@@ -149,6 +149,7 @@ MonoBehaviour:
   m_UseDebug: 0
   m_UAMPrefab: {fileID: 5481811013921750607, guid: d0c2b077bc620b34bb21aa8a3aa77865, type: 3}
   m_Key: 
+  m_OneSideLocations: []
   m_NextLocations: []
 --- !u!54 &205878857539866529
 Rigidbody:
@@ -194,7 +195,7 @@ Transform:
   m_GameObject: {fileID: 7677833143768943192}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 150, y: 150, z: 150}
+  m_LocalScale: {x: 300, y: 300, z: 300}
   m_Children: []
   m_Father: {fileID: 5974330813035299239}
   m_RootOrder: 0
@@ -226,7 +227,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: bcb379b16ce7e8d41b16d6abf6679758, type: 2}
+  - {fileID: 2100000, guid: 444724271abafbd4d88e187e268da8de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

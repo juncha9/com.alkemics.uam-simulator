@@ -1,7 +1,9 @@
-﻿using Sirenix.OdinInspector.Editor;
+﻿using Codice.Client.BaseCommands;
+using Sirenix.OdinInspector.Editor;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace UAM
 {
@@ -57,7 +59,13 @@ namespace UAM
 
         private void OnDisable()
         {
+            if(target.editMode != Location.EditMode.None)
+            {
+                target.editMode = Location.EditMode.None;
+            }
+
             SceneView.duringSceneGui -= UpdateSceneView;
+
         }
 
         private static void FindUAM()
@@ -71,57 +79,116 @@ namespace UAM
 
         private void UpdateSceneView(SceneView sceneView)
         {
-            if (target.useDrawMode == false) return;
+            
             if (s_MainUAMSimulator?.locationControl == null) return;
 
-            if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
+            Vector2 pos;
+            Ray ray;
+
+            if (target.editMode != Location.EditMode.None)
             {
-                var locationControl = s_MainUAMSimulator.locationControl;
-
-                var pos = Event.current.mousePosition;
-                float ppp = EditorGUIUtility.pixelsPerPoint;
-                pos.y = sceneView.camera.pixelHeight - pos.y * ppp;
-                pos.x *= ppp;
-
-                var ray = sceneView.camera.ScreenPointToRay(pos);
-
-                Debug.DrawLine(ray.origin + new Vector3(0,0, -1000f), ray.origin + new Vector3(0,0,1000f)
-                    , Color.red, 10f);
-                Debug.DrawLine(ray.origin + new Vector3(0, -1000f, 0), ray.origin + new Vector3(0, 1000f, 0)
-                    , Color.red, 10f);
-                Debug.DrawLine(ray.origin + new Vector3(-1000f, 0, 0), ray.origin + new Vector3(1000f, 0, 0)
-                    , Color.red, 10f);
-                Debug.DrawLine(ray.origin, ray.origin + (ray.direction * -1000f)
-                    , Color.red, 10f);
-
-                Vector3 pointsPos = ray.origin;
                 
-                pointsPos.y = locationControl.transform.position.y;
-                //Todo create object here at pointsPos
-
-                var newLocation = (PrefabUtility.InstantiatePrefab(s_LocationPrefab) as GameObject)?.GetComponent<Location>();
-                newLocation.transform.position = pointsPos;
-                newLocation.transform.parent = locationControl.locationParent;
-                newLocation.useDrawMode = true;
-                if (locationControl.locations.Contains(newLocation) == false)
+                if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
                 {
-                    locationControl.locations.Add(newLocation);
+                    pos = Event.current.mousePosition;
+                    float ppp = EditorGUIUtility.pixelsPerPoint;
+                    pos.y = sceneView.camera.pixelHeight - pos.y * ppp;
+                    pos.x *= ppp;
+                    ray = sceneView.camera.ScreenPointToRay(pos);
+
+                    Debug.DrawLine(ray.origin + new Vector3(0, 0, -1000f), ray.origin + new Vector3(0, 0, 1000f)
+                        , Color.red, 10f);
+                    Debug.DrawLine(ray.origin + new Vector3(0, -1000f, 0), ray.origin + new Vector3(0, 1000f, 0)
+                        , Color.red, 10f);
+                    Debug.DrawLine(ray.origin + new Vector3(-1000f, 0, 0), ray.origin + new Vector3(1000f, 0, 0)
+                        , Color.red, 10f);
+                    Debug.DrawLine(ray.origin, ray.origin + (ray.direction * -1000f)
+                        , Color.red, 10f);
+
+                    switch (target.editMode)
+                    {
+                        case Location.EditMode.DrawMode:
+                            {
+                                var locationControl = s_MainUAMSimulator.locationControl;
+
+                                Vector3 pointsPos = ray.origin;
+
+                                pointsPos.y = locationControl.transform.position.y;
+                                //Todo create object here at pointsPos
+
+                                var newLocation = (PrefabUtility.InstantiatePrefab(s_LocationPrefab) as GameObject)?.GetComponent<Location>();
+                                newLocation.transform.position = pointsPos;
+                                newLocation.transform.parent = locationControl.locationParent;
+                                newLocation.editMode = Location.EditMode.DrawMode;
+                                if (locationControl.locations.Contains(newLocation) == false)
+                                {
+                                    locationControl.locations.Add(newLocation);
+                                }
+                                target.nextLocations.Add(newLocation);
+                                EditorUtility.SetDirty(target);
+
+                                // Avoid the current event being propagated
+                                // I'm not sure which of both works better here
+                                //Event.current.Use();
+                                //Event.current = null;
+
+                                target.editMode = Location.EditMode.None;
+                                Selection.activeGameObject = newLocation.gameObject;
+                            }
+                            break;
+                        case Location.EditMode.WayMode:
+                            {
+
+                                var raycastResults = Physics.RaycastAll(ray);
+
+                                var hits = raycastResults.Where(x => x.collider.tag == "Hit").Select(x => x.collider.gameObject);
+                                
+                                Location location = null;
+                                foreach (var hit in hits)
+                                {
+                                    var _location = hit.GetComponentInParent<Location>();
+                                    if (_location != null 
+                                        && Equals(target, _location) == false
+                                        && target.preLocations.Contains(_location) == false)
+                                    {
+                                        location = _location;
+                                        break;
+                                    }
+                                }
+
+                                if(location != null)
+                                {
+                                    if (Event.current.control == true)
+                                    {
+                                        if(target.oneSideLocations.Contains(location) == false)
+                                        {
+                                            target.oneSideLocations.Add(location);
+                                            EditorUtility.SetDirty(target);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (target.nextLocations.Contains(location) == false)
+                                        {
+                                            target.nextLocations.Add(location);
+                                            EditorUtility.SetDirty(target);
+                                        }
+                                    }
+                                }
+
+                            }
+                            break;
+                    }
+
                 }
-                target.nextLocations.Add(newLocation);
 
-                // Avoid the current event being propagated
-                // I'm not sure which of both works better here
-                //Event.current.Use();
-                //Event.current = null;
+            }
+               
 
-                target.useDrawMode = false;
-                Selection.activeGameObject = newLocation.gameObject;
+                
                 
                 // Keep the created object in focus
                 //Selection.activeGameObject = target.gameObject;
-
-                // exit creation mode
-            }
 
             /*
             if (isCreating)

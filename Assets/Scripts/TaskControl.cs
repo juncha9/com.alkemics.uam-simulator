@@ -22,11 +22,15 @@ namespace UAM
         private Task m_CurTask = null;
 
         [ReadOnly, ShowInInspector]
+        private Coroutine m_CurRoutine = null;
+
+        [ReadOnly, ShowInInspector]
         private List<Task> m_TaskList = new List<Task>();
         public List<Task> taskList => m_TaskList;
 
         //[ReadOnly, ShowInInspector]
         //private Dictionary<Task.Type, Func<Task, IEnumerator>> logicDict = null;
+
 
         protected override void Awake()
         {
@@ -42,25 +46,13 @@ namespace UAM
             StartAutoCoroutine(CheckTaskRoutine());
         }
 
-        private Coroutine StartRoutine(in Task task)
-        {
-            var logic = task.logic;
-            return StartCoroutine(logic.Invoke(task));
-        }
 
-        /*
-        public void SetTaskLogic(Dictionary<Task.Type, Func<Task, IEnumerator>> dict)
+        public void AddTask<T>(Action<T> initCallback = null) where T : Task 
         {
-            this.logicDict = dict;
-            foreach(var task in taskList)
-            {
-                if(dict.ContainsKey(task.type) == true)
-                {
-                    task.SetLogic(dict[task.type]);
-                }
-            }
+            T _task = gameObject.AddComponent<T>();
+            initCallback?.Invoke(_task);
+            this.taskList.Add(_task);
         }
-        */
 
         IEnumerator CheckTaskRoutine()
         {
@@ -71,8 +63,8 @@ namespace UAM
                 m_CurTask = taskList.Where(x => x.isCompleted == false).FirstOrValue(null);
                 if(m_CurTask != null)
                 {
-                    var routine = StartRoutine(m_CurTask);
-                    yield return routine;
+                    m_CurRoutine = m_CurTask.StartTask();
+                    yield return m_CurRoutine;
                     m_CurTask.Complete();
                 }
                 else

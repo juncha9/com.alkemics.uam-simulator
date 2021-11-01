@@ -6,48 +6,35 @@ using UnityEngine;
 
 namespace UAM
 {
-
-    [Serializable]
     public class EVTOL_MoveTask : Task
     {
+
         [ReadOnly, ShowInInspector]
         private EVTOL m_Target;
-        public EVTOL target => m_Target;
 
         [SerializeField]
-        private Location m_DestLocation;
+        private Location m_DestLocation = null;
         public Location destLocation
         {
-            private set => m_DestLocation = value;
+            set => m_DestLocation = value;
             get => m_DestLocation;
         }
 
-        protected override void Awake()
+        protected override void OnPreAwake()
         {
-            base.Awake();
-
+            base.OnPreAwake();
             if (m_Target == null)
             {
-                m_Target = parentTaskControl.target.GetComponent<EVTOL>();
+                m_Target = GetComponentInParent<EVTOL>();
             }
-
         }
 
-        public void SetLocation(Location location)
+        public override IEnumerator TaskRoutine()
         {
-            this.m_DestLocation = location;
+            isTasking = true;
+            yield return m_Target.MoveToLocationRoutine(destLocation);
+            isTasking = false;
         }
-
-        public override IEnumerator Logic()
-        {
-            if (this.m_DestLocation != this.destLocation)
-            {
-                this.m_DestLocation = this.destLocation;
-            }
-
-            yield return new WaitUntil(() => target.curLocation == this.destLocation);
-        }
-
     }
 
 
@@ -67,8 +54,13 @@ namespace UAM
         }
 
         [ReadOnly, ShowInInspector]
-        private Func<Task, IEnumerator> m_Logic = null;
-        public Func<Task, IEnumerator> logic => m_Logic;
+        private bool m_IsTasking = false;
+        public bool isTasking
+        {
+            protected set => m_IsTasking = value;
+            get => m_IsTasking;
+        }
+        
 
         protected override void OnPreAwake()
         {
@@ -85,9 +77,15 @@ namespace UAM
             Debug.Assert(m_ParentTaskControl != null, $"[{name}] {nameof(m_ParentTaskControl)} is null", gameObject);
         }
 
-        public virtual IEnumerator Logic()
+        public Coroutine StartTask()
         {
+            return StartCoroutine(TaskRoutine());
+        }
+        public virtual IEnumerator TaskRoutine()
+        {
+            isTasking = true;
             yield return null;
+            isTasking = false;
         }
 
         public void Complete()
@@ -95,10 +93,6 @@ namespace UAM
             this.isCompleted = true;
         }
 
-        public Task()
-        {
-
-        }
     }
 
 

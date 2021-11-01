@@ -7,6 +7,8 @@ using UnityEngine;
 using UAM;
 using System.Collections.Specialized;
 using System;
+using UnityEngine.Serialization;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -16,15 +18,23 @@ namespace UAM
     
     public class Location : Behavior
     {
+        public enum EditMode
+        {
+            None,
+            DrawMode,
+            WayMode,
+        }
+
         private const float MAX_WIDTH_FACTOR = 3f;
         private const float MIN_WIDTH_FACTOR = -1f;
         private const float DEFAULT_LINE_WIDTH = 2f;
 
-        private bool m_UseDrawMode = false;
-        public bool useDrawMode
+        [ReadOnly, ShowInInspector]
+        private EditMode m_EditMode = EditMode.None;
+        public EditMode editMode
         {
-            set => m_UseDrawMode = value;
-            get =>m_UseDrawMode;
+            set => m_EditMode = value;
+            get => m_EditMode;
         }
 
         [ReadOnly, ShowInInspector]
@@ -43,11 +53,17 @@ namespace UAM
             private set => m_Key = value;
             get => m_Key;
         }
-
         
+        [ReadOnly, ShowInInspector]
+        private Lines m_WayLines = null;
 
         [ReadOnly, ShowInInspector]
-        private Lines m_Lines = null;
+        private Lines m_OneWayLines = null;
+
+        [ListDrawerSettings(HideAddButton = true)]
+        [SerializeField]
+        private List<Location> m_OneSideLocations = new List<Location>();
+        public List<Location> oneSideLocations => m_OneSideLocations;
 
         [ListDrawerSettings(HideAddButton = true)]
         [SerializeField]
@@ -55,14 +71,67 @@ namespace UAM
         public List<Location> nextLocations => m_NextLocations;
 
         [ReadOnly, ShowInInspector]
+        public List<Location> preLocations
+        {
+            get
+            {
+                if (m_ParentLocationControl == null)
+                {
+                    return new List<Location>();
+                }
+                else
+                {
+                    return m_ParentLocationControl.locations
+                    .Where(x => x.nextLocations.Contains(this) == true)
+                    .ToList();
+                }
+            }
+        }
+
+        [ReadOnly, ShowInInspector]
+        public List<Location> ableLocations
+        {
+            get
+            {
+                List<Location> locations = new List<Location>();
+                locations.AddRange(nextLocations);
+                locations.AddRange(preLocations);
+                locations.AddRange(oneSideLocations);
+                return locations;
+            }
+        }
+
+        [ReadOnly, ShowInInspector]
         private DestroyableList<EVTOL> m_HandleVTOLS = new DestroyableList<EVTOL>();
         public DestroyableList<EVTOL> handleVTOLS => m_HandleVTOLS;
 
-        [GUIColor("@useDrawMode == true ? Color.yellow : Color.white")]
+        [GUIColor("@editMode == EditMode.DrawMode ? Color.yellow : Color.white")]
         [Button]
         private void DrawMode()
         {
-            useDrawMode = !useDrawMode;
+            if(this.editMode == EditMode.DrawMode)
+            {
+                editMode = EditMode.None;
+            }
+            else
+            {
+                editMode = EditMode.DrawMode;
+            }
+        }
+
+        [GUIColor("@editMode == EditMode.WayMode ? Color.yellow : Color.white")]
+        [Button]
+        private void WayMode()
+        {
+            if(this.editMode == EditMode.WayMode)
+            {
+                editMode = EditMode.None;
+            }
+            else
+            {
+                editMode = EditMode.WayMode;
+            }
+
         }
 
         [Button]
@@ -74,41 +143,82 @@ namespace UAM
 #endif
         }
 
-        protected override void OnValidate()
+        #region [ EDITOR ]
+
+        private void ResizeLines()
         {
-            base.OnValidate();
-
-            name = $"LOC[{key}]";
-
-            nextLocations.RemoveAll(x => x == null);
+            if (m_WayLines == null || (m_NextLocations.Count != m_WayLines.count))
+            {
+                m_WayLines = new Lines(m_NextLocations.Count);
+            }
+            if (m_OneWayLines == null || (m_OneSideLocations.Count != m_OneWayLines.count))
+            {
+                m_OneWayLines = new Lines(m_OneSideLocations.Count);
+            }
         }
 
         private void OnDrawGizmos()
         {
             ResizeLines();
 
-            var lineColor = m_ParentSimulator?.lineColor ?? Color.yellow;
-            var lineWidth = m_ParentSimulator?.lineWidth ?? DEFAULT_LINE_WIDTH;
+            Color lineColor;
+            float lineWidth;
 
-            for (int i = 0; i < m_NextLocations.Count; i++)
+            if (m_OneSideLocations != null)
             {
-                if (m_NextLocations != null)
+                lineColor = m_ParentSimulator?.oneWayLineColor ?? Color.red;
+                lineWidth = m_ParentSimulator?.lineWidth ?? DEFAULT_LINE_WIDTH;
+                for (int i = 0; i < m_OneSideLocations.Count; i++)
                 {
-                    if (m_NextLocations[i] == null) continue;
-                    m_Lines[i] = new Line(new Vector3(0, 0, 0),
-                                m_NextLocations[i].transform.position - this.transform.position,
+
+                    if (m_OneSideLocations[i] == null) continue;
+                    m_OneWayLines[i] = new Line(new Vector3(0, 0, 0),
+                                m_OneSideLocations[i].transform.position - this.transform.position,
                                 lineColor,
                                 lineColor,
                                 lineWidth + MAX_WIDTH_FACTOR,
                                 lineWidth + MIN_WIDTH_FACTOR);
                 }
             }
-
-            if (m_Lines != null && m_Lines.count > 0)
+            if (m_OneWayLines != null && m_OneWayLines.count > 0)
             {
-                m_Lines.DrawNow(transform.localToWorldMatrix);
+                m_OneWayLines.DrawNow(transform.localToWorldMatrix);
             }
+
+            if (m_NextLocations != null)
+            {
+                lineColor = m_ParentSimulator?.lineColor ?? Color.yellow;
+                lineWidth = m_ParentSimulator?.lineWidth ?? DEFAULT_LINE_WIDTH;
+                for (int i = 0; i < m_NextLocations.Count; i++)
+                {
+
+                    if (m_NextLocations[i] == null) continue;
+                    m_WayLines[i] = new Line(new Vector3(0, 0, 0),
+                                m_NextLocations[i].transform.position - this.transform.position,
+                                lineColor,
+                                lineColor,
+                                lineWidth + MAX_WIDTH_FACTOR,
+                                lineWidth + MAX_WIDTH_FACTOR);
+                }
+            }
+            if (m_WayLines != null && m_WayLines.count > 0)
+            {
+                m_WayLines.DrawNow(transform.localToWorldMatrix);
+            }
+
+
         }
+
+        #endregion
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+
+            name = $"LOC[{key}]";
+
+            ableLocations.RemoveAll(x => x == null);
+        }
+
 
         protected override void OnPreAwake()
         {
@@ -140,14 +250,37 @@ namespace UAM
         {
             ResizeLines();
 
-            var lineColor = m_ParentSimulator?.lineColor ?? Color.yellow;
-            var lineWidth = m_ParentSimulator?.lineWidth ?? DEFAULT_LINE_WIDTH;
+            Color lineColor;
+            float lineWidth;
+
+            lineColor = m_ParentSimulator?.oneWayLineColor ?? Color.red;
+            lineWidth = m_ParentSimulator?.lineWidth ?? DEFAULT_LINE_WIDTH;
+            for (int i = 0; i < m_OneSideLocations.Count; i++)
+            {
+
+                if (m_OneSideLocations[i] == null) continue;
+                m_OneWayLines[i] = new Line(this.transform.position,
+                            m_OneSideLocations[i].transform.position,
+                            lineColor,
+                            lineColor,
+                            lineWidth + MAX_WIDTH_FACTOR,
+                            lineWidth + MIN_WIDTH_FACTOR);
+            }
+
+
+            if (m_OneWayLines != null && m_OneWayLines.count > 0)
+            {
+                m_OneWayLines.Draw();
+            }
+
+            lineColor = m_ParentSimulator?.lineColor ?? Color.yellow;
+            lineWidth = m_ParentSimulator?.lineWidth ?? DEFAULT_LINE_WIDTH;
 
             for (int i = 0; i < m_NextLocations.Count; i++)
             {
                 if (m_NextLocations != null)
                 {
-                    m_Lines[i] = new Line(this.transform.position,
+                    m_WayLines[i] = new Line(this.transform.position,
                                 m_NextLocations[i].transform.position,
                                 lineColor,
                                 lineColor,
@@ -156,9 +289,9 @@ namespace UAM
                 }
             }
 
-            if (m_Lines != null && m_Lines.count > 0)
+            if (m_WayLines != null && m_WayLines.count > 0)
             {
-                m_Lines.Draw();
+                m_WayLines.Draw();
             }
             
         }
@@ -177,14 +310,7 @@ namespace UAM
             }
         }
 
-        private void ResizeLines()
-        {
-            if (m_Lines != null && (m_NextLocations.Count == m_Lines.count))
-            {
-                return;
-            }
-            m_Lines = new Lines(m_NextLocations.Count);
-        }
+
 
         [Button]
         public void AddLocation(
@@ -200,13 +326,13 @@ namespace UAM
             var location = m_ParentLocationControl.locations.Find(x => x.key == key);
             if(location != null)
             {
-                if(nextLocations.Contains(x => x == location) == true)
+                if(ableLocations.Contains(x => x == location) == true)
                 {
                     Debug.LogError($"[{name}] Location is already exist", gameObject);
                     return;
                 }
 
-                nextLocations.Add(location);
+                ableLocations.Add(location);
             }
             else
             {
