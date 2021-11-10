@@ -6,13 +6,22 @@ using UnityEngine;
 
 namespace UAM
 {
-    public class EVTOL_MoveTask : Task
+    
+    [IncludeMyAttributes()]
+    [ShowIf("@useDebug == true")]
+    [VerticalGroup("Debug")]
+    public class DebugOnly : Attribute
     {
 
+    }
+
+    [Serializable]
+    public class EVTOL_MoveTask : Task
+    {
         [ReadOnly, ShowInInspector]
         private EVTOL m_Target;
+        public EVTOL target => m_Target;
 
-        [SerializeField]
         private Location m_DestLocation = null;
         public Location destLocation
         {
@@ -32,7 +41,7 @@ namespace UAM
         public override IEnumerator TaskRoutine()
         {
             isTasking = true;
-            yield return m_Target.MoveToLocationRoutine(destLocation);
+            yield return target.MoveToLocationRoutine(destLocation);
             isTasking = false;
         }
     }
@@ -41,10 +50,14 @@ namespace UAM
     [Serializable]
     public class Task : Behavior
     {
-        [ReadOnly, ShowInInspector]
+        private const string GROUP_TASK = "Task";
+
+
+        [DebugOnly]
         private TaskControl m_ParentTaskControl;
         public TaskControl parentTaskControl => m_ParentTaskControl;
 
+        [HorizontalGroup(GROUP_TASK)]
         [ReadOnly, ShowInInspector]
         private bool m_IsCompleted = false;
         public bool isCompleted
@@ -53,6 +66,7 @@ namespace UAM
             get => m_IsCompleted;
         }
 
+        [HorizontalGroup(GROUP_TASK)]
         [ReadOnly, ShowInInspector]
         private bool m_IsTasking = false;
         public bool isTasking
