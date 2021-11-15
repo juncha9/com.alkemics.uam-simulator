@@ -1,25 +1,32 @@
-﻿using Codice.Client.BaseCommands;
-using Sirenix.OdinInspector.Editor;
+﻿using Sirenix.OdinInspector.Editor;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace UAM
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(Location))]
-    public class LocationCreateControl : OdinEditor
+    [CustomEditor(typeof(WayPoint))]
+    public class WayPointEditor : LocationEditor
     {
-        private static bool s_IsCreateMode;
 
-        private static UAMSimulator s_MainUAMSimulator;
+    }
 
+    [CanEditMultipleObjects]
+    [CustomEditor(typeof(Station))]
+    public class StationEditor : LocationEditor
+    {
+
+    }
+
+
+    [CanEditMultipleObjects]
+    [CustomEditor(typeof(Location))]
+    public class LocationEditor : OdinEditor
+    {
         private new Location target => base.target as Location;
 
         private static Object s_LocationPrefab;
-
-        private static Location s_LastCreatedLocation;
 
         /*
         [MenuItem("UAM/EnableCreateMode")]
@@ -47,45 +54,33 @@ namespace UAM
         }
         */
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
             s_LocationPrefab = Resources.Load("Location");
-
-            FindUAM();
 
             SceneView.duringSceneGui -= UpdateSceneView;
             SceneView.duringSceneGui += UpdateSceneView;
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
-            if(target.editMode != Location.EditMode.None)
+            base.OnDisable();
+            if(target.EditMode != LocationEditMode.None)
             {
-                target.editMode = Location.EditMode.None;
+                target.EditMode = LocationEditMode.None;
             }
 
             SceneView.duringSceneGui -= UpdateSceneView;
 
         }
 
-        private static void FindUAM()
-        {
-            var mainSimulator = GameObject.FindObjectsOfType<UAMSimulator>()
-                           .Where(x => x.isMain == true)
-                           .FirstOrDefault();
-
-            s_MainUAMSimulator = mainSimulator;
-        }
-
         private void UpdateSceneView(SceneView sceneView)
         {
-            
-            if (s_MainUAMSimulator?.locationControl == null) return;
-
             Vector2 pos;
             Ray ray;
 
-            if (target.editMode != Location.EditMode.None)
+            if (target.EditMode != LocationEditMode.None)
             {
                 
                 if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
@@ -105,26 +100,28 @@ namespace UAM
                     Debug.DrawLine(ray.origin, ray.origin + (ray.direction * -1000f)
                         , Color.red, 10f);
 
-                    switch (target.editMode)
+                    switch (target.EditMode)
                     {
-                        case Location.EditMode.DrawMode:
+                        case LocationEditMode.DrawMode:
                             {
-                                var locationControl = s_MainUAMSimulator.locationControl;
+                                var locationControl = target.ParentLocationControl;
 
                                 Vector3 pointsPos = ray.origin;
 
                                 pointsPos.y = locationControl.transform.position.y;
                                 //Todo create object here at pointsPos
 
-                                var newLocation = (PrefabUtility.InstantiatePrefab(s_LocationPrefab) as GameObject)?.GetComponent<Location>();
+                                var newLocation = (PrefabUtility.InstantiatePrefab(s_LocationPrefab) as GameObject)?.GetComponent<WayPoint>();
                                 newLocation.transform.position = pointsPos;
                                 newLocation.transform.parent = locationControl.locationParent;
-                                newLocation.editMode = Location.EditMode.DrawMode;
+                                newLocation.EditMode = LocationEditMode.DrawMode;
                                 if (locationControl.locations.Contains(newLocation) == false)
                                 {
                                     locationControl.locations.Add(newLocation);
                                 }
-                                target.nextLocations.Add(newLocation);
+                                Way way = target.gameObject.AddComponent<Way>();
+                                way.Setup(target, newLocation);
+                                target.NextWays.Add(way);
                                 EditorUtility.SetDirty(target);
 
                                 // Avoid the current event being propagated
@@ -132,50 +129,44 @@ namespace UAM
                                 //Event.current.Use();
                                 //Event.current = null;
 
-                                target.editMode = Location.EditMode.None;
+                                target.EditMode = LocationEditMode.None;
                                 Selection.activeGameObject = newLocation.gameObject;
                             }
                             break;
-                        case Location.EditMode.WayMode:
+                        case LocationEditMode.WayMode:
                             {
 
                                 var raycastResults = Physics.RaycastAll(ray);
 
                                 var hits = raycastResults.Where(x => x.collider.tag == "Hit").Select(x => x.collider.gameObject);
                                 
-                                Location location = null;
+                                WayPoint location = null;
                                 foreach (var hit in hits)
                                 {
-                                    var _location = hit.GetComponentInParent<Location>();
+                                    var _location = hit.GetComponentInParent<WayPoint>();
                                     if (_location != null 
                                         && Equals(target, _location) == false
-                                        && target.preLocations.Contains(_location) == false)
+                                        && target.PreWays.Contains(x => x.From ==_location) == false)
                                     {
                                         location = _location;
                                         break;
                                     }
                                 }
 
-                                if(location != null)
+                                if(location != null && target.NextWays.Contains(x => x.To == location) == false)
                                 {
+                                    Way way = target.gameObject.AddComponent<Way>();
                                     if (Event.current.control == true)
                                     {
-                                        if(target.oneSideLocations.Contains(location) == false)
-                                        {
-                                            target.oneSideLocations.Add(location);
-                                            EditorUtility.SetDirty(target);
-                                        }
+                                        way.Setup(target, location, true);
                                     }
                                     else
                                     {
-                                        if (target.nextLocations.Contains(location) == false)
-                                        {
-                                            target.nextLocations.Add(location);
-                                            EditorUtility.SetDirty(target);
-                                        }
+                                        way.Setup(target, location, false);
                                     }
+                                    target.NextWays.Add(way);
+                                    EditorUtility.SetDirty(target);
                                 }
-
                             }
                             break;
                     }

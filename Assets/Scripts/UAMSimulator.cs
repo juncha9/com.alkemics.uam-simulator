@@ -1,10 +1,21 @@
 ﻿using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UAM
 {
+    public class RouteMaker : Behavior
+    {
+
+        [SerializeField]
+        private List<Way> ways = new List<Way>();
+        public List<Way> Ways => ways;
+
+    }
+
+
     public class UAMSimulator : Behavior
     {
         [SerializeField]
@@ -12,25 +23,12 @@ namespace UAM
         public bool isMain => m_IsMain;
 
         [SerializeField]
-        private GameObject m_EVTOLPrefab;
-        public GameObject EVTOLPrefab => m_EVTOLPrefab;
+        private GameObject _EVTOLPrefab;
+        public GameObject EVTOLPrefab => _EVTOLPrefab;
 
         [SerializeField]
-        private Transform m_EVTOLParent;
-        public Transform EVTOLParent => m_EVTOLParent;
-
-
-        [SerializeField]
-        private Color m_LineColor = Color.yellow;
-        public Color lineColor => m_LineColor;
-
-        private Color m_OneDirLineColor = Color.red;
-        public Color oneWayLineColor => m_OneDirLineColor;
-
-        [Range(2f, 10f)]
-        [SerializeField]
-        private float m_LineWidth = 2f;
-        public float lineWidth => m_LineWidth;
+        private Transform _EVTOLParent;
+        public Transform EVTOLParent => _EVTOLParent;
 
         [ReadOnly, ShowInInspector]
         private LocationControl m_LocationControl;
@@ -57,9 +55,22 @@ namespace UAM
         {
             base.Start();
 
-            StartAutoCoroutine(CheckEVTOLRoutine());
         }
 
+        [Button]
+        public void CreateEVTOL()
+        {
+            var evtol = Instantiate(EVTOLPrefab, EVTOLParent).GetComponent<EVTOL>();
+            this.EVTOLs.Add(evtol);
+            evtol.TaskControl.AddTask<EVTOL_MoveTask>((task) =>
+            {
+                task
+
+            });
+
+        }
+
+        /*
         [Button]
         private void StartSim()
         {
@@ -67,13 +78,13 @@ namespace UAM
             for (int i =0; i< UAMCount; i++)
             {
                 var evtol = Instantiate(m_EVTOLPrefab, m_EVTOLParent)?.GetComponent<EVTOL>();
-                evtol.name = $"EVTOL [{i + 1}]";
-                evtol.speed = 1000f + (Random.Range(-1f, 1f) * 500f);
                 
+                
+
                 this.EVTOLs.Add(evtol);
 
                 var locations = locationControl.locations;
-                Location randomLocation = locations[Random.Range(0, locations.Count)];
+                WayPoint randomLocation = locations[Random.Range(0, locations.Count)];
                 if(randomLocation != null)
                 {
                     evtol.transform.position = randomLocation.transform.position;
@@ -96,7 +107,7 @@ namespace UAM
                 {
                     if (evtol.isTasking == true) continue;
                     if (evtol.curLocation == null) continue;
-                    var locations = evtol.curLocation.ableLocations;
+                    var locations = evtol.curLocation.ableWays;
                     var targetLoc = locations[Random.Range(0, locations.Count)];
                     if(targetLoc != null)
                     {
@@ -110,6 +121,7 @@ namespace UAM
                 yield return delay;
             }
         }
+        */
 
 
 
@@ -117,3 +129,4 @@ namespace UAM
 
 
 }
+

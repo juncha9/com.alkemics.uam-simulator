@@ -1,8 +1,4 @@
-﻿
-
-
-using Linefy;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -25,14 +21,14 @@ namespace UAM
 
         public List<string> GetLocationList()
         {
-            return locations.Select(x => x.key).Distinct().ToList();
+            return locations.Select(x => x.Key).Distinct().ToList();
         }
 
         protected override void OnValidate()
         {
             base.OnValidate();
 
-            var childLocations = GetComponentsInChildren<Location>();
+            var childLocations = GetComponentsInChildren<WayPoint>();
 
             foreach(var loc in childLocations)
             {

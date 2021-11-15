@@ -3,78 +3,54 @@ using Sirenix.Serialization;
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace UAM
 {
-    
-    [IncludeMyAttributes()]
-    [ShowIf("@useDebug == true")]
-    [VerticalGroup("Debug")]
-    public class DebugOnly : Attribute
-    {
-
-    }
-
-    [Serializable]
-    public class EVTOL_MoveTask : Task
-    {
-        [ReadOnly, ShowInInspector]
-        private EVTOL m_Target;
-        public EVTOL target => m_Target;
-
-        private Location m_DestLocation = null;
-        public Location destLocation
-        {
-            set => m_DestLocation = value;
-            get => m_DestLocation;
-        }
-
-        protected override void OnPreAwake()
-        {
-            base.OnPreAwake();
-            if (m_Target == null)
-            {
-                m_Target = GetComponentInParent<EVTOL>();
-            }
-        }
-
-        public override IEnumerator TaskRoutine()
-        {
-            isTasking = true;
-            yield return target.MoveToLocationRoutine(destLocation);
-            isTasking = false;
-        }
-    }
-
-
     [Serializable]
     public class Task : Behavior
     {
+        [Serializable]
+        public class TaskEvent : UnityEvent<Task> { }
+        
         private const string GROUP_TASK = "Task";
-
 
         [DebugOnly]
         private TaskControl m_ParentTaskControl;
         public TaskControl parentTaskControl => m_ParentTaskControl;
 
-        [HorizontalGroup(GROUP_TASK)]
-        [ReadOnly, ShowInInspector]
-        private bool m_IsCompleted = false;
-        public bool isCompleted
-        {
-            private set => m_IsCompleted = value;
-            get => m_IsCompleted;
-        }
-
-        [HorizontalGroup(GROUP_TASK)]
-        [ReadOnly, ShowInInspector]
         private bool m_IsTasking = false;
+        [HorizontalGroup(GROUP_TASK)]
+        [GUIColor("isTasking ? Color.green : Color.red")]
+        [HideLabel]
+        [ReadOnly, ShowInInspector]
         public bool isTasking
         {
             protected set => m_IsTasking = value;
             get => m_IsTasking;
         }
-        
+
+        private bool m_IsCompleted = false;
+        [HorizontalGroup(GROUP_TASK)]
+        [GUIColor("isCompleted ? Color.green : Color.yellow")]
+        [ReadOnly, ShowInInspector]
+        public bool isCompleted
+        {
+            protected set => m_IsCompleted = value;
+            get => m_IsCompleted;
+        }
+
+        private bool m_IsInterrupted = false;
+        [HorizontalGroup(GROUP_TASK)]
+        [GUIColor("isInterrupted ? Color.red : Color.white")]
+        [HideLabel]
+        [ReadOnly, ShowInInspector]
+        public bool isInterrupted
+        {
+            private set => m_IsInterrupted = value;
+            get => m_IsInterrupted;
+        }
 
         protected override void OnPreAwake()
         {
@@ -97,16 +73,40 @@ namespace UAM
         }
         public virtual IEnumerator TaskRoutine()
         {
-            isTasking = true;
+            InitTask();
             yield return null;
-            isTasking = false;
+            TickTask();
+            OverTask();
         }
 
-        public void Complete()
+        public void Inturrupt()
         {
-            this.isCompleted = true;
+            isInterrupted = true;
         }
 
+        public virtual void InitTask()
+        {
+            isTasking = true;
+            parentTaskControl?.onTaskInit.Invoke(this);
+        }
+
+        public virtual void TickTask()
+        {
+            parentTaskControl?.onTaskTick.Invoke(this);
+        }
+
+        public virtual void OverTask()
+        {
+            isTasking = false;
+            isCompleted = true;
+            parentTaskControl?.onTaskOver.Invoke(this);
+        }
+
+        public void Clear()
+        {
+            isInterrupted = false;
+            isCompleted = false;
+        }
     }
 
 

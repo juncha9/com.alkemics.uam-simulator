@@ -3,18 +3,71 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace UAM
 {
-    
 
+
+    [RequireComponent(typeof(Looker))]
+    [RequireComponent(typeof(Mover))]
     public class EVTOL : Behavior
     {
+        public enum State
+        {
+            Idle,
+            Move,
+            TakeOff,
+        }
+      
         [Serializable]
-        public class LocationArriveEvent : UnityEvent<Location> { }
+        public class LocationEvent : UnityEvent<Location> { }
+
+        private State m_State = State.Idle;
+        [ShowInInspector]
+        public State state
+        {
+            private set
+            {
+                m_State = value;
+                if(mover != null)
+                {
+                    switch (m_State)
+                    {
+                        case State.Idle:
+                            mover.direction = Vector3.zero;
+                            mover.enabled = false;
+                            break;
+                        case State.Move:
+                            mover.direction = transform.forward;
+                            mover.enabled = true;
+                            break;
+                        case State.TakeOff:
+                            mover.direction = transform.up;
+                            mover.enabled = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            get => m_State;
+        }
+
+        #region [ Component ]
+
+        [BoxGroup("Component")]
+        private Looker looker;
+
+        [BoxGroup("Component")]
+        private Mover mover;
+
+        #endregion
+
 
         [SerializeField]
         private TextMeshProUGUI m_NameTextMesh;
@@ -22,68 +75,88 @@ namespace UAM
         [SerializeField]
         private TextMeshProUGUI m_SpeedTextMesh;
 
-        private LocationArriveEvent m_OnLocationArrived = new LocationArriveEvent();
-        public LocationArriveEvent onLocationArrived => m_OnLocationArrived;
+        private LocationEvent locationArrived = new LocationEvent();
+        public LocationEvent LocationArrived => locationArrived;
 
         [ReadOnly, ShowInInspector]
-        private TaskControl m_TaskControl;
-        public TaskControl taskControl => m_TaskControl;
+        private TaskControl taskControl;
+        public TaskControl TaskControl => taskControl;
+
+        [ReadOnly, ShowInInspector]
+        private Location curLocation = null;
+        public Location CurLocation
+        {
+            set
+            {
+                curLocation = value;
+                if(curLocation != null)
+                {
+                    preLocation = curLocation;
+                }
+            }
+            get => curLocation;
+        }
+
+        [ReadOnly, ShowInInspector]
+        private Location preLocation = null;
+        public Location PreLocation
+        {
+            set
+            {
+                preLocation = value;
+            }
+            get => preLocation;
+        }
 
         [SerializeField]
-        private float m_Speed = 1000f;
-        public float speed
+        private Location targetLocation;
+        public Location TargetLocation
         {
-            set => m_Speed = value;
-            get => m_Speed;
+            set
+            {
+                targetLocation = value;
+                if(looker != null)
+                {
+                    if(targetLocation != null)
+                    {
+                        looker.target = targetLocation.transform;
+                    }
+                    else
+                    {
+                        looker.target = null;
+                    }
+                }
+            }
+            get => targetLocation;
         }
 
         [ReadOnly, ShowInInspector]
-        private float m_TargetSpeed;
+        private float distance;
 
-        [ReadOnly, ShowInInspector]
-        private float m_CurSpeed;
-
-        [ReadOnly, ShowInInspector]
-        private Location m_CurLocation = null;
-        public Location curLocation => m_CurLocation;
-
-        [ReadOnly, ShowInInspector]
-        private Location m_PreLocation = null;
-        public Location preLocation => m_PreLocation;
-
-        [SerializeField]
-        private Location m_TargetLocation;
-        public Location targetLocation
+        [ShowInInspector]
+        public bool IsTasking
         {
-            private set => m_TargetLocation = value;
-            get => m_TargetLocation;
-        }
-
-        [ReadOnly, ShowInInspector]
-        private float m_Distance;
-
-        [ReadOnly, ShowInInspector]
-        private bool m_IsTasking = false;
-        public bool isTasking
-        {
-            private set => m_IsTasking = value;
-            get => m_IsTasking;
-        }
-
-        [ReadOnly, ShowInInspector]
-        private bool m_IsInterrupt = false;
-        public bool isInterrupt
-        {
-            private set => m_IsInterrupt = value;
-            get => m_IsInterrupt;
+            get
+            {
+                if (taskControl == null) return false;
+                return taskControl.isTasking;
+            }
         }
 
         protected override void OnPreAwake()
         {
             base.OnPreAwake();
-            if(m_TaskControl == null)
+            if (mover == null)
             {
-                m_TaskControl = GetComponentInChildren<TaskControl>();
+                mover = GetComponent<Mover>();
+            }
+            if(looker == null)
+            {
+                looker = GetComponent<Looker>();
+            }
+            if (taskControl == null)
+            {
+                taskControl = GetComponentInChildren<TaskControl>();
             }
         }
 
@@ -96,63 +169,69 @@ namespace UAM
             m_TaskControl.SetTaskLogic(dict);
 
             */
-            onLocationArrived.AddListener((location) =>
+            LocationArrived.AddListener((location) =>
             {
-                m_CurLocation = location;
+                curLocation = location;
             });
 
-            m_TaskControl.StartTasks();
+            taskControl.onTaskInit.AddListener(OnTaskInit);
+
+            taskControl.onTaskTick.AddListener(OnTaskTick);
+
+            taskControl.onTaskOver.AddListener(OnTaskOver);
+
+            taskControl.StartTasks();
 
         }
 
-        public IEnumerator MoveToLocationRoutine(Location location)
+        private void OnTaskInit(Task task)
         {
-            WaitForSeconds delay = new WaitForSeconds(0.1f);
-            
-            targetLocation = location;
-            isTasking = true;
-            while (true)
+            switch (task)
             {
-                if (isInterrupt == true)
-                {
-                    isInterrupt = false;
-                    targetLocation = null;
-                    isTasking = false;
-                    yield break;
-                }
+                case EVTOL_MoveTask moveTask:
+                    this.TargetLocation = moveTask.Way.To;
+                    this.state = State.Move;
+                    break;
+            }
 
-                if (Equals(curLocation, location) == true)
-                {
-                    targetLocation = null;
-                    isTasking = false;
-                    yield break;
-                }
+        }
 
-                yield return delay;
+        private void OnTaskTick(Task task)
+        {
+            switch (task)
+            {
+                case EVTOL_MoveTask moveTask:       
+                    break;
             }
         }
 
-        protected override void Start()
+        private void OnTaskOver(Task task)
         {
-            base.Start();
 
-            m_TargetSpeed = m_Speed;
+            switch (task)
+            {
+                case EVTOL_MoveTask moveTask:
+                    this.TargetLocation = null;
+                    this.state = State.Idle;
+                    break;
+            }
+
         }
 
         private void Update()
         {
-            m_CurSpeed = Mathf.Lerp(m_CurSpeed, m_TargetSpeed, Time.deltaTime * 10f);
 
-            if(m_TargetLocation != null)
+            if(targetLocation != null)
             {
-                m_Distance = Vector3.Distance(m_TargetLocation.transform.position, this.transform.position);
-                if(m_Distance > 1f)
+                distance = Vector3.Distance(targetLocation.transform.position, this.transform.position);
+                if(distance > 1f)
                 {
-                    transform.LookAt(m_TargetLocation.transform.position);
-                    transform.Translate(Vector3.forward * Time.deltaTime * m_CurSpeed);
+                    transform.LookAt(targetLocation.transform.position);
+                    
                 }
             }
 
+            /*
             if(m_NameTextMesh != null)
             {
                 m_NameTextMesh.text = this.name;
@@ -162,24 +241,18 @@ namespace UAM
             {
                 m_SpeedTextMesh.text = m_CurSpeed.ToString("00.0 m/s");
             }
+            */
 
-
-        }
-
-        public void SetInterrupt()
-        {
-            if (isTasking == false) return;
-            m_IsInterrupt = true;
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if(other.tag == "Hit")
             {
-                var location = other.GetComponentInParent<Location>();
+                var location = other.GetComponentInParent<WayPoint>();
                 if(location != null)
                 {
-                    m_CurLocation = location;
+                    curLocation = location;
                 }
             }
         }
@@ -188,10 +261,10 @@ namespace UAM
         {
             if(other.tag == "Hit")
             {
-                var location = other.GetComponentInParent<Location>();
-                if(location != null && m_CurLocation == location)
+                var location = other.GetComponentInParent<WayPoint>();
+                if(location != null && curLocation == location)
                 {
-                    m_CurLocation = null;
+                    curLocation = null;
                 }
             }
         }

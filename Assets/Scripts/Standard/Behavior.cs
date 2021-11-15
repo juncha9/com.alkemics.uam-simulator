@@ -137,7 +137,6 @@ namespace UAM
             }
         }
 
-
         protected virtual void OnDestroy()
         {
             onDestroy.Invoke(this);

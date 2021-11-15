@@ -7,12 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace UAM
 {
    
     public class TaskControl : Behavior
     {
+        public class TaskEvent : UnityEvent<Task> { }
+
 
         [SerializeField]
         private GameObject m_Target;
@@ -24,13 +27,28 @@ namespace UAM
         [ReadOnly, ShowInInspector]
         private Coroutine m_CurRoutine = null;
 
+        [ShowInInspector]
+        public bool isTasking
+        {
+            get
+            {
+                if (m_CurTask == null) return false;
+                return m_CurTask.isTasking;
+            }
+        }
+
         [ReadOnly, ShowInInspector]
         private List<Task> m_TaskList = new List<Task>();
         public List<Task> taskList => m_TaskList;
 
-        //[ReadOnly, ShowInInspector]
-        //private Dictionary<Task.Type, Func<Task, IEnumerator>> logicDict = null;
+        private TaskEvent m_OnTaskInit = new TaskEvent();
+        public TaskEvent onTaskInit => m_OnTaskInit;
 
+        private TaskEvent m_OnTaskTick = new TaskEvent();
+        public TaskEvent onTaskTick => m_OnTaskTick;
+
+        private TaskEvent m_OnTaskOver = new TaskEvent();
+        public TaskEvent onTaskOver => m_OnTaskOver;
 
         protected override void Awake()
         {
@@ -39,6 +57,14 @@ namespace UAM
             var tasks = GetComponentsInChildren<Task>();
             this.taskList.AddRange(tasks);
         }
+
+        [Button]
+        public void Interrupt()
+        {
+            if (m_CurTask == null) return;
+            m_CurTask.Inturrupt();
+        }
+
 
         [Button]
         public void StartTasks()
@@ -65,7 +91,6 @@ namespace UAM
                 {
                     m_CurRoutine = m_CurTask.StartTask();
                     yield return m_CurRoutine;
-                    m_CurTask.Complete();
                 }
                 else
                 {
