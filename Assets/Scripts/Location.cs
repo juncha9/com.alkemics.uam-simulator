@@ -28,7 +28,7 @@ namespace UAM
     public class Location : Behavior
     {
 
-        #region [ EDIT_MODE ]
+       #region [ EDIT_MODE ]
 
         [ReadOnly, ShowInInspector]
         private LocationEditMode editMode = LocationEditMode.None;

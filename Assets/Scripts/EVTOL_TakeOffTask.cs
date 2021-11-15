@@ -5,41 +5,19 @@ using UnityEngine;
 
 namespace UAM
 {
-
-
     [Serializable]
-    public class EVTOL_MoveTask : Task
+    public class EVTOL_TakeOffTask : Task
     {
         [ReadOnly, ShowInInspector]
         private EVTOL target;
         public EVTOL Target => target;
 
-        /*
-         * 비행기 2대
-         * 단거리 20분 이내
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 중장거리 전역 이동
-         *
-         * 
-         * 1m => 
-         * 서쪽 600m
-         * 동쪽 300m 
-         * 
-         */
-
         [SerializeField]
-        private Way way = null;
-        public Way Way
+        private float height = 1000;
+        public float Height
         {
-            set => way = value;
-            get => way;
+            set => height = value;
+            get => height;
         }
 
         protected override void OnPreAwake()
@@ -51,18 +29,16 @@ namespace UAM
             }
         }
 
-
         public override IEnumerator TaskRoutine()
         {
             InitTask();
-            this.Way.MovingEVTOLs.Add(Target);
-            while(true)
+            while (true)
             {
-                if(isInterrupted == true)
+                if (isInterrupted == true)
                 {
                     break;
                 }
-                if (Equals(Target.CurLocation, way.To) == true)
+                if (target.transform.position.y > height)
                 {
                     break;
                 }
@@ -70,9 +46,9 @@ namespace UAM
                 TickTask();
                 yield return UAMStatic.TICK;
             }
-            this.Way.MovingEVTOLs.Remove(Target);
             OverTask();
         }
+
     }
 
 

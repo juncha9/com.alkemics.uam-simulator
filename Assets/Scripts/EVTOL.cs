@@ -39,15 +39,18 @@ namespace UAM
                     switch (m_State)
                     {
                         case State.Idle:
-                            mover.direction = Vector3.zero;
+                            mover.direction = null;
+                            looker.enabled = false;
                             mover.enabled = false;
                             break;
                         case State.Move:
-                            mover.direction = transform.forward;
+                            mover.direction = null;
+                            looker.enabled = true;
                             mover.enabled = true;
                             break;
                         case State.TakeOff:
-                            mover.direction = transform.up;
+                            mover.direction = Vector3.up;
+                            looker.enabled = true;
                             mover.enabled = true;
                             break;
                         default:
@@ -64,7 +67,7 @@ namespace UAM
         private Looker looker;
 
         [BoxGroup("Component")]
-        private Mover mover;
+        private EVTOL_Mover mover;
 
         #endregion
 
@@ -148,7 +151,7 @@ namespace UAM
             base.OnPreAwake();
             if (mover == null)
             {
-                mover = GetComponent<Mover>();
+                mover = GetComponent<EVTOL_Mover>();
             }
             if(looker == null)
             {
@@ -179,6 +182,11 @@ namespace UAM
             taskControl.onTaskTick.AddListener(OnTaskTick);
 
             taskControl.onTaskOver.AddListener(OnTaskOver);
+        }
+
+        protected override void Start()
+        {
+            base.Start();
 
             taskControl.StartTasks();
 
@@ -188,8 +196,14 @@ namespace UAM
         {
             switch (task)
             {
+                case EVTOL_TakeOffTask takeOffTask:
+                    this.mover.targetKnotPHour = 10f;
+                    this.state = State.TakeOff;
+                    break;
+
                 case EVTOL_MoveTask moveTask:
                     this.TargetLocation = moveTask.Way.To;
+                    this.mover.targetKnotPHour = 10f;
                     this.state = State.Move;
                     break;
             }
@@ -200,7 +214,8 @@ namespace UAM
         {
             switch (task)
             {
-                case EVTOL_MoveTask moveTask:       
+                case EVTOL_MoveTask moveTask:
+                    this.mover.direction = transform.forward;
                     break;
             }
         }
@@ -210,7 +225,16 @@ namespace UAM
 
             switch (task)
             {
+                case EVTOL_TakeOffTask takeOffTask:
+                    this.looker.enabled = false;
+                    this.mover.enabled = false;
+                    this.mover.targetKnotPHour = 0f;
+                    this.state = State.Idle;
+                    break;
                 case EVTOL_MoveTask moveTask:
+                    this.looker.enabled = false;
+                    this.mover.enabled = false;
+                    this.mover.targetKnotPHour = 0f;
                     this.TargetLocation = null;
                     this.state = State.Idle;
                     break;
@@ -218,32 +242,6 @@ namespace UAM
 
         }
 
-        private void Update()
-        {
-
-            if(targetLocation != null)
-            {
-                distance = Vector3.Distance(targetLocation.transform.position, this.transform.position);
-                if(distance > 1f)
-                {
-                    transform.LookAt(targetLocation.transform.position);
-                    
-                }
-            }
-
-            /*
-            if(m_NameTextMesh != null)
-            {
-                m_NameTextMesh.text = this.name;
-            }
-
-            if(m_SpeedTextMesh != null)
-            {
-                m_SpeedTextMesh.text = m_CurSpeed.ToString("00.0 m/s");
-            }
-            */
-
-        }
 
         private void OnTriggerEnter(Collider other)
         {

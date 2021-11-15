@@ -4,8 +4,8 @@
     {
         public float targetKnotPHour
         {
-            set => targetSpeed = value * UAMStatic.knotPHour2Speed;
-            get => targetSpeed * UAMStatic.speed2KnotPHour;
+            set => targetSpeed = value * UAMStatic.speed2KnotPHour;
+            get => targetSpeed * UAMStatic.knotPHour2Speed;
         }
     }
 

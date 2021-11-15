@@ -21,12 +21,14 @@ namespace UAM
             get => m_TurnSpeed;
         }
 
-        protected override void Start()
-        {
-            base.Start();
 
+
+        protected override void Awake()
+        {
+            base.Awake();
             enabled = false;
         }
+
 
         private void Update()
         {

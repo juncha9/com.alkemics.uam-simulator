@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace UAM
-{
+{ 
     public class Mover : Behavior
     {
 
@@ -30,18 +30,35 @@ namespace UAM
             get => m_Speed;
         }
 
-        private Vector3 m_Direction;
-        public Vector3 direction
+        private Vector3? m_Direction;
+        public Vector3? direction
         {
             set => m_Direction = value;
             get => m_Direction;
         }
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            enabled = false;
+        }
+
+
         private void FixedUpdate()
         {
             if (enabled == false) return;
-            speed = Mathf.Lerp(speed, targetSpeed, Time.unscaledTime);
-            transform.Translate(transform.forward * speed * Time.unscaledTime);
+
+            speed = Mathf.Lerp(speed, targetSpeed, 2f * Time.unscaledTime);
+            if(direction.HasValue == true)
+            {
+                transform.Translate(direction * speed * Time.unscaledTime);
+            }
+            else
+            {
+                transform.Translate(transform.forward * speed * Time.unscaledTime);
+            }
+            
         }
 
     }
