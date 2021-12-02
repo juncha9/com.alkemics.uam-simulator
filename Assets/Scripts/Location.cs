@@ -4,11 +4,12 @@ using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UAM;
 using System.Collections.Specialized;
 using System;
 using UnityEngine.Serialization;
 using System.Linq;
+using Alkemic;
+using Alkemic.Collections;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,7 +26,7 @@ namespace UAM
     }
 
 
-    public class Location : Behavior
+    public class Location : LeadComponent
     {
 
        #region [ EDIT_MODE ]

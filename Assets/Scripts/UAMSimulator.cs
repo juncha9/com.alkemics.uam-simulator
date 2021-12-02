@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using Alkemic;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace UAM
 {
-    public class UAMSimulator : Behavior
+    public class UAMSimulator : LeadComponent
     {
         [SerializeField]
         private bool m_IsMain = false;

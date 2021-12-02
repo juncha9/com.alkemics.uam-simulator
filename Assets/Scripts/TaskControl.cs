@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using Alkemic;
+using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using Sirenix.Utilities;
 using System;
@@ -12,7 +13,7 @@ using UnityEngine.Events;
 namespace UAM
 {
    
-    public class TaskControl : Behavior
+    public class TaskControl : BaseComponent
     {
         public class TaskEvent : UnityEvent<Task> { }
 

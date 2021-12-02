@@ -1,4 +1,6 @@
-﻿using Linefy;
+﻿using Alkemic;
+using Alkemic.Collections;
+using Linefy;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ using UnityEngine;
 
 namespace UAM
 {
-    public class Way : Behavior
+    public class Way : BaseComponent
     {
 
         private UAMSimulator parentSimulator;
@@ -81,13 +83,12 @@ namespace UAM
             this.isOneWay = isOneWay;
         }
 
-        
-
         private void OnDrawGizmos()
         {
             if (from == null || to == null)
             {
                 drawingLinesOnGizmo.Dispose();
+                return;
             }
             Color lineColor;
             if (isOneWay == false)

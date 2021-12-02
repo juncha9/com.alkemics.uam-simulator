@@ -1,27 +1,27 @@
-﻿using Sirenix.OdinInspector;
+﻿using Alkemic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace UAM
 {
-    public class Looker : Behavior
+    public class Looker : BaseComponent
     {
-        public Transform m_Target = null;
+        
+        private Transform target = null;
         [ShowInInspector]
-        public Transform target
+        public Transform Target
         {
-            set => m_Target = value;
-            get => m_Target;
+            set => target = value;
+            get => target;
         }
 
         [SerializeField]
-        private float m_TurnSpeed = 0.01f;
-        public float turnSpeed
+        private float turnSpeed = 0.01f;
+        public float TurnSpeed
         {
-            set => m_TurnSpeed = value;
-            get => m_TurnSpeed;
+            set => turnSpeed = value;
+            get => turnSpeed;
         }
-
-
 
         protected override void Awake()
         {
@@ -32,11 +32,11 @@ namespace UAM
 
         private void Update()
         {
-            if (target == null) return;
+            if (Target == null) return;
 
-            Vector3 dir = (target.position - transform.position).normalized;
+            Vector3 dir = Target.position - transform.position;
             var goal = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, goal, turnSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, goal, TurnSpeed);
         }
     }
 

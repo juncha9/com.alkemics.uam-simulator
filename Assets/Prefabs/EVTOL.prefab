@@ -450,7 +450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a370e170fe88d04da6cd7e6f7a87e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseDebug: 0
+  isDebug: 0
   m_Target: {fileID: 0}
 --- !u!1 &5481811013921750607
 GameObject:
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 5481811013921750605}
   - component: {fileID: 6434983763036928547}
   - component: {fileID: 4226816019178743045}
-  - component: {fileID: 8247120153137305363}
+  - component: {fileID: 8121589644131965188}
   m_Layer: 5
   m_Name: EVTOL
   m_TagString: Untagged
@@ -502,9 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dbcf04408c0afe4e951f39078096fce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseDebug: 0
-  m_NameTextMesh: {fileID: 1779482922343105040}
-  m_SpeedTextMesh: {fileID: 1958500299441918413}
+  isDebug: 0
   targetLocation: {fileID: 0}
 --- !u!54 &6434983763036928547
 Rigidbody:
@@ -534,10 +532,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 203dc58146565db409b4a8f608de3404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseDebug: 0
-  m_Target: {fileID: 0}
-  m_TurnSpeed: 100
---- !u!114 &8247120153137305363
+  isDebug: 0
+  turnSpeed: 10
+--- !u!114 &8121589644131965188
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -546,10 +543,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5481811013921750607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 192266123dcbcea49b95c288cd17a3f9, type: 3}
+  m_Script: {fileID: 11500000, guid: b42ec5ec5a912544698fe968e21cbd2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseDebug: 0
+  isDebug: 0
+  animators:
+    m_List: []
+  xMulti: 1
+  yMulti: 1
+  zMulti: 1
+  accelFactor: 1
+  breakFactor: 1
+  targetSpeed: 0
 --- !u!1 &5481811014541162207
 GameObject:
   m_ObjectHideFlags: 0

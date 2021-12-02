@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Alkemic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UAM
 {
-    public class RouteMaker : Behavior
+    public class RouteMaker : BaseComponent
     {
 
         [SerializeField]

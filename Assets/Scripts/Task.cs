@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using Alkemic;
+using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System;
 using System.Collections;
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 namespace UAM
 {
     [Serializable]
-    public class Task : Behavior
+    public class Task : BaseComponent
     {
         [Serializable]
         public class TaskEvent : UnityEvent<Task> { }

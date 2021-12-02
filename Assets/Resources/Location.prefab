@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f517543f3b8bca4a817f259b48b0b3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseDebug: 0
+  isDebug: 0
   nextWays:
     m_List: []
   key: 

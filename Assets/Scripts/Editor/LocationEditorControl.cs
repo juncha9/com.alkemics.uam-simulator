@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Alkemic;
 
 namespace UAM
 {
@@ -174,12 +175,9 @@ namespace UAM
                 }
 
             }
-               
-
-                
-                
-                // Keep the created object in focus
-                //Selection.activeGameObject = target.gameObject;
+              
+            // Keep the created object in focus
+            //Selection.activeGameObject = target.gameObject;
 
             /*
             if (isCreating)

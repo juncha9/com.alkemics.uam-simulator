@@ -1,11 +1,13 @@
-﻿using Sirenix.OdinInspector;
+﻿using Alkemic;
+using Alkemic.Collections;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace UAM
 {
-    public class LocationControl : Behavior
+    public class LocationControl : LeadComponent
     {
         [SerializeField]
         private Transform m_LocationParent;
@@ -49,6 +51,6 @@ namespace UAM
 
 
     }
-
+     
 
 }

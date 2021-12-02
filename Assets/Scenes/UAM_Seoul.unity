@@ -1279,6 +1279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UseDebug: 0
   ways:
+  - {fileID: 1692647451}
   - {fileID: 86402035}
   - {fileID: 482507274}
   - {fileID: 1500354478}
@@ -1295,10 +1296,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 341690422306305770, guid: 0400f4be18c186f47a6b43f4d0766ba9, type: 3}
       propertyPath: nextWays.m_List.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 341690422306305770, guid: 0400f4be18c186f47a6b43f4d0766ba9, type: 3}
       propertyPath: nextWays.m_List.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 341690422306305770, guid: 0400f4be18c186f47a6b43f4d0766ba9, type: 3}
+      propertyPath: nextWays.m_List.Array.data[1]
       value: 
       objectReference: {fileID: 1692647451}
     - target: {fileID: 4513033117564884185, guid: 0400f4be18c186f47a6b43f4d0766ba9, type: 3}

@@ -1,4 +1,7 @@
-﻿using Sirenix.OdinInspector;
+﻿using Alkemic;
+using Alkemic.Movement;
+using Linefy;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +14,9 @@ using UnityEngine.Events;
 
 namespace UAM
 {
-
-
     [RequireComponent(typeof(Looker))]
     [RequireComponent(typeof(Mover))]
-    public class EVTOL : Behavior
+    public class EVTOL : LeadComponent
     {
         public enum State
         {
@@ -39,19 +40,13 @@ namespace UAM
                     switch (m_State)
                     {
                         case State.Idle:
-                            mover.direction = null;
                             looker.enabled = false;
-                            mover.enabled = false;
                             break;
                         case State.Move:
-                            mover.direction = null;
                             looker.enabled = true;
-                            mover.enabled = true;
                             break;
                         case State.TakeOff:
-                            mover.direction = Vector3.up;
                             looker.enabled = true;
-                            mover.enabled = true;
                             break;
                         default:
                             break;
@@ -61,22 +56,12 @@ namespace UAM
             get => m_State;
         }
 
-        #region [ Component ]
-
         [BoxGroup("Component")]
         private Looker looker;
 
         [BoxGroup("Component")]
-        private EVTOL_Mover mover;
+        private Mover mover;
 
-        #endregion
-
-
-        [SerializeField]
-        private TextMeshProUGUI m_NameTextMesh;
-
-        [SerializeField]
-        private TextMeshProUGUI m_SpeedTextMesh;
 
         private LocationEvent locationArrived = new LocationEvent();
         public LocationEvent LocationArrived => locationArrived;
@@ -122,19 +107,16 @@ namespace UAM
                 {
                     if(targetLocation != null)
                     {
-                        looker.target = targetLocation.transform;
+                        looker.Target = targetLocation.transform;
                     }
                     else
                     {
-                        looker.target = null;
+                        looker.Target = null;
                     }
                 }
             }
             get => targetLocation;
         }
-
-        [ReadOnly, ShowInInspector]
-        private float distance;
 
         [ShowInInspector]
         public bool IsTasking
@@ -146,12 +128,30 @@ namespace UAM
             }
         }
 
+        public float TargetKnotPHour
+        {
+            set
+            {
+                if (mover != null)
+                {
+                    mover.TargetSpeed = value * UAMStatic.knotPHour2Speed;
+                }
+            }
+            get
+            {
+                return mover.TargetSpeed * UAMStatic.speed2KnotPHour;
+            }
+        }
+
+        [ShowInInspector]
+        private Lines directionLines = null; 
+
         protected override void OnPreAwake()
         {
             base.OnPreAwake();
             if (mover == null)
             {
-                mover = GetComponent<EVTOL_Mover>();
+                mover = GetComponent<Mover>();
             }
             if(looker == null)
             {
@@ -172,6 +172,9 @@ namespace UAM
             m_TaskControl.SetTaskLogic(dict);
 
             */
+
+            directionLines = new Lines(1);
+
             LocationArrived.AddListener((location) =>
             {
                 curLocation = location;
@@ -192,18 +195,44 @@ namespace UAM
 
         }
 
+        private void OnDrawGizmos()
+        {
+
+            
+        }
+
+        private void Update()
+        {
+
+            Vector3 from = transform.position;
+            Vector3 to = transform.position + (transform.forward * 500f);
+            directionLines[0] = new Line(from, to, Color.red, Color.red, 10f, 5f);
+            directionLines.Draw();
+            
+            if(this.state == State.Move)
+            {
+                if(mover != null)
+                {
+                    mover.Direction = transform.forward;
+                }
+            }
+
+        }
+
+
         private void OnTaskInit(Task task)
         {
             switch (task)
             {
                 case EVTOL_TakeOffTask takeOffTask:
-                    this.mover.targetKnotPHour = 10f;
+                    mover.StartMove(transform.up, 40f * UAMStatic.knotPHour2Speed);
                     this.state = State.TakeOff;
                     break;
 
                 case EVTOL_MoveTask moveTask:
+                    looker.enabled = true;
                     this.TargetLocation = moveTask.Way.To;
-                    this.mover.targetKnotPHour = 10f;
+                    mover.StartMove(transform.forward, 80f * UAMStatic.knotPHour2Speed);
                     this.state = State.Move;
                     break;
             }
@@ -215,10 +244,14 @@ namespace UAM
             switch (task)
             {
                 case EVTOL_MoveTask moveTask:
-                    this.mover.direction = transform.forward;
+                    //Debug.Log("UpdateDirection");
+                    //this.mover.Direction = transform.forward;
                     break;
             }
         }
+
+
+
 
         private void OnTaskOver(Task task)
         {
@@ -227,14 +260,12 @@ namespace UAM
             {
                 case EVTOL_TakeOffTask takeOffTask:
                     this.looker.enabled = false;
-                    this.mover.enabled = false;
-                    this.mover.targetKnotPHour = 0f;
+                    this.mover.StopMove(useReset: true);
                     this.state = State.Idle;
                     break;
                 case EVTOL_MoveTask moveTask:
                     this.looker.enabled = false;
-                    this.mover.enabled = false;
-                    this.mover.targetKnotPHour = 0f;
+                    this.mover.StopMove(useReset: true);
                     this.TargetLocation = null;
                     this.state = State.Idle;
                     break;
