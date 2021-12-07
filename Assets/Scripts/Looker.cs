@@ -1,20 +1,22 @@
-﻿using Alkemic;
-using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace UAM
+namespace Alkemic.UAM
 {
     public class Looker : BaseComponent
     {
-        
+
+        [PropertyGroup]
+        [ShowOnly]
         private Transform target = null;
-        [ShowInInspector]
+        //[ShowInInspector]
         public Transform Target
         {
             set => target = value;
             get => target;
         }
 
+        [OptionGroup]
+        [Range(0.01f, 1f)]
         [SerializeField]
         private float turnSpeed = 0.01f;
         public float TurnSpeed
@@ -29,14 +31,18 @@ namespace UAM
             enabled = false;
         }
 
-
         private void Update()
         {
             if (Target == null) return;
-
-            Vector3 dir = Target.position - transform.position;
+            if (IsDebug == true)
+            {
+                Debug.DrawLine(this.transform.position, Target.position, Color.green, 1f);
+            }
+            Vector3 dir = (Target.position - transform.position).normalized;
             var goal = Quaternion.LookRotation(dir);
             transform.rotation = Quaternion.Slerp(transform.rotation, goal, TurnSpeed);
+
+
         }
     }
 
