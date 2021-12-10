@@ -22,6 +22,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   RouteDatas:
-  - Key: 
-    VertiPortID: 
-    Ways: []
+  - VertiPortKey: 
+    WayKeys: []
+  editWays: []

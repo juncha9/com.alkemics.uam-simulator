@@ -1,4 +1,5 @@
 ﻿using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,42 +10,67 @@ namespace Alkemic.UAM
 
     public class UAMSimulator : LeadComponent
     {
+        public static IList<UAMSimulator> GetSimulators()
+        {
+            return GameObject.FindObjectsOfType<UAMSimulator>().ToList();
+                //.Select(x => (x.GetInstanceID(), x) )
+                //.ToList();
+        }
 
+        [PropertyGroup]
+        [SerializeField]
+        private string key;
+        public string Key => key;
 
+        [PresetComponent]
         [SerializeField]
         private Transform _VTOLParent;
         public Transform VTOLParent => _VTOLParent;
 
         [ShowOnly]
-        private LocationControl m_LocationControl;
-        public LocationControl locationControl => m_LocationControl;
-
-        [ShowOnly]
-        private RouteControl routeMaker;
-        public RouteControl RouteMaker => routeMaker;
+        private LocationControl locationControl;
+        public LocationControl LocationControl => locationControl;
 
 
         [SerializeField]
-        private int m_UAMCount = 50;
-        public int UAMCount => m_UAMCount;
+        private int _UAMCount = 50;
+        public int UAMCount => _UAMCount;
 
         [ShowOnly]
         private List<VTOL> m_EVTOLs = new List<VTOL>();
         public List<VTOL> EVTOLs => m_EVTOLs;
 
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            if(string.IsNullOrWhiteSpace(key) == true)
+            {
+                GenerateKey();
+            }
+
+        }
+
 
         protected override void OnPreAwake()
         {
             base.OnPreAwake();
-            if (m_LocationControl == null)
-            {
-                m_LocationControl = GetComponentInChildren<LocationControl>();
-            }
-            if (routeMaker == null)
-            {
-                routeMaker = GetComponent<RouteControl>();
-            }
+            this.CacheComponentInChildren(ref locationControl);
 
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            Debug.Assert(locationControl != null, $"[{name}] {nameof(locationControl)} is null", gameObject);
+        }
+
+
+        [Button]
+        public void GenerateKey()
+        {
+            var guid = Guid.NewGuid();
+            this.key = guid.ToString();
         }
 
 

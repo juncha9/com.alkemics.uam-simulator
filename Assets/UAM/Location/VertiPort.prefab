@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebug: 0
-  routes:
-    m_List: []
 --- !u!1 &457716250647120120
 GameObject:
   m_ObjectHideFlags: 0
