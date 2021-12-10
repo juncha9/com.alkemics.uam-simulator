@@ -253,12 +253,15 @@ namespace Alkemic.UAM
                             int _index = way.MovingVTOLs.IndexOf(this);
                             if (_index >= 0)
                             {
-                                var forwardVTOLs = way.MovingVTOLs.Take(_index).ToArray();
-                                float forwardSpeed = forwardVTOLs.Min(x => x.mover.CurSpeedFactor) * UAMStatic.speed2KnotPHour;
-                                if(speed < forwardSpeed)
+                                var forwardVTOLs = way.MovingVTOLs.Take(_index).ToList();
+                                if(forwardVTOLs.Count > 0)
                                 {
-                                    Debug.Log($"MinSpeed is {forwardSpeed}");
-                                    speed = forwardSpeed;
+                                    float forwardSpeed = forwardVTOLs.Min(x => x.mover.CurSpeedFactor) * UAMStatic.speed2KnotPHour;
+                                    if (speed < forwardSpeed)
+                                    {
+                                        Debug.Log($"MinSpeed is {forwardSpeed}");
+                                        speed = forwardSpeed;
+                                    }
                                 }
                             }
                         }

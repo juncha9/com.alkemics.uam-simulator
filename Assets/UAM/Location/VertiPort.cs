@@ -12,7 +12,7 @@ namespace Alkemic.UAM
 
     public class VertiPort : Location
     {
-
+        
         [CacheGroup]
         [Debug]
         private RouteControl routeControl;
@@ -48,6 +48,7 @@ namespace Alkemic.UAM
             base.Awake();
 
             Debug.Assert(routeControl != null, $"[{name}] {nameof(routeControl)} is null", gameObject);
+
         }
 
         [Button]
@@ -70,10 +71,10 @@ namespace Alkemic.UAM
             switch (type)
             {
                 case VTOLType.LongTerm:
-                    vtol = Instantiate(ParentSimulator.LT_VTOLPrefab, ParentSimulator.VTOLParent).GetComponent<VTOL>();
+                    vtol = Instantiate(UAMManager.Inst.LT_VTOLPrefab, ParentSimulator.VTOLParent).GetComponent<VTOL>();
                     break;
                 case VTOLType.ShortTerm:
-                    vtol = Instantiate(ParentSimulator.ST_VTOLPrefab, ParentSimulator.VTOLParent).GetComponent<VTOL>();
+                    vtol = Instantiate(UAMManager.Inst.ST_VTOLPrefab, ParentSimulator.VTOLParent).GetComponent<VTOL>();
                     break;
             }
             vtol.transform.position = landingAnchor.position;

@@ -11,21 +11,6 @@ namespace Alkemic.UAM
     {
 
 
-
-        [SerializeField]
-        private bool m_IsMain = false;
-        public bool isMain => m_IsMain;
-
-        [PresetComponent]
-        [SerializeField]
-        private GameObject _LT_VTOLPrefab;
-        public GameObject LT_VTOLPrefab => _LT_VTOLPrefab;
-
-        [PresetComponent]
-        [SerializeField]
-        private GameObject _ST_VTOLPrefab;
-        public GameObject ST_VTOLPrefab => _ST_VTOLPrefab;
-
         [SerializeField]
         private Transform _VTOLParent;
         public Transform VTOLParent => _VTOLParent;
@@ -47,8 +32,6 @@ namespace Alkemic.UAM
         private List<VTOL> m_EVTOLs = new List<VTOL>();
         public List<VTOL> EVTOLs => m_EVTOLs;
 
-        [SerializeField]
-        VertiPort station;
 
         protected override void OnPreAwake()
         {
@@ -64,18 +47,6 @@ namespace Alkemic.UAM
 
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            Debug.Assert(station != null, $"[{name}] {nameof(station)} is null", gameObject);
-
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-
-        }
 
         /*
         [Button]

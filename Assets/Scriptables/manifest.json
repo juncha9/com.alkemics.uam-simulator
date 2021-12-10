@@ -1,0 +1,10 @@
+{
+  "scriptables": [
+    {
+      "key": "route",
+      "filename": "Route",
+      "typeText": "Assembly-CSharp;Alkemic.UAM.RouteScriptable"
+    }
+  ],
+  "LoadedScriptables": []
+}

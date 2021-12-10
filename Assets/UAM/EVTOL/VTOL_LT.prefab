@@ -406,6 +406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebug: 0
+  maxSpeed: 120
 --- !u!54 &6434983763036928547
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -435,7 +436,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebug: 1
-  target: {fileID: 0}
   turnSpeed: 0.1
 --- !u!114 &8121589644131965188
 MonoBehaviour:
