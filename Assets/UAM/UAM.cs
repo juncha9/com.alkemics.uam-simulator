@@ -10,7 +10,7 @@ namespace Alkemic.UAM
 
 
         [HideInInspector]
-        public static RouteScriptable RouteContainer => ScriptableDatabase.Scriptables[KEY_ROUTE_SCRIPTABLE] as RouteScriptable;
+        public static RouteScriptable Route => ScriptableDatabase.Scriptables[KEY_ROUTE_SCRIPTABLE] as RouteScriptable;
     }
 
 

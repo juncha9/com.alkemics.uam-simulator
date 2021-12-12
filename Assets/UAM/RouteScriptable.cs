@@ -11,24 +11,19 @@ namespace Alkemic.UAM
     [Serializable]
     public class RouteScriptable : Scriptable
     {
+        
+        [ShowInInspector]
+        public RouteData EditingRouteData = null;
+
         [SerializeField]
         public List<RouteData> RouteDatas = new List<RouteData>();
 
         #region [ EDITING ]
 
-
-        [ShowInInspector]
-        [NonSerialized]
-        private bool isEditing = false;
-
-        [ShowIf("@isEditing == true")]
+        [ShowIf("@EditingRouteData != null")]
         [ValueDropdown("@Alkemic.UAM.UAMSimulator.GetSimulators()")]
         [ShowInInspector]
         private UAMSimulator simulator;
-
-        [ShowIf("@isEditing == true && simulator != null")]
-        [ValueDropdown("@GetWays(simulator)")]
-        public List<Way> editWays = new List<Way>();
 
         #endregion
 
@@ -39,17 +34,11 @@ namespace Alkemic.UAM
             return simulator.LocationControl.Ways;
         }
 
+        [ShowIf("@EditingRouteData != null && simulator != null")]
         [Button]
-        public void EditRoute()
+        public void AddWay([ValueDropdown("@GetWays(simulator)")] Way way)
         {
-            if(isEditing == true)
-            {
-                isEditing = false;
-            }
-            else
-            {
-                isEditing = true;
-            }
+            if (EditingRouteData == null) return;
 
 
         }

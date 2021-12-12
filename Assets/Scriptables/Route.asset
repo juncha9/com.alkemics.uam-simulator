@@ -21,7 +21,9 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  EditingRouteData:
+    VertiPortKey: 
+    WayKeys: []
   RouteDatas:
   - VertiPortKey: 
     WayKeys: []
-  editWays: []

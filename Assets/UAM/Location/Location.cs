@@ -167,6 +167,9 @@ namespace Alkemic.UAM
             }
         }
 
+        
+
+
         protected override void OnPreAwake()
         {
             base.OnPreAwake();
@@ -190,6 +193,19 @@ namespace Alkemic.UAM
             nextWays.CollectionChanged += OnNextWaysCollectionChanged;
 
             ExistsVTOLS.CollectionChanged += OnExistVTOLsCollectionChanged;
+        }
+
+        private void OnDrawGizmos()
+        {
+
+            var style = new GUIStyle();
+            style.normal.textColor = Color.white;
+            style.fontSize = 12;
+            style.fontStyle = FontStyle.Bold;
+            style.alignment = TextAnchor.MiddleLeft;
+            Handles.Label(transform.position + (Vector3.up * 1000f), $"{this.Key}", style);
+
+
         }
 
         private void ReloadName()

@@ -131,6 +131,11 @@ namespace Alkemic.UAM
                 {
                     color = ColorDefine.RED_ORANGE;
                 }
+                else if (UAM.Route?.EditingRouteData != null &&
+                    UAM.Route?.EditingRouteData.WayKeys.Contains(this.Key) == true)
+                {
+                    color = ColorDefine.RED_ORANGE;
+                }
                 else
                 {
                     if (isOneWay == false)
@@ -144,6 +149,7 @@ namespace Alkemic.UAM
                 }
             }
 
+            /*
             style = new GUIStyle();
             style.normal.textColor = Color.white;
             style.fontSize = 10;
@@ -151,6 +157,7 @@ namespace Alkemic.UAM
             style.alignment = TextAnchor.MiddleLeft;
             Vector3 pos = (from.transform.position + to.transform.position) / 2f;
             Handles.Label(pos + (Vector3.up * 500f), $"[{this.from.Key}]\n[{this.to.Key}]", style);
+            */
 
             if (isOneWay == false)
             {
