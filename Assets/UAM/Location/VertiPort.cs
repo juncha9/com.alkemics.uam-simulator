@@ -1,5 +1,6 @@
 ﻿using Linefy.Primitives;
 using Sirenix.OdinInspector;
+using System.Collections;
 using UnityEngine;
 
 namespace Alkemic.UAM
@@ -9,6 +10,7 @@ namespace Alkemic.UAM
         LongTerm,
         ShortTerm
     }
+
 
     public class VertiPort : Location
     {
@@ -20,16 +22,7 @@ namespace Alkemic.UAM
 
         [PropertyGroup]
         [ShowOnly]
-        private VTOL ClimbingVTOL = null;
-
-        [PropertyGroup]
-        [ShowOnly]
-        private VTOL LandingVTOL = null;
-
-        [OptionGroup]
-        [ValueDropdown("@RouteControl.Routes")]
-        [SerializeField]
-        private Route selectedRoute;
+        private VTOL TakingVTOL = null;
 
         [PresetComponent]
         [SerializeField]
@@ -51,20 +44,41 @@ namespace Alkemic.UAM
 
         }
 
-        [Button]
-        public void MakeAndRoute(VTOLType type)
+        protected override void Start()
         {
-            if(selectedRoute == null)
+            base.Start();
+
+            StartAutoCoroutine(MakeVTOLRoutine());
+        }
+
+
+        private IEnumerator MakeVTOLRoutine()
+        {
+            float sleepTime = 2.5f;
+            while(true)
             {
-                Debug.LogError($"[{name}] Route is not selected", gameObject);
-                return;
+                if (routeControl.Routes == null || routeControl.Routes.Count <= 0)
+                {
+                    yield break;
+                }
+
+                MakeAndSetRoute();
+
+                yield return new WaitForSeconds(sleepTime);
             }
+        }
 
-            var vtol = MakeVTOL(type);
+        [Button]
+        public void MakeAndSetRoute()
+        {
+            var route = this.routeControl.Routes[Random.Range(0, routeControl.Routes.Count)];
+            
+            var vtol = MakeVTOL(VTOLType.LongTerm);
 
-            SetTask(vtol, selectedRoute);
+            SetTask(vtol, route);   
         }
         
+
         public VTOL MakeVTOL(VTOLType type)
         {
             VTOL vtol = null;
@@ -100,12 +114,52 @@ namespace Alkemic.UAM
                 task.MoveType = VerticalMove.TakeOff;
             });
 
-            foreach(var way in route.Ways)
+            Location preLocation = null;
+            Location nextLocation = null;
+            int i = 0;
+            foreach (var way in route.Ways)
             {
+                if(i == 0)
+                {
+                    if(Equals(way.LocationA.Key, this.Key) == true)
+                    {
+                        preLocation = way.LocationA;
+                        nextLocation = way.LocationB;
+                    }
+                    else if(Equals(way.LocationB.Key, this.Key) == true)
+                    {
+                        preLocation = way.LocationB;
+                        nextLocation = way.LocationA;
+                    }
+                    else
+                    {
+                        throw new System.Exception("Location not match");
+                    }
+                }
+                else
+                {
+                    if(Equals(way.LocationA, nextLocation) == true)
+                    {
+                        preLocation = way.LocationA;
+                        nextLocation = way.LocationB;
+                    }
+                    else if(Equals(way.LocationB, nextLocation) == true)
+                    {
+                        preLocation = way.LocationB;
+                        nextLocation = way.LocationA;
+                    }
+                    else
+                    {
+                        throw new System.Exception("Location not match");
+                    }
+                }
+
                 vtol.TaskControl.AddTask<MoveTask>((task) =>
                 {
                     task.Way = way;
+                    task.TargetLocation = nextLocation;
                 });
+                i++;
             }
 
             vtol.TaskControl.AddTask<VerticalMoveTask>((task) =>

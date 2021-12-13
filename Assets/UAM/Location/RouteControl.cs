@@ -39,7 +39,7 @@ namespace Alkemic.UAM
         private void SyncRoutes()
         {
             string vertiPortKey = parentVertiPort?.Key;
-            var routeDatas = UAM.Route.RouteDatas.Where(x => x.VertiPortKey == vertiPortKey);
+            var routeDatas = UAM.Route.RouteDatas.Where(x => x.VertiPort == vertiPortKey);
             foreach(var routeData in routeDatas)
             {
                 CreateRoute(routeData);
@@ -49,7 +49,7 @@ namespace Alkemic.UAM
         public void CreateRoute(RouteData data)
         {
             var newRoute = gameObject.AddComponent<Route>();
-            newRoute.Init(data);
+            newRoute.Setup(data);
             this.routes.Add(newRoute);
         }
        

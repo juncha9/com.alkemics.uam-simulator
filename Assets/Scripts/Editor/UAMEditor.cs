@@ -1,5 +1,4 @@
 ﻿using Alkemic.Scriptables;
-using Alkemic.UAM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ using UnityEngine;
 namespace Alkemic.Editors
 {
 
-    public class UAMEditor : ScriptableEditorWindow
+    public class UAMEditor
     {
 
         

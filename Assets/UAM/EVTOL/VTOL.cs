@@ -214,7 +214,7 @@ namespace Alkemic.UAM
 
                 case MoveTask moveTask:
                     looker.enabled = true;
-                    this.Target = moveTask.Way.To;
+                    this.Target = moveTask.TargetLocation;
                     mover.StartMove();
                     this.state = State.Move;
                     break;
@@ -300,8 +300,6 @@ namespace Alkemic.UAM
             }
 
         }
-
-
 
         private void OnTriggerEnter(Collider other)
         {

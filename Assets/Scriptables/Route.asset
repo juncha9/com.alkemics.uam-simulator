@@ -21,9 +21,140 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  EditingRouteData:
-    VertiPortKey: 
-    WayKeys: []
+  GUI_Simulator: {fileID: 0}
   RouteDatas:
-  - VertiPortKey: 
-    WayKeys: []
+  - Key: INCH_AP_R001
+    VertiPort: INCH_AP
+    Ways:
+    - INCH_AP_INCH_0001
+    - INCH_0001_INCH_0002
+    - INCH_0002_INCH_0003
+    - INCH_0003_INCH_0004
+    - INCH_0004_INCH_0005
+    - INCH_0005_INCH_0006
+    - INCH_0006_INCH_0007
+    - INCH_0007_INCH_0008
+    - INCH_0008_GWMY_0001
+    - GWMY_0001_GWMY_0002
+    - GWMY_0002_GWMY_0003
+    - GWMY_0003_JMSL_0003
+    - JMSL_0003_JMSL_0004
+    - EXBT_AP01_JMSL_0004
+    GUI_VertiPort: {fileID: 0}
+    GUI_Ways:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+  - Key: INCH_AP_R002
+    VertiPort: INCH_AP
+    Ways:
+    - INCH_AP_INCH_0017
+    - INCH_0017_INCH_0016
+    - INCH_0016_INCH_0015
+    - INCH_0015_GMPO_0005
+    - GMPO_0005_GMPO_0002
+    - GMPO_0002_GMPO_0001
+    - GMPO_0001_YEOD_0001
+    - YEOD_0001_JMSL_0009
+    - JMSL_0009_JMSL_0008
+    - JMSL_0004_JMSL_0008
+    - EXBT_AP01_JMSL_0004
+    GUI_VertiPort: {fileID: 0}
+    GUI_Ways:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+  - Key: INCH_AP_R003
+    VertiPort: INCH_AP
+    Ways:
+    - INCH_AP_INCH_0017
+    - INCH_0017_INCH_0016
+    - INCH_0016_INCH_0015
+    - INCH_0015_INCH_0014
+    - INCH_0014_INCH_0013
+    - INCH_0013_INCH_0012
+    - INCH_0012_GMPO_AP01
+    - GMPO_AP01_GMPO_0001
+    - GMPO_0001_YEOD_0001
+    - YEOD_0001_JMSL_0009
+    - JMSL_0009_JMSL_0008
+    - JMSL_0004_JMSL_0008
+    - EXBT_AP01_JMSL_0004
+    GUI_VertiPort: {fileID: 0}
+    GUI_Ways:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+  - Key: GMPO_R001
+    VertiPort: GMPO_AP01
+    Ways:
+    - GMPO_AP01_GMPO_0001
+    - GMPO_0001_YEOD_0001
+    - YEOD_0001_JMSL_0009
+    - JMSL_0009_JMSL_0008
+    - JMSL_0004_JMSL_0008
+    - JMSL_0003_JMSL_0004
+    - GWMY_0003_JMSL_0003
+    - GWMY_0002_GWMY_0003
+    - GWMY_0001_GWMY_0002
+    - GWMY_AP_GWMY_0001
+    GUI_VertiPort: {fileID: 0}
+    GUI_Ways:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+  - Key: GMPO_R002
+    VertiPort: GMPO_AP01
+    Ways:
+    - INCH_0012_GMPO_AP01
+    - INCH_0011_INCH_0012
+    - INCH_0010_INCH_0011
+    - INCH_0010_INCH_0009
+    - INCH_0009_INCH_0008
+    - INCH_0008_GWMY_0001
+    - GWMY_AP_GWMY_0001
+    GUI_VertiPort: {fileID: 0}
+    GUI_Ways:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}

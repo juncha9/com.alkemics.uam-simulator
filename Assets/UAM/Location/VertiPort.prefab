@@ -234,7 +234,6 @@ MonoBehaviour:
   key: 
   nextWays:
     m_List: []
-  selectedRoute: {fileID: 0}
   landingAnchor: {fileID: 8389064544505169013}
 --- !u!54 &205878857539866529
 Rigidbody:

@@ -1,6 +1,7 @@
 ﻿using Alkemic.Collections;
 using Linefy;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -24,20 +25,20 @@ namespace Alkemic.UAM
 
         [PropertyGroup]
         [SerializeField]
-        private Location from;
-        public Location From
+        private Location locationA;
+        public Location LocationA
         {
-            set => from = value;
-            get => from;
+            set => locationA = value;
+            get => locationA;
         }
 
         [PropertyGroup]
         [SerializeField]
-        private Location to;
-        public Location To
+        private Location locationB;
+        public Location LocationB
         {
-            set => to = value;
-            get => to;
+            set => locationB = value;
+            get => locationB;
         }
 
         [PropertyGroup]
@@ -54,7 +55,7 @@ namespace Alkemic.UAM
         [ShowOnly]
         public string Key
         {
-            get => $"{from?.Key}_{to?.Key}";
+            get => $"{locationA?.Key}_{locationB?.Key}";
         }
 
         [InstanceGroup]
@@ -90,14 +91,14 @@ namespace Alkemic.UAM
         {
             if (Helper.IsPrefabMode == false)
             {
-                this.name = $"{GetType().Name} [{from?.Key}]-[{to?.Key}]";
+                this.name = $"{GetType().Name} [{locationA?.Key}]-[{locationB?.Key}]";
             }
         }
 
         public void Setup(Location from, Location to, bool isOneWay = false)
         {
-            this.from = from;
-            this.to = to;
+            this.locationA = from;
+            this.locationB = to;
             this.isOneWay = isOneWay;
             ReloadName();
         }
@@ -110,8 +111,8 @@ namespace Alkemic.UAM
             {
                 style = new GUIStyle();
                 style.normal.textColor = Color.white;
-                style.fontSize = 10;
-                style.fontStyle = FontStyle.Bold;
+                style.fontSize = 12;
+                //style.fontStyle = FontStyle.Bold;
                 style.alignment = TextAnchor.MiddleLeft;
                 for (int i = 0; i < movingVTOLs.Count; i++)
                 {
@@ -120,7 +121,7 @@ namespace Alkemic.UAM
                 }
             }
 
-            if (from == null || to == null)
+            if (locationA == null || locationB == null)
             {
                 wayLines.Dispose();
                 return;
@@ -131,10 +132,21 @@ namespace Alkemic.UAM
                 {
                     color = ColorDefine.RED_ORANGE;
                 }
-                else if (UAM.Route?.EditingRouteData != null &&
-                    UAM.Route?.EditingRouteData.WayKeys.Contains(this.Key) == true)
+
+                else if (UAM.Route?.EditingRoute != null &&
+                        UAM.Route?.EditingRoute.GUI_Ways.Contains(this) == true)
                 {
-                    color = ColorDefine.RED_ORANGE;
+
+                    color = ColorDefine.RADICAL_RED;
+
+                    int index = UAM.Route.EditingRoute.GUI_Ways.IndexOf(this) + 1;
+
+                    style = new GUIStyle(GUI.skin.box);
+                    style.normal.textColor = ColorDefine.RADICAL_RED;
+                    style.fontSize = 12;
+                    style.fontStyle = FontStyle.Bold;
+                    style.alignment = TextAnchor.MiddleCenter;
+                    Handles.Label((locationA.transform.position + locationB.transform.position) / 2 + (Vector3.up * 1000f), $"{index}", style);
                 }
                 else
                 {
@@ -163,7 +175,7 @@ namespace Alkemic.UAM
             {
                 wayLines[0] = new Line(
                     new Vector3(0, 0, 0),
-                    To.transform.position - From.transform.position,
+                    LocationB.transform.position - LocationA.transform.position,
                     color,
                     color,
                     UAMStatic.LineWidth,
@@ -173,7 +185,7 @@ namespace Alkemic.UAM
             {
                 wayLines[0] = new Line(
                     new Vector3(0, 0, 0),
-                    To.transform.position - From.transform.position,
+                    LocationB.transform.position - LocationA.transform.position,
                     color,
                     color,
                     UAMStatic.LineWidth + 2f,
@@ -185,7 +197,7 @@ namespace Alkemic.UAM
     
         private void Update()
         {
-            if (from == null || to == null)
+            if (locationA == null || locationB == null)
             {
                 wayLines.Dispose();
             }
@@ -201,8 +213,8 @@ namespace Alkemic.UAM
             if (isOneWay == false)
             {
                 wayLines[0] = new Line(
-                    From.transform.position,
-                    To.transform.position,
+                    LocationA.transform.position,
+                    LocationB.transform.position,
                     lineColor,
                     lineColor,
                     UAMStatic.LineWidth,
@@ -211,8 +223,8 @@ namespace Alkemic.UAM
             else
             {
                 wayLines[0] = new Line(
-                    From.transform.position,
-                    To.transform.position,
+                    LocationA.transform.position,
+                    LocationB.transform.position,
                     lineColor,
                     lineColor,
                     UAMStatic.LineWidth + 2f,
@@ -224,14 +236,14 @@ namespace Alkemic.UAM
 
         private void FixedUpdate()
         {
-                if (To != null && movingVTOLs.Count > 0)
+                if (LocationB != null && movingVTOLs.Count > 0)
                 {
                     movingVTOLs.Sort((a, b) =>
                     {
                         if (a == null) return 1;
                         else if (b == null) return -1;
 
-                        if (Vector3.Distance(a.transform.position, To.transform.position) < Vector3.Distance(b.transform.position, To.transform.position))
+                        if (Vector3.Distance(a.transform.position, LocationB.transform.position) < Vector3.Distance(b.transform.position, LocationB.transform.position))
                         {
                             return -1;
                         }

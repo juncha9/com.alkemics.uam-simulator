@@ -36,6 +36,15 @@ namespace Alkemic.UAM
             get => way;
         }
 
+        [ShowOnly]
+        private Location targetLocation;
+        public Location TargetLocation
+        {
+            set => targetLocation = value;
+            get => targetLocation;
+        }
+
+
         protected override void OnPreAwake()
         {
             base.OnPreAwake();
@@ -49,7 +58,8 @@ namespace Alkemic.UAM
             while (true)
             {
                 if (this.Status == TaskStatus.Inturrupted) { break; }
-                if (Equals(Target.CurLocation, this.Way.To) == true)
+                
+                if (Equals(Target.CurLocation, TargetLocation) == true)
                 {
                     break;
                 }
@@ -66,9 +76,8 @@ namespace Alkemic.UAM
             base.TickTask();
             if (ParentTaskControl != null && ParentTaskControl.IsDebug == true)
             {
-                Vector3 lineStart = target.transform.position;
-                Vector3 lineEnd = this.Way.To.transform.position;
-                Debug.DrawLine(lineStart, lineEnd, Color.green, UAMStatic.TICK_TIME);
+                Debug.DrawLine(target.transform.position + (-1 * this.transform.right * 500f), TargetLocation.transform.position, Color.green, UAMStatic.TICK_TIME);
+                Debug.DrawLine(target.transform.position + ( this.transform.right * 500f), TargetLocation.transform.position, Color.green, UAMStatic.TICK_TIME);
             }
 
 

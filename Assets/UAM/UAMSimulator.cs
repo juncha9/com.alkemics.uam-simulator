@@ -12,9 +12,9 @@ namespace Alkemic.UAM
     {
         public static IList<UAMSimulator> GetSimulators()
         {
-            return GameObject.FindObjectsOfType<UAMSimulator>().ToList();
-                //.Select(x => (x.GetInstanceID(), x) )
-                //.ToList();
+            var list = GameObject.FindObjectsOfType<UAMSimulator>().ToList();
+            list.Insert(0, null);
+            return list;
         }
 
         [PropertyGroup]

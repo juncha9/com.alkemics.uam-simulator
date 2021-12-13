@@ -113,7 +113,7 @@ namespace Alkemic.UAM
                         var _location = hit.GetComponentInParent<Location>();
                         if (_location != null
                             && Equals(target, _location) == false
-                            && target.PreWays.Contains(x => x.From == _location) == false)
+                            && target.PreWays.Contains(x => x.LocationA == _location) == false)
                         {
                             location = _location;
                             break;
@@ -175,14 +175,14 @@ namespace Alkemic.UAM
                                     var _location = hit.GetComponentInParent<Location>();
                                     if (_location != null
                                         && Equals(target, _location) == false
-                                        && target.PreWays.Contains(x => x.From == _location) == false)
+                                        && target.PreWays.Contains(x => x.LocationA == _location) == false)
                                     {
                                         location = _location;
                                         break;
                                     }
                                 }
 
-                                if (location != null && target.NextWays.Contains(x => x.To == location) == false)
+                                if (location != null && target.NextWays.Contains(x => x.LocationB == location) == false)
                                 {
                                     if (Event.current.control == true)
                                     {

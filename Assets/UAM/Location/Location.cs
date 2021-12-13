@@ -116,8 +116,8 @@ namespace Alkemic.UAM
                 else
                 {
                     return ParentLocationControl.Locations
-                    .Where(x => x != null && x.NextWays.Contains(y => y != null && y.To == this))
-                    .Select(x => x.NextWays.Find(y => y.To == this))
+                    .Where(x => x != null && x.NextWays.Contains(y => y != null && y.LocationB == this))
+                    .Select(x => x.NextWays.Find(y => y.LocationB == this))
                     .ToList();
                 }
             }
@@ -158,7 +158,7 @@ namespace Alkemic.UAM
 
             foreach (var way in GetComponentsInChildren<Way>())
             {
-                if (way.From == null || way.To == null)
+                if (way.LocationA == null || way.LocationB == null)
                 {
 #if UNITY_EDITOR
                     UnityEditor.EditorApplication.delayCall += () => { DestroyImmediate(way.gameObject); };
@@ -282,7 +282,7 @@ namespace Alkemic.UAM
 
         public void AddWay(Location location, bool isOneWay = false)
         {
-            if (ableWays.Contains(x => x.To == location) == true)
+            if (ableWays.Contains(x => x.LocationB == location) == true)
             {
                 Debug.LogError($"[{name}] Location is already exist", gameObject);
                 return;

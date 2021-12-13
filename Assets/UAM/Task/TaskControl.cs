@@ -86,8 +86,7 @@ namespace Alkemic.UAM
 
         IEnumerator CheckTaskRoutine()
         {
-            WaitForSeconds delay = new WaitForSeconds(0.1f);
-            WaitForSeconds sleep = new WaitForSeconds(1.0f);
+            WaitForSeconds delay = new WaitForSeconds(0.02f);
             while (true)
             {
                 curTask = TaskList.Where(x => x.Status == Task.TaskStatus.Waiting).FirstOrValue(null);
@@ -99,7 +98,7 @@ namespace Alkemic.UAM
                 }
                 else
                 {
-                    yield return sleep;
+                    yield return delay;
                 }
                 yield return delay;
             }
