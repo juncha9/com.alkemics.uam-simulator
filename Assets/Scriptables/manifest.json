@@ -4,6 +4,11 @@
       "key": "route",
       "filename": "Route",
       "typeText": "Assembly-CSharp;Alkemic.UAM.RouteScriptable"
+    },
+    {
+      "key": "simulate",
+      "filename": "Simulate",
+      "typeText": "Assembly-CSharp;Alkemic.UAM.SimulateScriptable"
     }
   ],
   "LoadedScriptables": []

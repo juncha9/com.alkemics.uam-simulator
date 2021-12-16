@@ -1,14 +1,14 @@
 ﻿using Alkemic.Scriptables;
 using Alkemic.Editors;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using Alkemic.Collections;
 
 namespace Alkemic.UAM
 {
 
-    [Serializable]
+
     public class RouteScriptable : Scriptable
     {
 
@@ -40,9 +40,6 @@ namespace Alkemic.UAM
 
         [SerializeField]
         public List<RouteData> RouteDatas = new List<RouteData>();
-
-
-
 
     }
 
