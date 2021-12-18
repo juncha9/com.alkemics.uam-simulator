@@ -21,7 +21,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  GUI_Simulator: {fileID: 0}
   RouteDatas:
   - Key: INCH_AP_R001
     VertiPort: INCH_AP
@@ -40,22 +39,6 @@ MonoBehaviour:
     - GWMY_0003_JMSL_0003
     - JMSL_0003_JMSL_0004
     - EXBT_AP01_JMSL_0004
-    GUI_VertiPort: {fileID: 0}
-    GUI_Ways:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
   - Key: INCH_AP_R002
     VertiPort: INCH_AP
     Ways:
@@ -70,19 +53,6 @@ MonoBehaviour:
     - JMSL_0009_JMSL_0008
     - JMSL_0004_JMSL_0008
     - EXBT_AP01_JMSL_0004
-    GUI_VertiPort: {fileID: 0}
-    GUI_Ways:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
   - Key: INCH_AP_R003
     VertiPort: INCH_AP
     Ways:
@@ -99,21 +69,6 @@ MonoBehaviour:
     - JMSL_0009_JMSL_0008
     - JMSL_0004_JMSL_0008
     - EXBT_AP01_JMSL_0004
-    GUI_VertiPort: {fileID: 0}
-    GUI_Ways:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
   - Key: GMPO_R001
     VertiPort: GMPO_AP01
     Ways:
@@ -127,18 +82,6 @@ MonoBehaviour:
     - GWMY_0002_GWMY_0003
     - GWMY_0001_GWMY_0002
     - GWMY_AP_GWMY_0001
-    GUI_VertiPort: {fileID: 0}
-    GUI_Ways:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
   - Key: GMPO_R002
     VertiPort: GMPO_AP01
     Ways:
@@ -149,12 +92,3 @@ MonoBehaviour:
     - INCH_0009_INCH_0008
     - INCH_0008_GWMY_0001
     - GWMY_AP_GWMY_0001
-    GUI_VertiPort: {fileID: 0}
-    GUI_Ways:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
