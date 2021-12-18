@@ -23,15 +23,8 @@ MonoBehaviour:
     SerializationNodes:
     - Name: simulateDatas
       Entry: 7
-      Data: 0|Unity.Cloud.Collaborate.Common.SerializableDictionary`2[[System.String,
-        mscorlib],[Alkemic.UAM.SimulateData, Assembly-CSharp]], Unity.CollabProxy.Editor
-    - Name: comparer
-      Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
-        mscorlib]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
+      Data: 0|Alkemic.Collections.InnerKeyList`2[[System.String, mscorlib],[Alkemic.UAM.SimulateData,
+        Assembly-CSharp]], Alkemic.Core
     - Name: 
       Entry: 12
       Data: 0
