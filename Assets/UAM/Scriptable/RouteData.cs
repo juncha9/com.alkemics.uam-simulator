@@ -23,16 +23,20 @@ namespace Alkemic.UAM
 
 #if UNITY_EDITOR
 
+        [NonSerialized]
         private bool isEdit = false;
+        [JsonIgnore]
         public bool IsEdit => isEdit;
 
         private static UAMSimulator GUI_Simulator => UAM.Route?.GUI_Simulator;
 
+        [JsonIgnore, NonSerialized]
         [ValueDropdown("@GetVertiPorts()")]
         [ShowIf("@isEdit == true")]
         [ShowInInspector]
         public VertiPort GUI_VertiPort = null;
 
+        [JsonIgnore, NonSerialized]
         [ValueDropdown("@GetWays()")]
         [ShowIf("@isEdit == true")]
         [ShowInInspector]
