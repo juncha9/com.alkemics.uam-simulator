@@ -1,7 +1,6 @@
 ﻿using Alkemic.Collections;
 using Linefy;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -65,6 +64,8 @@ namespace Alkemic.UAM
 
         private Lines wayLines = new Lines(1);
 
+
+
         private Lines selectionLines = new Lines(1);
 
         protected override void OnPreAwake()
@@ -103,10 +104,32 @@ namespace Alkemic.UAM
             ReloadName();
         }
 
+
+
         private void OnDrawGizmos()
         {
-            Color color;
+            GUI_DrawText();
+            GUI_DrawLine();
+            /*
+            style = new GUIStyle();
+            style.normal.textColor = Color.white;
+            style.fontSize = 10;
+            style.fontStyle = FontStyle.Bold;
+            style.alignment = TextAnchor.MiddleLeft;
+            Vector3 pos = (from.transform.position + to.transform.position) / 2f;
+            Handles.Label(pos + (Vector3.up * 500f), $"[{this.from.Key}]\n[{this.to.Key}]", style);
+            */ 
+
+        }
+
+#if UNITY_EDITOR
+        private Lines GUI_wayLines = new Lines(1);
+
+        private void GUI_DrawText()
+        {
             GUIStyle style;
+            Color color;
+
             if (movingVTOLs.Count > 0)
             {
                 style = new GUIStyle();
@@ -121,61 +144,54 @@ namespace Alkemic.UAM
                 }
             }
 
+            
+            if (UAM.Route?.EditingRoute != null &&
+                UAM.Route?.EditingRoute.GUI_Ways.Contains(this) == true)
+            {
+                color = ColorDefine.RADICAL_RED;
+
+                int index = UAM.Route.EditingRoute.GUI_Ways.IndexOf(this) + 1;
+
+                style = new GUIStyle(GUI.skin.box);
+                style.normal.textColor = ColorDefine.RADICAL_RED;
+                style.fontSize = 12;
+                style.fontStyle = FontStyle.Bold;
+                style.alignment = TextAnchor.MiddleCenter;
+                Handles.Label((locationA.transform.position + locationB.transform.position) / 2 + (Vector3.up * 1000f), $"{index}", style);
+            }
+        }
+
+        private void GUI_DrawLine()
+        {
             if (locationA == null || locationB == null)
             {
-                wayLines.Dispose();
+                GUI_wayLines.Dispose();
                 return;
+            }
+
+            Color color;
+            if (Selection.activeGameObject == this.gameObject)
+            {
+                color = ColorDefine.RED_ORANGE;
+            }
+            else if (UAM.Route?.EditingRoute != null &&
+                UAM.Route?.EditingRoute.GUI_Ways.Contains(this) == true)
+            {
+                color = ColorDefine.RADICAL_RED;
+            }
+            else if (isOneWay == false)
+            {
+                color = UAMStatic.LineColor;
             }
             else
             {
-                if (Selection.activeGameObject == this.gameObject)
-                {
-                    color = ColorDefine.RED_ORANGE;
-                }
-
-                else if (UAM.Route?.EditingRoute != null &&
-                        UAM.Route?.EditingRoute.GUI_Ways.Contains(this) == true)
-                {
-
-                    color = ColorDefine.RADICAL_RED;
-
-                    int index = UAM.Route.EditingRoute.GUI_Ways.IndexOf(this) + 1;
-
-                    style = new GUIStyle(GUI.skin.box);
-                    style.normal.textColor = ColorDefine.RADICAL_RED;
-                    style.fontSize = 12;
-                    style.fontStyle = FontStyle.Bold;
-                    style.alignment = TextAnchor.MiddleCenter;
-                    Handles.Label((locationA.transform.position + locationB.transform.position) / 2 + (Vector3.up * 1000f), $"{index}", style);
-                }
-                else
-                {
-                    if (isOneWay == false)
-                    {
-                        color = UAMStatic.LineColor;
-                    }
-                    else
-                    {
-                        color = UAMStatic.AltLineColor;
-                    }
-                }
+                color = UAMStatic.AltLineColor;
             }
-
-            /*
-            style = new GUIStyle();
-            style.normal.textColor = Color.white;
-            style.fontSize = 10;
-            style.fontStyle = FontStyle.Bold;
-            style.alignment = TextAnchor.MiddleLeft;
-            Vector3 pos = (from.transform.position + to.transform.position) / 2f;
-            Handles.Label(pos + (Vector3.up * 500f), $"[{this.from.Key}]\n[{this.to.Key}]", style);
-            */
-
             if (isOneWay == false)
             {
-                wayLines[0] = new Line(
-                    new Vector3(0, 0, 0),
-                    LocationB.transform.position - LocationA.transform.position,
+                GUI_wayLines[0] = new Line(
+                    LocationA.transform.position,
+                    LocationB.transform.position,
                     color,
                     color,
                     UAMStatic.LineWidth,
@@ -183,6 +199,7 @@ namespace Alkemic.UAM
             }
             else
             {
+                /*
                 wayLines[0] = new Line(
                     new Vector3(0, 0, 0),
                     LocationB.transform.position - LocationA.transform.position,
@@ -190,11 +207,20 @@ namespace Alkemic.UAM
                     color,
                     UAMStatic.LineWidth + 2f,
                     UAMStatic.LineWidth - 2f);
+                */
+                GUI_wayLines[0] = new Line(
+                    LocationA.transform.position,
+                    LocationB.transform.position,
+                    color,
+                    color,
+                    UAMStatic.LineWidth + 2f,
+                    UAMStatic.LineWidth - 2f);
             }
 
-            wayLines.DrawNow(transform.localToWorldMatrix);
+            GUI_wayLines.DrawNow(Gizmos.matrix);
         }
-    
+#endif
+
         private void Update()
         {
             if (locationA == null || locationB == null)
@@ -236,24 +262,24 @@ namespace Alkemic.UAM
 
         private void FixedUpdate()
         {
-                if (LocationB != null && movingVTOLs.Count > 0)
+            if (LocationB != null && movingVTOLs.Count > 0)
+            {
+                movingVTOLs.Sort((a, b) =>
                 {
-                    movingVTOLs.Sort((a, b) =>
+                    if (a == null) return 1;
+                    else if (b == null) return -1;
+
+                    if (Vector3.Distance(a.transform.position, LocationB.transform.position) < Vector3.Distance(b.transform.position, LocationB.transform.position))
                     {
-                        if (a == null) return 1;
-                        else if (b == null) return -1;
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
 
-                        if (Vector3.Distance(a.transform.position, LocationB.transform.position) < Vector3.Distance(b.transform.position, LocationB.transform.position))
-                        {
-                            return -1;
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-
-                    });
-                }
+                });
+            }
         }
 
     }

@@ -2,9 +2,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MPUIKIT {
+namespace MPUIKIT
+{
     [AddComponentMenu("UI/MPUI/MPImageBasic")]
-    public class MPImageBasic : Image {
+    public class MPImageBasic : Image
+    {
 
         #region SerializedFields
 
@@ -36,89 +38,112 @@ namespace MPUIKIT {
         [SerializeField] private int m_NStarPolygonSideCount = 3;                   // MapTo -> Normal.y compressed
         [SerializeField] private float m_NStarPolygonInset = 2f;                    // MapTo -> Normal.y compressed
         [SerializeField] private float m_NStarPolygonCornerRadius;                  // MapTo -> Normal.z
-        
+
         #endregion
 
         #region Public Accessors
 
-        public DrawShape Shape { get => m_DrawShape;
-            set {
+        public DrawShape Shape
+        {
+            get => m_DrawShape;
+            set
+            {
                 m_DrawShape = value;
                 m_Material = null;
                 base.SetMaterialDirty();
                 base.SetVerticesDirty();
             }
         }
-        public float StrokeWidth {
+        public float StrokeWidth
+        {
             get => m_StrokeWidth;
-            set {
+            set
+            {
                 Vector2 size = GetPixelAdjustedRect().size;
                 m_StrokeWidth = Mathf.Clamp(value, 0, Mathf.Min(size.x, size.y) * 0.5f);
                 base.SetVerticesDirty();
             }
         }
-        public float FallOffDistance {
+        public float FallOffDistance
+        {
             get => m_FalloffDistance;
-            set {
+            set
+            {
                 m_FalloffDistance = Mathf.Max(0, value);
                 base.SetVerticesDirty();
             }
         }
-        public float OutlineWidth {
+        public float OutlineWidth
+        {
             get => m_OutlineWidth;
-            set {
-                m_OutlineWidth = Mathf.Max(0,value);
+            set
+            {
+                m_OutlineWidth = Mathf.Max(0, value);
                 base.SetVerticesDirty();
             }
         }
-        public Color OutlineColor {
+        public Color OutlineColor
+        {
             get => m_OutlineColor;
-            set {
+            set
+            {
                 m_OutlineColor = value;
                 base.SetVerticesDirty();
             }
         }
 
-        public float ShapeRotation {
+        public float ShapeRotation
+        {
             get => m_ShapeRotation;
-            set {
+            set
+            {
                 m_ShapeRotation = value % 360;
                 ConstrainRotationValue();
                 base.SetVerticesDirty();
             }
         }
-        public bool ConstrainRotation {
+        public bool ConstrainRotation
+        {
             get => m_ConstrainRotation;
-            set {
+            set
+            {
                 m_ConstrainRotation = value;
                 ConstrainRotationValue();
                 base.SetVerticesDirty();
             }
         }
-        public bool FlipHorizontal {
+        public bool FlipHorizontal
+        {
             get => m_FlipHorizontal;
-            set {
-                m_FlipHorizontal = value; 
+            set
+            {
+                m_FlipHorizontal = value;
                 base.SetVerticesDirty();
             }
         }
-        public bool FlipVertical {
+        public bool FlipVertical
+        {
             get => m_FlipVertical;
-            set {
-                m_FlipVertical = value; 
+            set
+            {
+                m_FlipVertical = value;
                 base.SetVerticesDirty();
             }
         }
-        
+
         /// <summary>
         /// Type of the image. Only two types are supported. Simple and Filled.
         /// Default and fallback value is Simple.
         /// </summary>
-        public new Type type {
+        public new Type type
+        {
             get => m_ImageType;
-            set {
-                if (m_ImageType != value) {
-                    switch (value) {
+            set
+            {
+                if (m_ImageType != value)
+                {
+                    switch (value)
+                    {
                         case Type.Simple:
                         case Type.Filled:
                             if (sprite) m_ImageType = value;
@@ -130,34 +155,39 @@ namespace MPUIKIT {
                             throw new ArgumentOutOfRangeException(value.ToString(), value, null);
                     }
                 }
-                if(base.type != m_ImageType) base.type = m_ImageType;
+                if (base.type != m_ImageType) base.type = m_ImageType;
                 base.SetAllDirty();
             }
         }
-        
-        public CornerStyleType CornerStyle {
+
+        public CornerStyleType CornerStyle
+        {
             get => m_CornerStyle;
-            set {
+            set
+            {
                 m_CornerStyle = value;
                 base.SetVerticesDirty();
             }
         }
-        public Vector3 TriangleCornerRadius {
+        public Vector3 TriangleCornerRadius
+        {
             get => m_TriangleCornerRadius;
-            set {
+            set
+            {
                 Vector2 size = GetPixelAdjustedRect().size;
 
                 float zMax = size.x * 0.5f;
                 m_TriangleCornerRadius.z = Mathf.Clamp(value.z, 0, zMax);
                 float hMax = Mathf.Min(size.x, size.y) * 0.3f;
-                
+
                 m_TriangleCornerRadius.x = Mathf.Clamp(value.x, 0, hMax);
                 m_TriangleCornerRadius.y = Mathf.Clamp(value.y, 0, hMax);
-                
+
                 base.SetVerticesDirty();
             }
         }
-        public Vector4 RectangleCornerRadius {
+        public Vector4 RectangleCornerRadius
+        {
             get => m_RectangleCornerRadius;
             set
             {
@@ -165,52 +195,63 @@ namespace MPUIKIT {
                 base.SetVerticesDirty();
             }
         }
-        public float CircleRadius {
+        public float CircleRadius
+        {
             get => m_CircleRadius;
-            set {
+            set
+            {
                 m_CircleRadius = Mathf.Clamp(value, 0, GetMinSize());
                 base.SetVerticesDirty();
             }
         }
-        public bool CircleFitToRect {
+        public bool CircleFitToRect
+        {
             get => m_CircleFitToRect;
-            set {
+            set
+            {
                 m_CircleFitToRect = value;
                 base.SetVerticesDirty();
             }
         }
-        public float NStarPolygonCornerRadius {
+        public float NStarPolygonCornerRadius
+        {
             get => m_NStarPolygonCornerRadius;
-            set {
+            set
+            {
                 float halfHeight = GetPixelAdjustedRect().height * 0.5f;
-                m_NStarPolygonCornerRadius = Mathf.Clamp(value, m_NStarPolygonSideCount == 2? 0.1f : 0f, halfHeight);
+                m_NStarPolygonCornerRadius = Mathf.Clamp(value, m_NStarPolygonSideCount == 2 ? 0.1f : 0f, halfHeight);
                 base.SetVerticesDirty();
             }
         }
-        public float NStarPolygonInset {
+        public float NStarPolygonInset
+        {
             get => m_NStarPolygonInset;
-            set {
+            set
+            {
                 m_NStarPolygonInset = Mathf.Clamp(value, 2f, m_NStarPolygonSideCount);
                 base.SetVerticesDirty();
             }
         }
-        public int NStarPolygonSideCount {
+        public int NStarPolygonSideCount
+        {
             get => m_NStarPolygonSideCount;
-            set {
+            set
+            {
                 m_NStarPolygonSideCount = Mathf.Clamp(value, 2, 10);
                 base.SetVerticesDirty();
             }
         }
-        
+
         #endregion
-        
-        public override Material material {
+
+        public override Material material
+        {
             get
             {
                 switch (m_DrawShape)
                 {
                     case DrawShape.None:
-                         return Canvas.GetDefaultCanvasMaterial();
+                        return Canvas.GetDefaultCanvasMaterial();
                     case DrawShape.Circle:
                     case DrawShape.Triangle:
                     case DrawShape.Rectangle:
@@ -226,14 +267,16 @@ namespace MPUIKIT {
             set => Debug.LogWarning("Setting Material of MPImageBasic has no effect.");
         }
 
-        protected override void OnEnable() {
+        protected override void OnEnable()
+        {
             base.OnEnable();
             MPImageUtility.FixAdditionalShaderChannelsInCanvas(canvas);
             if (sprite == null) sprite = MPImageUtility.EmptySprite;
         }
 
-        #if UNITY_EDITOR
-        protected override void OnValidate() {
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
             base.OnValidate();
             Shape = m_DrawShape;
             if (sprite == null) sprite = MPImageUtility.EmptySprite;
@@ -250,29 +293,34 @@ namespace MPUIKIT {
         }
 #endif
 
-        private float GetMinSizeHalf() {
+        private float GetMinSizeHalf()
+        {
             return GetMinSize() * 0.5f;
         }
 
-        private float GetMinSize() {
+        private float GetMinSize()
+        {
             Vector2 size = GetPixelAdjustedRect().size;
             return Mathf.Min(size.x, size.y);
         }
 
-        private void ConstrainRotationValue() {
+        private void ConstrainRotationValue()
+        {
             if (!m_ConstrainRotation) return;
-            float finalRotation =  m_ShapeRotation - (m_ShapeRotation % 90);
+            float finalRotation = m_ShapeRotation - (m_ShapeRotation % 90);
             if (Mathf.Abs(finalRotation) >= 360) finalRotation = 0;
-            m_ShapeRotation =  finalRotation;
+            m_ShapeRotation = finalRotation;
         }
-        
-        protected override void OnTransformParentChanged() {
+
+        protected override void OnTransformParentChanged()
+        {
             base.OnTransformParentChanged();
             MPImageUtility.FixAdditionalShaderChannelsInCanvas(canvas);
             base.SetVerticesDirty();
         }
 
-        private MPVertexStream CreateVertexStream() {
+        private MPVertexStream CreateVertexStream()
+        {
             MPVertexStream stream = new MPVertexStream();
             RectTransform rectT = rectTransform;
             stream.RectTransform = rectT;
@@ -289,7 +337,8 @@ namespace MPUIKIT {
 
             Vector4 data;
             Vector2 shapeProps;
-            switch (m_DrawShape) {
+            switch (m_DrawShape)
+            {
                 case DrawShape.Circle:
                     shapeProps = new Vector2(m_CircleRadius, m_CircleFitToRect ? 1 : 0);
                     break;
@@ -319,7 +368,8 @@ namespace MPUIKIT {
             return stream;
         }
 
-        private float PackRotationData(float rotation, bool constrainRotation, bool flipH, bool flipV) {
+        private float PackRotationData(float rotation, bool constrainRotation, bool flipH, bool flipV)
+        {
             int c = constrainRotation ? 1 : 0;
             c += flipH ? 10 : 0;
             c += flipV ? 100 : 0;
@@ -329,15 +379,16 @@ namespace MPUIKIT {
             cr = (cr + c) * sign;
             return cr;
         }
-        
 
-        void UnPackRotation(float f) {
+
+        void UnPackRotation(float f)
+        {
             float r = 0, x = 0, y = 0, z = 0;
-            
+
             float sign = f >= 0.0f ? 1 : -1;
             f = Mathf.Abs(f);
             r = fract(f) * 360f * sign;
-            
+
             f = Mathf.Floor(f);
             float p = f / 100f;
             z = Mathf.Floor(p);
@@ -347,56 +398,60 @@ namespace MPUIKIT {
             x = Mathf.Round(p);
 
             // Debug.Log($"Rotation: {r}, X: {x}, Y: {y}, Z: {z}");
-            float fract(float val) {
+            float fract(float val)
+            {
                 val = Mathf.Abs(val);
                 float ret = val - Mathf.Floor(val);
                 return ret;
             }
         }
-        
+
         private Vector4 FixRadius(Vector4 radius)
         {
             Rect rect = rectTransform.rect;
-            
+
             radius = Vector4.Max(radius, Vector4.zero);
             radius = Vector4.Min(radius, Vector4.one * Mathf.Min(rect.width, rect.height));
-            float scaleFactor = 
-                Mathf.Min (
-                    Mathf.Min (
-                        Mathf.Min (
-                            Mathf.Min (
-                                rect.width / (radius.x + radius.y), 
+            float scaleFactor =
+                Mathf.Min(
+                    Mathf.Min(
+                        Mathf.Min(
+                            Mathf.Min(
+                                rect.width / (radius.x + radius.y),
                                 rect.width / (radius.z + radius.w)),
-                            rect.height / (radius.x + radius.w)), 
-                        rect.height / (radius.z + radius.y)), 
+                            rect.height / (radius.x + radius.w)),
+                        rect.height / (radius.z + radius.y)),
                     1f);
             return radius * scaleFactor;
         }
 
 
-        protected override void OnPopulateMesh(VertexHelper toFill) {
+        protected override void OnPopulateMesh(VertexHelper toFill)
+        {
             base.OnPopulateMesh(toFill);
 
             MPVertexStream stream = CreateVertexStream();
-            
+
             UIVertex uiVert = new UIVertex();
 
-            for (int i = 0; i < toFill.currentVertCount; i++) {
+            for (int i = 0; i < toFill.currentVertCount; i++)
+            {
                 toFill.PopulateUIVertex(ref uiVert, i);
-                
+
                 //uiVert.position += ((Vector3)uiVert.uv0 - new Vector3(0.5f, 0.5f)) * m_FalloffDistance;
                 uiVert.uv1 = stream.Uv1;
                 uiVert.uv2 = stream.Uv2;
                 uiVert.uv3 = stream.Uv3;
                 uiVert.normal = stream.Normal;
                 uiVert.tangent = stream.Tangent;
-                
+
                 toFill.SetUIVertex(uiVert, i);
             }
         }
 
 #if UNITY_EDITOR
-        protected override void Reset() {
+        protected override void Reset()
+        {
             base.Reset();
             if (sprite == null) sprite = MPImageUtility.EmptySprite;
 

@@ -7,9 +7,11 @@ using UnityEditor;
 #endif
 
 
-namespace MPUIKIT {
+namespace MPUIKIT
+{
     [AddComponentMenu("UI/MPUI/MPImage")]
-    public class MPImage : Image {
+    public class MPImage : Image
+    {
         #region Constants
 
         public const string MpShaderName = "MPUI/Procedural Image";
@@ -49,12 +51,15 @@ namespace MPUIKIT {
         /// <summary>
         /// Type of the shape to be drawn. ie: Rectangle, Circle
         /// </summary>
-        public DrawShape DrawShape {
+        public DrawShape DrawShape
+        {
             get => m_DrawShape;
-            set {
+            set
+            {
                 m_DrawShape = value;
-                if (material == m_Material) {
-                    m_Material.SetInt(SpDrawShape, (int) m_DrawShape);
+                if (material == m_Material)
+                {
+                    m_Material.SetInt(SpDrawShape, (int)m_DrawShape);
                 }
 
                 base.SetMaterialDirty();
@@ -64,12 +69,15 @@ namespace MPUIKIT {
         /// <summary>
         /// Width of the stroke for the drawn shape. 0 is no stroke.
         /// </summary>
-        public float StrokeWidth {
+        public float StrokeWidth
+        {
             get => m_StrokeWidth;
-            set {
+            set
+            {
                 m_StrokeWidth = value;
                 m_StrokeWidth = m_StrokeWidth < 0 ? 0 : m_StrokeWidth;
-                if (material == m_Material) {
+                if (material == m_Material)
+                {
                     m_Material.SetFloat(SpStrokeWidth, m_StrokeWidth);
                 }
 
@@ -80,12 +88,15 @@ namespace MPUIKIT {
         /// <summary>
         /// Width of the outline for the drawn shape. 0 is no outline. 
         /// </summary>
-        public float OutlineWidth {
+        public float OutlineWidth
+        {
             get => m_OutlineWidth;
-            set {
+            set
+            {
                 m_OutlineWidth = value;
-                m_OutlineWidth = m_OutlineWidth < 0 ? 0 : m_OutlineWidth; 
-                if (m_Material == material) {
+                m_OutlineWidth = m_OutlineWidth < 0 ? 0 : m_OutlineWidth;
+                if (m_Material == material)
+                {
                     m_Material.SetFloat(SpOutlineWidth, m_OutlineWidth);
                 }
 
@@ -96,11 +107,14 @@ namespace MPUIKIT {
         /// <summary>
         /// Color of the Outline. Has no effect is teh value of the OutlineWidth is 0
         /// </summary>
-        public Color OutlineColor {
+        public Color OutlineColor
+        {
             get => m_OutlineColor;
-            set {
+            set
+            {
                 m_OutlineColor = value;
-                if (m_Material == material) {
+                if (m_Material == material)
+                {
                     m_Material.SetColor(SpOutlineColor, m_OutlineColor);
                 }
 
@@ -111,11 +125,14 @@ namespace MPUIKIT {
         /// <summary>
         /// Edge falloff distance of the shape
         /// </summary>
-        public float FalloffDistance {
+        public float FalloffDistance
+        {
             get { return m_FalloffDistance; }
-            set {
+            set
+            {
                 m_FalloffDistance = Mathf.Max(value, 0f);
-                if (material == m_Material) {
+                if (material == m_Material)
+                {
                     m_Material.SetFloat(SpFalloffDistance, m_FalloffDistance);
                 }
 
@@ -129,15 +146,19 @@ namespace MPUIKIT {
         /// If set to false, any shapes can be rotated in any arbitrary angle but will often result in
         /// clipping of the shape.
         /// </summary>
-        public bool ConstrainRotation {
+        public bool ConstrainRotation
+        {
             get { return m_ConstrainRotation; }
-            set {
+            set
+            {
                 m_ConstrainRotation = value;
 
-                if (m_Material == material) {
-                    m_Material.SetInt(SpConstrainedRotation, value?1:0);
+                if (m_Material == material)
+                {
+                    m_Material.SetInt(SpConstrainedRotation, value ? 1 : 0);
                 }
-                if (value) {
+                if (value)
+                {
                     m_ShapeRotation = ConstrainRotationValue(m_ShapeRotation);
                 }
 
@@ -145,9 +166,10 @@ namespace MPUIKIT {
                 base.SetMaterialDirty();
             }
         }
-        
-        private float ConstrainRotationValue(float val) {
-            float finalRotation =  val - val % 90;
+
+        private float ConstrainRotationValue(float val)
+        {
+            float finalRotation = val - val % 90;
             if (Mathf.Abs(finalRotation) >= 360) finalRotation = 0;
             return finalRotation;
         }
@@ -155,11 +177,14 @@ namespace MPUIKIT {
         /// <summary>
         /// Rotation of the shape.
         /// </summary>
-        public float ShapeRotation {
+        public float ShapeRotation
+        {
             get { return m_ShapeRotation; }
-            set {
+            set
+            {
                 m_ShapeRotation = m_ConstrainRotation ? ConstrainRotationValue(value) : value;
-                if (m_Material == material) {
+                if (m_Material == material)
+                {
                     m_Material.SetFloat(SpShapeRotation, m_ShapeRotation);
                 }
 
@@ -170,11 +195,14 @@ namespace MPUIKIT {
         /// <summary>
         /// Flips the shape horizontally.
         /// </summary>
-        public bool FlipHorizontal {
+        public bool FlipHorizontal
+        {
             get { return m_FlipHorizontal; }
-            set {
+            set
+            {
                 m_FlipHorizontal = value;
-                if (m_Material == material) {
+                if (m_Material == material)
+                {
                     m_Material.SetInt(SpFlipHorizontal, m_FlipHorizontal ? 1 : 0);
                 }
 
@@ -185,11 +213,14 @@ namespace MPUIKIT {
         /// <summary>
         /// Flips the shape vertically
         /// </summary>
-        public bool FlipVertical {
+        public bool FlipVertical
+        {
             get { return m_FlipVertical; }
-            set {
+            set
+            {
                 m_FlipVertical = value;
-                if (m_Material == material) {
+                if (m_Material == material)
+                {
                     m_Material.SetInt(SpFlipVertical, m_FlipVertical ? 1 : 0);
                 }
 
@@ -203,13 +234,16 @@ namespace MPUIKIT {
         /// material in the material slot will be used to render the image. It will fallback to dynamic
         /// if no material in the material slot is assigned
         /// </summary>
-        public MaterialMode MaterialMode {
+        public MaterialMode MaterialMode
+        {
             get { return m_MaterialMode; }
-            set {
+            set
+            {
                 if (m_MaterialMode == value) return;
                 m_MaterialMode = value;
                 InitializeComponents();
-                if (material == m_Material) {
+                if (material == m_Material)
+                {
                     InitValuesFromSharedMaterial();
 #if UNITY_EDITOR
                     _parseAgainOnValidate = true;
@@ -223,18 +257,23 @@ namespace MPUIKIT {
         /// <summary>
         /// Shared material to use to render the shape. the material must use the "MPUI/Procedural Sprite" shader
         /// </summary>
-        public override Material material {
-            get {
-                if (m_Material && m_MaterialMode == MaterialMode.Shared) {
+        public override Material material
+        {
+            get
+            {
+                if (m_Material && m_MaterialMode == MaterialMode.Shared)
+                {
                     return m_Material;
                 }
 
                 return DynamicMaterial;
             }
-            set {
+            set
+            {
                 m_Material = value;
 
-                if (m_Material && m_MaterialMode == MaterialMode.Shared && m_Material.shader.name == MpShaderName) {
+                if (m_Material && m_MaterialMode == MaterialMode.Shared && m_Material.shader.name == MpShaderName)
+                {
                     InitValuesFromSharedMaterial();
 #if UNITY_EDITOR
                     _parseAgainOnValidate = true;
@@ -251,14 +290,17 @@ namespace MPUIKIT {
         /// Type of the image. Only two types are supported. Simple and Filled.
         /// Default and fallback value is Simple.
         /// </summary>
-        public new Type type {
+        public new Type type
+        {
             get => m_ImageType;
-            set {
+            set
+            {
                 if (m_ImageType == value) return;
-                switch (value) {
+                switch (value)
+                {
                     case Type.Simple:
                     case Type.Filled:
-                            m_ImageType = value;
+                        m_ImageType = value;
                         break;
                     case Type.Tiled:
                     case Type.Sliced:
@@ -273,57 +315,71 @@ namespace MPUIKIT {
 
         #endregion
 
-        public Triangle Triangle {
+        public Triangle Triangle
+        {
             get => m_Triangle;
-            set {
+            set
+            {
                 m_Triangle = value;
                 SetMaterialDirty();
             }
         }
 
-        public Rectangle Rectangle {
+        public Rectangle Rectangle
+        {
             get => m_Rectangle;
-            set {
+            set
+            {
                 m_Rectangle = value;
                 SetMaterialDirty();
             }
         }
 
-        public Circle Circle{
+        public Circle Circle
+        {
             get => m_Circle;
-            set {
+            set
+            {
                 m_Circle = value;
                 SetMaterialDirty();
             }
         }
 
-        public Pentagon Pentagon {
+        public Pentagon Pentagon
+        {
             get => m_Pentagon;
-            set {
+            set
+            {
                 m_Pentagon = value;
                 SetMaterialDirty();
             }
         }
 
-        public Hexagon Hexagon {
+        public Hexagon Hexagon
+        {
             get => m_Hexagon;
-            set {
+            set
+            {
                 m_Hexagon = value;
                 SetMaterialDirty();
             }
         }
 
-        public NStarPolygon NStarPolygon {
+        public NStarPolygon NStarPolygon
+        {
             get => m_NStarPolygon;
-            set {
+            set
+            {
                 m_NStarPolygon = value;
                 SetMaterialDirty();
             }
         }
 
-        public GradientEffect GradientEffect {
+        public GradientEffect GradientEffect
+        {
             get => m_GradientEffect;
-            set {
+            set
+            {
                 m_GradientEffect = value;
                 SetMaterialDirty();
             }
@@ -335,9 +391,12 @@ namespace MPUIKIT {
 
         private Material _dynamicMaterial;
 
-        private Material DynamicMaterial {
-            get {
-                if (_dynamicMaterial == null) {
+        private Material DynamicMaterial
+        {
+            get
+            {
+                if (_dynamicMaterial == null)
+                {
                     _dynamicMaterial = new Material(Shader.Find(MpShaderName));
                     _dynamicMaterial.name += " [Dynamic]";
                 }
@@ -350,8 +409,10 @@ namespace MPUIKIT {
         private bool _parseAgainOnValidate;
 #endif
 
-        private Sprite ActiveSprite {
-            get {
+        private Sprite ActiveSprite
+        {
+            get
+            {
                 Sprite overrideSprite1 = overrideSprite;
                 return overrideSprite1 != null ? overrideSprite1 : sprite;
             }
@@ -376,16 +437,20 @@ namespace MPUIKIT {
 
 
 #if UNITY_EDITOR
-        public void UpdateSerializedValuesFromSharedMaterial() {
-            if (m_Material && MaterialMode == MaterialMode.Shared) {
+        public void UpdateSerializedValuesFromSharedMaterial()
+        {
+            if (m_Material && MaterialMode == MaterialMode.Shared)
+            {
                 InitValuesFromSharedMaterial();
                 base.SetMaterialDirty();
             }
         }
 
-        protected override void OnValidate() {
+        protected override void OnValidate()
+        {
             InitializeComponents();
-            if (_parseAgainOnValidate) {
+            if (_parseAgainOnValidate)
+            {
                 InitValuesFromSharedMaterial();
                 _parseAgainOnValidate = false;
             }
@@ -400,7 +465,7 @@ namespace MPUIKIT {
             ShapeRotation = m_ShapeRotation;
             FlipHorizontal = m_FlipHorizontal;
             FlipVertical = m_FlipVertical;
-            
+
 
             m_Triangle.OnValidate();
             m_Circle.OnValidate();
@@ -417,7 +482,8 @@ namespace MPUIKIT {
 #endif
 
 
-        private void InitializeComponents() {
+        private void InitializeComponents()
+        {
             m_Circle.Init(m_Material, material, rectTransform);
             m_Triangle.Init(m_Material, material, rectTransform);
             m_Rectangle.Init(m_Material, material, rectTransform);
@@ -430,7 +496,7 @@ namespace MPUIKIT {
         void FixAdditionalShaderChannelsInCanvas()
         {
             Canvas c = canvas;
-            if(canvas == null) return;
+            if (canvas == null) return;
             AdditionalCanvasShaderChannels additionalShaderChannels = c.additionalShaderChannels;
             additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;
             additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord2;
@@ -438,7 +504,8 @@ namespace MPUIKIT {
         }
 
 #if UNITY_EDITOR
-        protected override void Reset() {
+        protected override void Reset()
+        {
             InitializeComponents();
             base.Reset();
         }
@@ -458,20 +525,24 @@ namespace MPUIKIT {
         {
             InitializeComponents();
             FixAdditionalShaderChannelsInCanvas();
-            if (m_Material && MaterialMode == MaterialMode.Shared) {
+            if (m_Material && MaterialMode == MaterialMode.Shared)
+            {
                 InitValuesFromSharedMaterial();
             }
             ListenToComponentChanges(true);
             base.SetAllDirty();
         }
 
-        protected override void OnDestroy() {
+        protected override void OnDestroy()
+        {
             ListenToComponentChanges(false);
             base.OnDestroy();
         }
 
-        protected void ListenToComponentChanges(bool toggle) {
-            if (toggle) {
+        protected void ListenToComponentChanges(bool toggle)
+        {
+            if (toggle)
+            {
                 m_Circle.OnComponentSettingsChanged += OnComponentSettingsChanged;
                 m_Triangle.OnComponentSettingsChanged += OnComponentSettingsChanged;
                 m_Rectangle.OnComponentSettingsChanged += OnComponentSettingsChanged;
@@ -480,7 +551,8 @@ namespace MPUIKIT {
                 m_NStarPolygon.OnComponentSettingsChanged += OnComponentSettingsChanged;
                 m_GradientEffect.OnComponentSettingsChanged += OnComponentSettingsChanged;
             }
-            else {
+            else
+            {
                 m_Circle.OnComponentSettingsChanged -= OnComponentSettingsChanged;
                 m_Triangle.OnComponentSettingsChanged -= OnComponentSettingsChanged;
                 m_Rectangle.OnComponentSettingsChanged -= OnComponentSettingsChanged;
@@ -497,19 +569,23 @@ namespace MPUIKIT {
             FixAdditionalShaderChannelsInCanvas();
         }
 
-        private void OnComponentSettingsChanged(object sender, EventArgs e) {
+        private void OnComponentSettingsChanged(object sender, EventArgs e)
+        {
             base.SetMaterialDirty();
         }
 
 
-        protected override void OnRectTransformDimensionsChange() {
+        protected override void OnRectTransformDimensionsChange()
+        {
             base.OnRectTransformDimensionsChange();
             m_Circle.UpdateCircleRadius(rectTransform);
             base.SetMaterialDirty();
         }
 
-        protected override void OnPopulateMesh(VertexHelper vh) {
-            switch (type) {
+        protected override void OnPopulateMesh(VertexHelper vh)
+        {
+            switch (type)
+            {
                 case Type.Simple:
                 case Type.Sliced:
                 case Type.Tiled:
@@ -525,41 +601,49 @@ namespace MPUIKIT {
             }
         }
 
-        public override Material GetModifiedMaterial(Material baseMaterial) {
-            
+        public override Material GetModifiedMaterial(Material baseMaterial)
+        {
+
             Material mat = base.GetModifiedMaterial(baseMaterial);
-            
-            
-            if (m_Material && MaterialMode == MaterialMode.Shared) {
+
+
+            if (m_Material && MaterialMode == MaterialMode.Shared)
+            {
                 InitValuesFromSharedMaterial();
             }
-            
+
             DisableAllMaterialKeywords(mat);
 
 
             RectTransform rt = rectTransform;
-            if (DrawShape != DrawShape.None) {
+            if (DrawShape != DrawShape.None)
+            {
                 mat.SetFloat(SpOutlineWidth, m_OutlineWidth);
                 mat.SetFloat(SpStrokeWidth, m_StrokeWidth);
-                
+
                 mat.SetColor(SpOutlineColor, OutlineColor);
                 mat.SetFloat(SpFalloffDistance, FalloffDistance);
-                
-                float pixelSize = 1/Mathf.Max(0, FalloffDistance);
+
+                float pixelSize = 1 / Mathf.Max(0, FalloffDistance);
                 mat.SetFloat(SpPixelWorldScale, Mathf.Clamp(pixelSize, 0f, 999999f));
 
 
-                if (m_StrokeWidth > 0 && m_OutlineWidth > 0) {
+                if (m_StrokeWidth > 0 && m_OutlineWidth > 0)
+                {
                     mat.EnableKeyword("OUTLINED_STROKE");
                 }
-                else {
-                    if (m_StrokeWidth > 0) {
+                else
+                {
+                    if (m_StrokeWidth > 0)
+                    {
                         mat.EnableKeyword("STROKE");
                     }
-                    else if (m_OutlineWidth > 0) {
+                    else if (m_OutlineWidth > 0)
+                    {
                         mat.EnableKeyword("OUTLINED");
                     }
-                    else {
+                    else
+                    {
                         mat.DisableKeyword("OUTLINED_STROKE");
                         mat.DisableKeyword("STROKE");
                         mat.DisableKeyword("OUTLINED");
@@ -578,7 +662,8 @@ namespace MPUIKIT {
             m_GradientEffect.ModifyMaterial(ref mat);
 
 
-            switch (DrawShape) {
+            switch (DrawShape)
+            {
                 case DrawShape.None:
                     mat.DisableKeyword("CIRCLE");
                     mat.DisableKeyword("TRIANGLE");
@@ -609,17 +694,18 @@ namespace MPUIKIT {
                     throw new ArgumentOutOfRangeException();
             }
 
-            mat.SetInt(SpDrawShape, (int) DrawShape);
+            mat.SetInt(SpDrawShape, (int)DrawShape);
             mat.SetInt(SpFlipHorizontal, m_FlipHorizontal ? 1 : 0);
             mat.SetInt(SpFlipVertical, m_FlipVertical ? 1 : 0);
-            
+
             mat.SetFloat(SpShapeRotation, m_ShapeRotation);
-            mat.SetInt(SpConstrainedRotation, m_ConstrainRotation?1:0);
+            mat.SetInt(SpConstrainedRotation, m_ConstrainRotation ? 1 : 0);
 
             return mat;
         }
 
-        private void DisableAllMaterialKeywords(Material mat) {
+        private void DisableAllMaterialKeywords(Material mat)
+        {
             mat.DisableKeyword("PROCEDURAL");
             mat.DisableKeyword("HYBRID");
 
@@ -642,13 +728,14 @@ namespace MPUIKIT {
         }
 
 
-        public void InitValuesFromSharedMaterial() {
+        public void InitValuesFromSharedMaterial()
+        {
             if (m_Material == null) return;
             Material mat = m_Material;
 
             //Debug.Log("Parsing shared mat");
             //Basic Settings
-            m_DrawShape = (DrawShape) mat.GetInt(SpDrawShape);
+            m_DrawShape = (DrawShape)mat.GetInt(SpDrawShape);
 
             m_StrokeWidth = mat.GetFloat(SpStrokeWidth);
             m_FalloffDistance = mat.GetFloat(SpFalloffDistance);
@@ -673,10 +760,11 @@ namespace MPUIKIT {
         }
 
 #if UNITY_EDITOR
-        public Material CreateMaterialAssetFromComponentSettings() {
+        public Material CreateMaterialAssetFromComponentSettings()
+        {
             Material matAsset = new Material(Shader.Find(MpShaderName));
             matAsset = GetModifiedMaterial(matAsset);
-            string path = EditorUtility.SaveFilePanelInProject("Create Material for MPImage", 
+            string path = EditorUtility.SaveFilePanelInProject("Create Material for MPImage",
                 "MPMaterial", "mat", "Choose location");
             AssetDatabase.CreateAsset(matAsset, path);
             AssetDatabase.SaveAssets();

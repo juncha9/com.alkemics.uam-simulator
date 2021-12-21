@@ -1,15 +1,19 @@
-﻿using UnityEngine;
-using Linefy;
+﻿using Linefy;
+using UnityEngine;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [ExecuteInEditMode]
-    public class QuickStart_TexturedLines : MonoBehaviour {
+    public class QuickStart_TexturedLines : MonoBehaviour
+    {
 
         Lines lines;
         public Texture2D texture;
 
-        void Update() {
-            if (lines == null) {
+        void Update()
+        {
+            if (lines == null)
+            {
                 lines = new Lines(2);
                 lines.widthMultiplier = 40;
                 lines.texture = texture;

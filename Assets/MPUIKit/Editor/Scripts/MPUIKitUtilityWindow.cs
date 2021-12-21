@@ -89,7 +89,7 @@ namespace MPUIKIT.Editor
 
         private static void WelcomeGUI()
         {
-            var style = new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleCenter};
+            var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             EditorGUILayout.LabelField("Thank you for using", style, GUILayout.ExpandWidth(true));
             EditorGUILayout.LabelField("Modern Procedural UI Kit", style, GUILayout.ExpandWidth(true));
             GUILayout.Space(20);

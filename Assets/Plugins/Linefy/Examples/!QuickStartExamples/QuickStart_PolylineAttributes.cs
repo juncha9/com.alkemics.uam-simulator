@@ -1,17 +1,21 @@
-﻿using UnityEngine;
-using Linefy;
+﻿using Linefy;
+using UnityEngine;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [ExecuteInEditMode]
-    public class QuickStart_PolylineAttributes : MonoBehaviour {
+    public class QuickStart_PolylineAttributes : MonoBehaviour
+    {
 
         Polyline polyline;
         public Texture2D texture;
 
         public float widthMult = 20f;
 
-        private void Update() {
-            if (polyline == null) {
+        private void Update()
+        {
+            if (polyline == null)
+            {
                 polyline = new Polyline(4);
                 polyline.transparent = true;
                 polyline.feather = 2;

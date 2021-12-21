@@ -1,11 +1,12 @@
-﻿using Sirenix.OdinInspector;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
 namespace Alkemic.UAM
 {
+
+    
+
     public class UAMManager : Singleton<UAMManager>
     {
         [PresetComponent]
@@ -27,9 +28,10 @@ namespace Alkemic.UAM
         [SerializeField]
         private string routesPath;
 
+
         public void Test()
         {
-            
+
 
         }
 

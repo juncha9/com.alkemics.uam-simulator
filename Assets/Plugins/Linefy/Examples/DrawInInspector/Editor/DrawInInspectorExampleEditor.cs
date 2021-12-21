@@ -1,17 +1,22 @@
 ﻿using Linefy;
-using Linefy.Primitives;
-using UnityEngine;
-using UnityEditor;
 using Linefy.Internal;
+using Linefy.Primitives;
+using UnityEditor;
+using UnityEngine;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [CustomEditor(typeof(DrawInInspectorExample))]
-    public class DrawInInspectorExampleEditor : Editor {
+    public class DrawInInspectorExampleEditor : Editor
+    {
 
         LabelsRenderer _labels;
-        LabelsRenderer labels {
-            get {
-                if (_labels == null) {
+        LabelsRenderer labels
+        {
+            get
+            {
+                if (_labels == null)
+                {
                     _labels = new LabelsRenderer(3);
                     _labels[0] = new Label("Mouse", Vector3.zero, new Vector2(0, 25));
                     _labels[1] = new Label("Local zero");
@@ -21,7 +26,7 @@ namespace LinefyExamples {
                     _labels.transparent = true;
                     _labels.size = 1;
                     _labels.renderOrder = 8;
-					_labels.pixelPerfect = true;
+                    _labels.pixelPerfect = true;
                 }
                 return _labels;
 
@@ -29,9 +34,12 @@ namespace LinefyExamples {
         }
 
         EditorGUIViewport _viewport;
-        EditorGUIViewport viewport {
-            get {
-                if (_viewport == null) {
+        EditorGUIViewport viewport
+        {
+            get
+            {
+                if (_viewport == null)
+                {
                     _viewport = new EditorGUIViewport();
                 }
                 return _viewport;
@@ -39,9 +47,12 @@ namespace LinefyExamples {
         }
 
         CircularPolyline _triangle;
-        CircularPolyline triangle {
-            get {
-                if (_triangle == null) {
+        CircularPolyline triangle
+        {
+            get
+            {
+                if (_triangle == null)
+                {
                     _triangle = new CircularPolyline(3, 70);
                     _triangle.wireframeProperties.transparent = true;
                     _triangle.wireframeProperties.feather = 1;
@@ -52,9 +63,12 @@ namespace LinefyExamples {
         }
 
         CircularPolyline _mouseCursor;
-        CircularPolyline mouseCursor {
-            get {
-                if (_mouseCursor == null) {
+        CircularPolyline mouseCursor
+        {
+            get
+            {
+                if (_mouseCursor == null)
+                {
                     _mouseCursor = new CircularPolyline(32, 10, new Linefy.Serialization.SerializationData_Polyline(4, Color.green, 1, true));
                     _mouseCursor.wireframeProperties.renderOrder = 9;
                 }
@@ -63,9 +77,12 @@ namespace LinefyExamples {
         }
 
         Grid2d _localGrid;
-        Grid2d localGrid {
-            get {
-                if (_localGrid == null) {
+        Grid2d localGrid
+        {
+            get
+            {
+                if (_localGrid == null)
+                {
                     _localGrid = new Grid2d(100, 100, 10, 10, false, new Linefy.Serialization.SerializationData_LinesBase(1, new Color(0, 0, 0, 0.5f), 0));
                 }
                 return _localGrid;
@@ -73,9 +90,12 @@ namespace LinefyExamples {
         }
 
         Grid2d _guigrid;
-        Grid2d guigrid {
-            get {
-                if (_guigrid == null) {
+        Grid2d guigrid
+        {
+            get
+            {
+                if (_guigrid == null)
+                {
                     _guigrid = new Grid2d(100, 100, 1, 1, false, new Linefy.Serialization.SerializationData_LinesBase(4, Color.black, 0));
                     _guigrid.wireframeProperties.renderOrder = 10;
                 }
@@ -84,9 +104,12 @@ namespace LinefyExamples {
         }
 
         ResizableControlRect _resizable;
-        ResizableControlRect resizable {
-            get {
-                if (_resizable == null) {
+        ResizableControlRect resizable
+        {
+            get
+            {
+                if (_resizable == null)
+                {
                     _resizable = new ResizableControlRect(false, 100, 2000, 300, null);
                 }
                 return _resizable;
@@ -95,7 +118,8 @@ namespace LinefyExamples {
 
         float rv;
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             DrawInInspectorExample t = target as DrawInInspectorExample;
             Repaint();
             //Rect inspectorRect = EditorGUILayout.GetControlRect(false, 300).Inflate(-8);
@@ -103,7 +127,8 @@ namespace LinefyExamples {
             resizable.Draw();
             Rect inspectorRect = resizable.guiRect;
 
-            if (Event.current.type == EventType.Repaint) {
+            if (Event.current.type == EventType.Repaint)
+            {
                 viewport.backgroundColor = t.backgroundColor;
                 viewport.SetParams(inspectorRect, t.zoom, t.pan);
                 viewport.DrawLocalSpace(localGrid, Matrix4x4.identity);
@@ -115,7 +140,8 @@ namespace LinefyExamples {
                 viewport.DrawLocalSpace(labels);
                 viewport.DrawGUIspace(guigrid, Matrix4x4.Translate(inspectorRect.center));
                 viewport.DrawGUIspace(mouseCursor, Matrix4x4.Translate(Event.current.mousePosition));
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 20; i++)
+                {
                     viewport.DrawLocalSpace(triangle, Matrix4x4.Rotate(Quaternion.Euler(0, 0, rv + i * 18)));
                 }
                 viewport.Render();
@@ -124,38 +150,45 @@ namespace LinefyExamples {
             DrawDefaultInspector();
         }
 
-        private void OnDestroy() {
-            if (_viewport != null) {
+        private void OnDestroy()
+        {
+            if (_viewport != null)
+            {
                 _viewport.Dispose();
                 _viewport = null;
             }
 
-            if (_triangle != null) {
+            if (_triangle != null)
+            {
                 _triangle.Dispose();
                 _triangle = null;
             }
 
-            if (_mouseCursor != null) {
+            if (_mouseCursor != null)
+            {
                 _mouseCursor.Dispose();
                 _mouseCursor = null;
             }
 
-            if (_labels != null) {
+            if (_labels != null)
+            {
                 _labels.Dispose();
                 _labels = null;
             }
 
-            if (_guigrid != null) {
+            if (_guigrid != null)
+            {
                 _guigrid.Dispose();
                 _guigrid = null;
             }
 
-            if (_localGrid != null) {
+            if (_localGrid != null)
+            {
                 _localGrid.Dispose();
                 _localGrid = null;
             }
 
- 
+
         }
     }
 }

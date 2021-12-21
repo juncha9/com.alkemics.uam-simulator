@@ -13,6 +13,16 @@ namespace Alkemic.UAM
         private DestroyableList<Location> locations = new DestroyableList<Location>();
         public DestroyableList<Location> Locations => locations;
 
+        public IList<VertiPort> vertiPorts
+        {
+            get
+            {
+                return (from loc in locations
+                        where loc is VertiPort
+                        select loc as VertiPort).ToList();
+            }
+        }
+
         [InstanceGroup]
         [SerializeField]
         private DestroyableList<Way> ways = new DestroyableList<Way>();

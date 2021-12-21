@@ -1,6 +1,7 @@
 ﻿namespace MPUIKIT
 {
-    public enum DrawShape {
+    public enum DrawShape
+    {
         None = 0,
         Circle,
         Triangle,
@@ -10,18 +11,21 @@
         NStarPolygon
     }
 
-    public enum GradientType {
+    public enum GradientType
+    {
         Linear,
         Corner,
         Radial
     }
 
-    public enum MaterialMode {
+    public enum MaterialMode
+    {
         Dynamic,
         Shared
     }
-    
-    public enum CornerStyleType {
+
+    public enum CornerStyleType
+    {
         Sharp, Rounded, Cropped, BoxCut, CircleCut
     }
 }

@@ -3,7 +3,8 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Alkemic.UAM
 {
@@ -13,9 +14,13 @@ namespace Alkemic.UAM
         [JsonProperty("key")]
         public string Key = "";
 
-        [JsonProperty("vertiPort")]
+        [JsonProperty("source")]
         [HideIf("@isEdit == true")]
-        public string VertiPort = "";
+        public string Source;
+
+        [JsonProperty("destination")]
+        [HideIf("@isEdit == true")]
+        public string Destination;
 
         [JsonProperty("ways")]
         [HideIf("@isEdit == true")]
@@ -34,7 +39,7 @@ namespace Alkemic.UAM
         [ValueDropdown("@GetVertiPorts()")]
         [ShowIf("@isEdit == true")]
         [ShowInInspector]
-        public VertiPort GUI_VertiPort = null;
+        public Location GUI_Source = null;
 
         [JsonIgnore, NonSerialized]
         [ValueDropdown("@GetWays()")]
@@ -59,6 +64,56 @@ namespace Alkemic.UAM
             return GUI_Simulator.LocationControl.Ways;
         }
 
+        private string GUI_CheckDestinationKey()
+        {
+            if(GUI_Ways.Count > 1)
+            {
+                var lastWay = this.GUI_Ways[Ways.Count - 1];
+                var preLastWay = this.GUI_Ways[Ways.Count - 2];
+                
+                if(lastWay.LocationA.Key == preLastWay.LocationA.Key || lastWay.LocationA.Key == preLastWay.LocationB.Key)
+                {
+                    //LocationB가 최종목적지
+                    return lastWay.LocationB.Key;
+                }
+                else if(lastWay.LocationB.Key == preLastWay.LocationA.Key || lastWay.LocationB.Key == preLastWay.LocationB.Key)
+                {
+                    //LocationA가 최종목적지
+                    return lastWay.LocationA.Key;
+                }
+                else
+                {
+                    //올바르지 않은 로케이션일 경우
+                    Debug.LogError($"[{GetType().Name}] Ways are not valid");
+                    return null;
+                }
+            }
+            else if(GUI_Ways.Count == 1)
+            {
+                var way = this.GUI_Ways[0];
+                if(way.LocationA.Key == GUI_Source.Key)
+                {
+                    //LocationB가 도착지
+                    return way.LocationB.Key;
+                }
+                else if(way.LocationB.Key == GUI_Source.Key)
+                {
+                    //LocationA가 도착지
+                    return way.LocationA.Key;
+                }
+                else
+                {
+                    Debug.LogError($"[{GetType().Name}] Ways are not valid");
+                    return null;
+                }
+            }
+            else
+            {
+                Debug.LogError($"[{GetType().Name}] No way exist");
+                return null;
+            }
+        }
+
         [ShowIf("@GUI_Simulator?.LocationControl != null")]
         [GUIColor("@isEdit ? Color.yellow : Color.white")]
         [Button("Edit")]
@@ -67,25 +122,25 @@ namespace Alkemic.UAM
             if (isEdit == false)
             {
                 isEdit = true;
-                GUI_SetupEditingProperties();
-           }
+                GUI_OnStartEdit();
+            }
             else
             {
                 isEdit = false;
-                GUI_UpdateByEditProperties();
+                GUI_OnEndEdit();
             }
         }
 
-        private void GUI_SetupEditingProperties()
+        private void GUI_OnStartEdit()
         {
-            var findedVertiPort = GUI_Simulator.LocationControl.Locations.Find(x => x.Key == VertiPort) as VertiPort;
-            if (findedVertiPort != null)
+            var findedSource = GUI_Simulator.LocationControl.Locations.Find(x => x.Key == Source);
+            if (findedSource != null)
             {
-                this.GUI_VertiPort = findedVertiPort;
+                this.GUI_Source = findedSource;
             }
             else
             {
-                this.GUI_VertiPort = null;
+                this.GUI_Source = null;
             }
 
             this.GUI_Ways.Clear();
@@ -103,9 +158,11 @@ namespace Alkemic.UAM
             }
         }
 
-        private void GUI_UpdateByEditProperties()
+        private void GUI_OnEndEdit()
         {
-            this.VertiPort = this.GUI_VertiPort?.Key ?? "";
+            this.Source = this.GUI_Source?.Key ?? "";
+            this.Destination = GUI_CheckDestinationKey() ?? "";
+
             this.Ways.Clear();
             this.Ways.AddRange(GUI_Ways.Select(x => x.Key));
         }

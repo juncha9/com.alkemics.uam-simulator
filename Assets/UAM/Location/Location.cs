@@ -167,7 +167,7 @@ namespace Alkemic.UAM
             }
         }
 
-        
+
 
 
         protected override void OnPreAwake()
@@ -182,8 +182,8 @@ namespace Alkemic.UAM
         {
             base.Awake();
 
-            Debug.Assert(parentSimulator != null, $"[{name}] {nameof(parentSimulator)} is null", gameObject);
-            Debug.Assert(parentLocationControl != null, $"[{name}] {nameof(parentLocationControl)} is null", gameObject);
+            Debug.Assert(parentSimulator != null, $"[{name}:{GetType().Name}] {nameof(parentSimulator)} is null", gameObject);
+            Debug.Assert(parentLocationControl != null, $"[{name}:{GetType().Name}] {nameof(parentLocationControl)} is null", gameObject);
 
             if (parentLocationControl != null && parentLocationControl.Locations.Contains(this) == false)
             {
@@ -225,7 +225,7 @@ namespace Alkemic.UAM
                     var target = item as VTOL;
                     if (target == null) continue;
 
-                    target.LocationArrived.Invoke(this);
+                    target.OnLocationArrived.Invoke(this);
                 }
             }
         }
@@ -265,7 +265,7 @@ namespace Alkemic.UAM
         {
             if (parentLocationControl == null)
             {
-                Debug.LogError($"[{name}] Parent location is not exist", gameObject);
+                Debug.LogError($"[{name}:{GetType().Name}] Parent location is not exist", gameObject);
                 return;
             }
 
@@ -276,7 +276,7 @@ namespace Alkemic.UAM
             }
             else
             {
-                Debug.LogError($"[{name}] Location[{targetLocationKey}] is not exist in this instance", gameObject);
+                Debug.LogError($"[{name}:{GetType().Name}] Location[{targetLocationKey}] is not exist in this instance", gameObject);
             }
         }
 
@@ -284,7 +284,7 @@ namespace Alkemic.UAM
         {
             if (ableWays.Contains(x => x.LocationB == location) == true)
             {
-                Debug.LogError($"[{name}] Location is already exist", gameObject);
+                Debug.LogError($"[{name}:{GetType().Name}] Location is already exist", gameObject);
                 return;
             }
             var go = new GameObject();

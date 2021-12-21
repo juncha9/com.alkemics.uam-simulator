@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MPUIKIT {
+namespace MPUIKIT
+{
     /// <summary>
     /// Gradient overlay of the image. 
     /// </summary>
     [Serializable]
-    public struct GradientEffect : IMPUIComponent {
+    public struct GradientEffect : IMPUIComponent
+    {
 
         [SerializeField] private bool m_Enabled;
         [SerializeField] private GradientType m_GradientType;
@@ -18,81 +20,98 @@ namespace MPUIKIT {
         /// <summary>
         /// Enable/Disable Gradient overlay
         /// </summary>
-        public bool Enabled {
+        public bool Enabled
+        {
             get => m_Enabled;
-            set {
+            set
+            {
                 m_Enabled = value;
-                if (ShouldModifySharedMat) {
-                    SharedMat.SetInt(SpEnableGradient, m_Enabled?1:0);
+                if (ShouldModifySharedMat)
+                {
+                    SharedMat.SetInt(SpEnableGradient, m_Enabled ? 1 : 0);
                 }
                 OnComponentSettingsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        
+
         /// <summary>
         /// Type of the Gradient. There are three types: Linear, Radial, Corner
         /// </summary>
-        public GradientType GradientType {
+        public GradientType GradientType
+        {
             get => m_GradientType;
-            set {
+            set
+            {
                 m_GradientType = value;
-                if (ShouldModifySharedMat) {
+                if (ShouldModifySharedMat)
+                {
                     SharedMat.SetInt(SpGradientType, (int)m_GradientType);
                 }
                 OnComponentSettingsChanged?.Invoke(this, EventArgs.Empty);
 
             }
         }
-        
+
         /// <summary>
         /// Rotation of the gradient. Only applies for Linear Gradient.
         /// </summary>
-        public float Rotation {
+        public float Rotation
+        {
             get => m_Rotation;
-            set {
+            set
+            {
                 m_Rotation = value;
-                if (ShouldModifySharedMat) {
+                if (ShouldModifySharedMat)
+                {
                     SharedMat.SetFloat(SpGradientRotation, m_Rotation);
                 }
                 OnComponentSettingsChanged?.Invoke(this, EventArgs.Empty);
 
             }
         }
-        
+
         /// <summary>
         /// Gradient that will be overlaid onto the image.
         /// </summary>
-        public Gradient Gradient {
+        public Gradient Gradient
+        {
             get => m_Gradient;
-            set {
+            set
+            {
                 m_Gradient = value;
-                if (ShouldModifySharedMat) {
+                if (ShouldModifySharedMat)
+                {
                     List<Vector4> Colors = new List<Vector4>(8);
                     List<Vector4> Alphas = new List<Vector4>(8);
-                    for (int i = 0; i < 8; i++) {
-                        if (i < m_Gradient.colorKeys.Length) {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (i < m_Gradient.colorKeys.Length)
+                        {
                             Color col = m_Gradient.colorKeys[i].color;
-                            Vector4 data = new Vector4(col.r, col.g, col.b, 
+                            Vector4 data = new Vector4(col.r, col.g, col.b,
                                 m_Gradient.colorKeys[i].time);
                             Colors.Add(data);
-                            SharedMat.SetVector("_GradientColor"+i, data);
+                            SharedMat.SetVector("_GradientColor" + i, data);
                         }
-                        else {
-                            SharedMat.SetVector("_GradientColor"+i, Vector4.zero);
+                        else
+                        {
+                            SharedMat.SetVector("_GradientColor" + i, Vector4.zero);
                         }
-                        if (i < m_Gradient.alphaKeys.Length) {
+                        if (i < m_Gradient.alphaKeys.Length)
+                        {
                             Vector4 data = new Vector4(m_Gradient.alphaKeys[i].alpha, m_Gradient.alphaKeys[i].time);
                             Alphas.Add(data);
-                            SharedMat.SetVector("_GradientAlpha"+i, data);
+                            SharedMat.SetVector("_GradientAlpha" + i, data);
                         }
-                        else {
-                            SharedMat.SetVector("_GradientAlpha"+i, Vector4.zero);
+                        else
+                        {
+                            SharedMat.SetVector("_GradientAlpha" + i, Vector4.zero);
                         }
                     }
-                    
+
                     SharedMat.SetInt(SpGradientColorsLength, m_Gradient.colorKeys.Length);
                     SharedMat.SetInt(SpGradientAlphasLength, m_Gradient.alphaKeys.Length);
-                    
+
                     for (int i = Colors.Count; i < 8; i++)
                     {
                         Colors.Add(Vector4.zero);
@@ -102,44 +121,50 @@ namespace MPUIKIT {
                     {
                         Alphas.Add(Vector4.zero);
                     }
-                    
+
                     SharedMat.SetVectorArray(SpGradientColors, Colors);
                     SharedMat.SetVectorArray(SpGradientAlphas, Alphas);
-                    SharedMat.SetInt(SpGradientInterpolationType, (int) m_Gradient.mode);
+                    SharedMat.SetInt(SpGradientInterpolationType, (int)m_Gradient.mode);
                 }
                 OnComponentSettingsChanged?.Invoke(this, EventArgs.Empty);
 
             }
         }
-        
+
         /// <summary>
         /// 4 Colors for Corner Gradient overlay.
         /// <para>[0] => top-left, [1] => top-right</para>
         /// <para>[2] => bottom-left, [3] => bottom-right</para>
         /// </summary>
-        public Color[] CornerGradientColors {
+        public Color[] CornerGradientColors
+        {
             get => m_CornerGradientColors;
-            set {
-                
-                if (m_CornerGradientColors.Length != 4) {
+            set
+            {
+
+                if (m_CornerGradientColors.Length != 4)
+                {
                     m_CornerGradientColors = new Color[4];
                 }
 
-                for (int i = 0; i < value.Length && i < 4; i++) {
+                for (int i = 0; i < value.Length && i < 4; i++)
+                {
                     m_CornerGradientColors[i] = value[i];
                 }
 
-                if (ShouldModifySharedMat) {
-                    for (int i = 0; i < m_CornerGradientColors.Length; i++) {
-                        SharedMat.SetColor("_CornerGradientColor"+i, m_CornerGradientColors[i]);
+                if (ShouldModifySharedMat)
+                {
+                    for (int i = 0; i < m_CornerGradientColors.Length; i++)
+                    {
+                        SharedMat.SetColor("_CornerGradientColor" + i, m_CornerGradientColors[i]);
                     }
                 }
                 OnComponentSettingsChanged?.Invoke(this, EventArgs.Empty);
 
             }
         }
-        
-        
+
+
         private static readonly int SpGradientType = Shader.PropertyToID("_GradientType");
         private static readonly int SpGradientColors = Shader.PropertyToID("colors");
         private static readonly int SpGradientAlphas = Shader.PropertyToID("alphas");
@@ -152,21 +177,24 @@ namespace MPUIKIT {
         public Material SharedMat { get; set; }
         public bool ShouldModifySharedMat { get; set; }
         public RectTransform RectTransform { get; set; }
-        
 
-        public void Init(Material SharedMat, Material renderMat, RectTransform rectTransform) {
+
+        public void Init(Material SharedMat, Material renderMat, RectTransform rectTransform)
+        {
             this.SharedMat = SharedMat;
             this.ShouldModifySharedMat = SharedMat == renderMat;
             this.RectTransform = rectTransform;
-            
-            if (m_CornerGradientColors == null || m_CornerGradientColors.Length != 4) {
+
+            if (m_CornerGradientColors == null || m_CornerGradientColors.Length != 4)
+            {
                 m_CornerGradientColors = new Color[4];
             }
         }
 
         public event EventHandler OnComponentSettingsChanged;
 
-        public void OnValidate() {
+        public void OnValidate()
+        {
             Enabled = m_Enabled;
             GradientType = m_GradientType;
             Gradient = m_Gradient;
@@ -174,48 +202,54 @@ namespace MPUIKIT {
             Rotation = m_Rotation;
         }
 
-        public void InitValuesFromMaterial(ref Material material) {
+        public void InitValuesFromMaterial(ref Material material)
+        {
             m_Enabled = material.GetInt(SpEnableGradient) == 1;
-            m_GradientType = (GradientType) material.GetInt(SpGradientType);
+            m_GradientType = (GradientType)material.GetInt(SpGradientType);
             m_Rotation = material.GetFloat(SpGradientRotation);
             int colorLength = material.GetInt(SpGradientColorsLength);
             int alphaLength = material.GetInt(SpGradientAlphasLength);
             Gradient gradient = new Gradient();
             GradientColorKey[] colorKeys = new GradientColorKey[colorLength];
             GradientAlphaKey[] alphaKeys = new GradientAlphaKey[alphaLength];
-            for (int i = 0; i < colorLength; i++) {
+            for (int i = 0; i < colorLength; i++)
+            {
                 Vector4 colorValue = material.GetVector("_GradientColor" + i);
                 colorKeys[i].color = new Color(colorValue.x, colorValue.y, colorValue.z);
                 colorKeys[i].time = colorValue.w;
             }
 
             gradient.colorKeys = colorKeys;
-            for (int i = 0; i < alphaLength; i++) {
+            for (int i = 0; i < alphaLength; i++)
+            {
                 Vector4 alphaValue = material.GetVector("_GradientAlpha" + i);
                 alphaKeys[i].alpha = alphaValue.x;
                 alphaKeys[i].time = alphaValue.y;
             }
 
             gradient.alphaKeys = alphaKeys;
-            gradient.mode = (GradientMode) material.GetInt(SpGradientInterpolationType);
+            gradient.mode = (GradientMode)material.GetInt(SpGradientInterpolationType);
             m_Gradient = gradient;
 
             m_CornerGradientColors = new Color[4];
-            for (int i = 0; i < CornerGradientColors.Length; i++) {
+            for (int i = 0; i < CornerGradientColors.Length; i++)
+            {
                 CornerGradientColors[i] = material.GetColor("_CornerGradientColor" + i);
             }
         }
 
-        public void ModifyMaterial(ref Material material, params object[] otherProperties) {
+        public void ModifyMaterial(ref Material material, params object[] otherProperties)
+        {
             material.DisableKeyword("GRADIENT_LINEAR");
             material.DisableKeyword("GRADIENT_RADIAL");
             material.DisableKeyword("GRADIENT_CORNER");
-            
-            
+
+
             if (!m_Enabled) return;
-            material.SetInt(SpEnableGradient, m_Enabled?1:0);
+            material.SetInt(SpEnableGradient, m_Enabled ? 1 : 0);
             material.SetInt(SpGradientType, (int)m_GradientType);
-            switch (m_GradientType) {
+            switch (m_GradientType)
+            {
                 case GradientType.Linear:
                     material.EnableKeyword("GRADIENT_LINEAR");
                     break;
@@ -229,34 +263,41 @@ namespace MPUIKIT {
                     throw new ArgumentOutOfRangeException();
             }
 
-               
-            if (m_GradientType == GradientType.Corner) {
-                for (int i = 0; i < m_CornerGradientColors.Length; i++) {
-                    material.SetColor("_CornerGradientColor"+i, m_CornerGradientColors[i]);
+
+            if (m_GradientType == GradientType.Corner)
+            {
+                for (int i = 0; i < m_CornerGradientColors.Length; i++)
+                {
+                    material.SetColor("_CornerGradientColor" + i, m_CornerGradientColors[i]);
                 }
             }
-            else {
+            else
+            {
                 Vector4[] colors = new Vector4[8];
                 Vector4[] alphas = new Vector4[8];
-                for (int i = 0; i < m_Gradient.colorKeys.Length; i++) {
+                for (int i = 0; i < m_Gradient.colorKeys.Length; i++)
+                {
                     Color col = m_Gradient.colorKeys[i].color;
                     colors[i] = new Vector4(col.r, col.g, col.b, m_Gradient.colorKeys[i].time);
                 }
-                for (int i = 0; i < m_Gradient.alphaKeys.Length; i++) {
+                for (int i = 0; i < m_Gradient.alphaKeys.Length; i++)
+                {
                     alphas[i] = new Vector4(m_Gradient.alphaKeys[i].alpha, m_Gradient.alphaKeys[i].time);
                 }
-                
+
                 material.SetFloat(SpGradientColorsLength, m_Gradient.colorKeys.Length);
                 material.SetFloat(SpGradientAlphasLength, m_Gradient.alphaKeys.Length);
                 material.SetFloat(SpGradientInterpolationType, (int)m_Gradient.mode);
                 material.SetFloat(SpGradientRotation, m_Rotation);
-                
-                for (int i = 0; i < colors.Length; i++) {
-                    material.SetVector("_GradientColor"+i, colors[i]);
+
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    material.SetVector("_GradientColor" + i, colors[i]);
                 }
-                
-                for (int i = 0; i < alphas.Length; i++) {
-                    material.SetVector("_GradientAlpha"+i, alphas[i]);
+
+                for (int i = 0; i < alphas.Length; i++)
+                {
+                    material.SetVector("_GradientAlpha" + i, alphas[i]);
                 }
             }
         }

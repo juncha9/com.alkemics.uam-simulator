@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Linefy;
+﻿using Linefy;
 using Linefy.Serialization;
+using UnityEngine;
 
-namespace LinefyExamples {
- 
+namespace LinefyExamples
+{
+
     [ExecuteInEditMode]
-    public class CreatePolygonalMesh : MonoBehaviour {
+    public class CreatePolygonalMesh : MonoBehaviour
+    {
         public PolygonalMesh pm;
         public SerializationData_PolygonalMeshProperties polygonalMeshProperties;
         public Vector3[] positions;
@@ -17,7 +17,7 @@ namespace LinefyExamples {
 
         public bool autoGenerateOnEnable;
         public bool doGenerate;
- 
+
 
         public bool drawWireframe;
         public SerializationData_Lines wireframePropertyes = new SerializationData_Lines(2, Color.black, 1);
@@ -26,32 +26,41 @@ namespace LinefyExamples {
 
 
         Lines _wireframe;
-        Lines wireframe {
-            get {
-                if (_wireframe == null) {
+        Lines wireframe
+        {
+            get
+            {
+                if (_wireframe == null)
+                {
                     _wireframe = new Lines(32);
                 }
                 return _wireframe;
             }
         }
 
-        private void OnEnable() {
-            if (autoGenerateOnEnable) {
+        private void OnEnable()
+        {
+            if (autoGenerateOnEnable)
+            {
                 doGenerate = true;
             }
         }
 
-        private void Update() {
- 
+        private void Update()
+        {
 
-            if (doGenerate) {
+
+            if (doGenerate)
+            {
                 pm = new PolygonalMesh(positions, uvs, colors, polygons);
                 doGenerate = false;
             }
 
-            if (pm != null) {
-                pm.LoadSerializationData(polygonalMeshProperties );
-                if (drawWireframe) {
+            if (pm != null)
+            {
+                pm.LoadSerializationData(polygonalMeshProperties);
+                if (drawWireframe)
+                {
                     pm.positionEdgesWireframe = wireframe;
                     wireframe.LoadSerializationData(wireframePropertyes);
                 }
@@ -60,9 +69,10 @@ namespace LinefyExamples {
             }
         }
 
-        void CreateDefaultCube() {
+        void CreateDefaultCube()
+        {
             positions = new Vector3[8];
-            positions[0] = new Vector3(-1,-1,-1);
+            positions[0] = new Vector3(-1, -1, -1);
             positions[1] = new Vector3(1, -1, -1);
             positions[2] = new Vector3(1, 1, -1);
             positions[3] = new Vector3(-1, 1, -1);

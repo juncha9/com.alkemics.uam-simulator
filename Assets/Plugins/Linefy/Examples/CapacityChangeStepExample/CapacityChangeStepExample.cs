@@ -1,15 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Linefy;
 using UnityEngine;
-using Linefy;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [ExecuteInEditMode]
-    public class CapacityChangeStepExample : MonoBehaviour {
+    public class CapacityChangeStepExample : MonoBehaviour
+    {
         Polyline _pl;
-        Polyline pl {
-            get {
-                if (_pl == null) {
+        Polyline pl
+        {
+            get
+            {
+                if (_pl == null)
+                {
                     _pl = new Polyline(itemsCount);
                 }
                 return _pl;
@@ -17,9 +20,12 @@ namespace LinefyExamples {
         }
 
         Dots _dots;
-        Dots dots {
-            get {
-                if (_dots == null) {
+        Dots dots
+        {
+            get
+            {
+                if (_dots == null)
+                {
                     _dots = new Dots(itemsCount);
                 }
                 return _dots;
@@ -27,9 +33,12 @@ namespace LinefyExamples {
         }
 
         Lines _lines;
-        Lines lines {
-            get {
-                if (_lines == null) {
+        Lines lines
+        {
+            get
+            {
+                if (_lines == null)
+                {
                     _lines = new Lines(itemsCount);
                 }
                 return _lines;
@@ -50,8 +59,10 @@ namespace LinefyExamples {
         float dMult = 1.4f;
 
 
-        void Update() {
-            if (Application.isPlaying) {
+        void Update()
+        {
+            if (Application.isPlaying)
+            {
                 itemsCount = (int)(countCurve.Evaluate(Time.timeSinceLevelLoad * 0.25f) * 256);
             }
 
@@ -76,7 +87,8 @@ namespace LinefyExamples {
 
             float a = 1;
 
-            for (int i = 1; i < pl.count; i++) {
+            for (int i = 1; i < pl.count; i++)
+            {
                 float r = i * 0.015f;
                 a += 1f / (Mathf.PI * r * dMult);
                 Vector3 pos = new Vector3(Mathf.Cos(a) * r, Mathf.Sin(a) * r, 0);

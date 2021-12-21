@@ -22,15 +22,15 @@ namespace MPUIKIT.Editor
         {
             _spInstallSoftMaskSupport = serializedObject.FindProperty("m_SoftMaskSupportInstalled");
             _spSoftMaskCgincLocation = serializedObject.FindProperty("m_SoftMaskCgincLocation");
-            
+
             _softMAskSupport = _spInstallSoftMaskSupport.boolValue;
             _softMaskCgincLocation = _spSoftMaskCgincLocation.stringValue;
         }
 
         public override void OnInspectorGUI()
         {
-            if (boxStyle == null) boxStyle = new GUIStyle(GUI.skin.box) {padding = new RectOffset(8, 8, 8, 8)}; 
-            
+            if (boxStyle == null) boxStyle = new GUIStyle(GUI.skin.box) { padding = new RectOffset(8, 8, 8, 8) };
+
             EditorGUILayout.BeginVertical(boxStyle, GUILayout.MaxHeight(170), GUILayout.MinHeight(170));
             {
                 EditorGUILayout.LabelField("Integrations", EditorStyles.centeredGreyMiniLabel);
@@ -52,7 +52,7 @@ namespace MPUIKIT.Editor
 
         private void SoftMaskSupportGUI()
         {
-            _softMAskSupport = EditorGUILayout.ToggleLeft("SoftMask by Oleg Knyazev", _softMAskSupport );
+            _softMAskSupport = EditorGUILayout.ToggleLeft("SoftMask by Oleg Knyazev", _softMAskSupport);
             if (_softMAskSupport)
             {
                 _softMaskCgincLocation = EditorGUILayout.TextField("SoftMask.cginc Location", _softMaskCgincLocation);
@@ -67,7 +67,7 @@ namespace MPUIKIT.Editor
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                
+
                 if (Path.GetFileName(_softMaskCgincLocation) != "SoftMask.cginc")
                 {
                     _error = true;

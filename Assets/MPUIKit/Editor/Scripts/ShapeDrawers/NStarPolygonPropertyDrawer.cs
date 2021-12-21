@@ -1,10 +1,13 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace MPUIKIT.Editor {
+namespace MPUIKIT.Editor
+{
     [CustomPropertyDrawer(typeof(NStarPolygon))]
-    public class NStarPolygonPropertyDrawer : PropertyDrawer {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+    public class NStarPolygonPropertyDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
             EditorGUI.BeginProperty(position, label, property);
             {
                 SerializedProperty sideCount = property.FindPropertyRelative("m_SideCount");
@@ -26,7 +29,8 @@ namespace MPUIKIT.Editor {
             EditorGUI.EndProperty();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
             return EditorGUIUtility.singleLineHeight * 4.5f + EditorGUIUtility.standardVerticalSpacing * 4;
         }
     }

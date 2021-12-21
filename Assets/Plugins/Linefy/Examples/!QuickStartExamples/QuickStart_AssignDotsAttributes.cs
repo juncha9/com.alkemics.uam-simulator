@@ -1,14 +1,18 @@
-﻿using UnityEngine;
-using Linefy;
+﻿using Linefy;
+using UnityEngine;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [ExecuteInEditMode]
-    public class QuickStart_AssignDotsAttributes : MonoBehaviour {
+    public class QuickStart_AssignDotsAttributes : MonoBehaviour
+    {
 
         Dots dots;
 
-        private void Update() {
-            if (dots == null) {
+        private void Update()
+        {
+            if (dots == null)
+            {
                 dots = new Dots(4);
                 dots.widthMultiplier = 20;
                 dots.transparent = true;

@@ -12,7 +12,7 @@ namespace Alkemic.UAM
 
         [ShowInInspector]
         private T target;
-         
+
         private IEnumerable<T> items = null;
 
         public Selector()

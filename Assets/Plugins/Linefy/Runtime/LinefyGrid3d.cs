@@ -1,20 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Linefy.Serialization;
 using UnityEngine;
-using Linefy.Internal;
-using Linefy.Serialization;
 
-namespace Linefy.Primitives {
+namespace Linefy.Primitives
+{
 
-    public class Grid3d : Drawable {
+    public class Grid3d : Drawable
+    {
         float _width;
-        public float width {
-            get {
+        public float width
+        {
+            get
+            {
                 return _width;
             }
 
-            set {
-                if (_width != value) {
+            set
+            {
+                if (_width != value)
+                {
                     _width = value;
                     dSize = true;
                 }
@@ -22,13 +25,17 @@ namespace Linefy.Primitives {
         }
 
         float _height;
-        public float height {
-            get {
+        public float height
+        {
+            get
+            {
                 return _height;
             }
 
-            set {
-                if (_height != value) {
+            set
+            {
+                if (_height != value)
+                {
                     _height = value;
                     dSize = true;
                 }
@@ -36,13 +43,17 @@ namespace Linefy.Primitives {
         }
 
         float _length;
-        public float length {
-            get {
+        public float length
+        {
+            get
+            {
                 return _length;
             }
 
-            set {
-                if (_length != value) {
+            set
+            {
+                if (_length != value)
+                {
                     _length = value;
                     dSize = true;
                 }
@@ -50,14 +61,18 @@ namespace Linefy.Primitives {
         }
 
         int _widthSegments;
-        public int widthSegments {
-            get {
+        public int widthSegments
+        {
+            get
+            {
                 return _widthSegments;
             }
 
-            set {
+            set
+            {
                 value = Mathf.Max(value, 1);
-                if (_widthSegments != value) {
+                if (_widthSegments != value)
+                {
                     _widthSegments = value;
                     dTopology = true;
                 }
@@ -65,14 +80,18 @@ namespace Linefy.Primitives {
         }
 
         int _heightSegments;
-        public int heightSegments {
-            get {
+        public int heightSegments
+        {
+            get
+            {
                 return _heightSegments;
             }
 
-            set {
+            set
+            {
                 value = Mathf.Max(value, 1);
-                if (_heightSegments != value) {
+                if (_heightSegments != value)
+                {
                     _heightSegments = value;
                     dTopology = true;
                 }
@@ -80,14 +99,18 @@ namespace Linefy.Primitives {
         }
 
         int _lengthSegments;
-        public int lengthSegments {
-            get {
+        public int lengthSegments
+        {
+            get
+            {
                 return _lengthSegments;
             }
 
-            set {
+            set
+            {
                 value = Mathf.Max(value, 1);
-                if (_lengthSegments != value) {
+                if (_lengthSegments != value)
+                {
                     _lengthSegments = value;
                     dTopology = true;
                 }
@@ -101,7 +124,8 @@ namespace Linefy.Primitives {
         Lines wireframe;
         public SerializationData_LinesBase wireframeProperties = new SerializationData_LinesBase(3, Color.white, 1);
 
-        public Grid3d(float width, float height, float length, int widthSegments, int heightSegments, int lengthSegments, SerializationData_LinesBase wireframeProperties) {
+        public Grid3d(float width, float height, float length, int widthSegments, int heightSegments, int lengthSegments, SerializationData_LinesBase wireframeProperties)
+        {
             _width = width;
             _height = height;
             _length = length;
@@ -113,16 +137,19 @@ namespace Linefy.Primitives {
             this.wireframeProperties = wireframeProperties;
         }
 
-        void PreDraw() {
+        void PreDraw()
+        {
 
 
-            if (wireframe == null) {
+            if (wireframe == null)
+            {
                 wireframe = new Lines(1);
                 wireframe.capacityChangeStep = 8;
             }
             wireframe.autoTextureOffset = true;
 
-            if (dTopology) {
+            if (dTopology)
+            {
                 int xc = widthSegments + 1;
                 int yc = heightSegments + 1;
                 int zc = lengthSegments + 1;
@@ -135,14 +162,16 @@ namespace Linefy.Primitives {
 
 
                 wireframe.count = linesCount;
-                for (int i = 0; i<wireframe.count; i++) {
-                    wireframe.SetTextureOffset(i, 0,0);
+                for (int i = 0; i < wireframe.count; i++)
+                {
+                    wireframe.SetTextureOffset(i, 0, 0);
                 }
                 dTopology = false;
                 dSize = true;
             }
 
-            if (dSize) {
+            if (dSize)
+            {
                 float xPosMin = -width / 2f;
                 float zPosMin = -length / 2f;
                 float yPosMin = -height / 2f;
@@ -156,8 +185,10 @@ namespace Linefy.Primitives {
                 float yStep = height / heightSegments;
 
                 int linesCounter = 0;
-                for (int y = 0; y <= heightSegments; y++) {
-                    for (int x = 0; x <= widthSegments; x++) {
+                for (int y = 0; y <= heightSegments; y++)
+                {
+                    for (int x = 0; x <= widthSegments; x++)
+                    {
                         float xpos = xPosMin + xStep * x;
                         float ypos = yPosMin + yStep * y;
                         Vector3 c0 = new Vector3(xpos, ypos, zPosMin);
@@ -167,8 +198,10 @@ namespace Linefy.Primitives {
                     }
                 }
 
-                for (int z = 0; z <= lengthSegments; z++) {
-                    for (int y = 0; y <= heightSegments; y++) {
+                for (int z = 0; z <= lengthSegments; z++)
+                {
+                    for (int y = 0; y <= heightSegments; y++)
+                    {
                         float zpos = zPosMin + zStep * z;
                         float ypos = yPosMin + yStep * y;
                         Vector3 c0 = new Vector3(xPosMin, ypos, zpos);
@@ -178,8 +211,10 @@ namespace Linefy.Primitives {
                     }
                 }
 
-                for (int z = 0; z <= lengthSegments; z++) {
-                    for (int x = 0; x <= widthSegments; x++) {
+                for (int z = 0; z <= lengthSegments; z++)
+                {
+                    for (int x = 0; x <= widthSegments; x++)
+                    {
                         float xpos = xPosMin + xStep * x;
                         float zpos = zPosMin + zStep * z;
                         Vector3 c0 = new Vector3(xpos, yPosMin, zpos);
@@ -194,22 +229,27 @@ namespace Linefy.Primitives {
             wireframe.LoadSerializationData(wireframeProperties);
         }
 
-        public override void DrawNow(Matrix4x4 matrix) {
+        public override void DrawNow(Matrix4x4 matrix)
+        {
             PreDraw();
             wireframe.DrawNow(matrix);
         }
 
-        public override void Draw(Matrix4x4 tm, Camera cam, int layer) {
+        public override void Draw(Matrix4x4 tm, Camera cam, int layer)
+        {
             PreDraw();
             wireframe.Draw(tm, cam, layer);
         }
 
-        public override void Dispose() {
+        public override void Dispose()
+        {
             wireframe.Dispose();
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
-            if (wireframe != null) {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
+        {
+            if (wireframe != null)
+            {
                 linesCount += 1;
                 totallinesCount += wireframe.count;
             }
@@ -217,7 +257,8 @@ namespace Linefy.Primitives {
     }
 
     [ExecuteInEditMode]
-    public class LinefyGrid3d : DrawableComponent {
+    public class LinefyGrid3d : DrawableComponent
+    {
 
         public float width = 1;
         public float height = 1;
@@ -233,32 +274,39 @@ namespace Linefy.Primitives {
         public SerializationData_LinesBase wireframeProperties = new SerializationData_LinesBase(3, Color.white, 1);
 
         Grid3d _grid;
-        Grid3d grid {
-            get {
-                if (_grid == null) {
+        Grid3d grid
+        {
+            get
+            {
+                if (_grid == null)
+                {
                     _grid = new Grid3d(width, height, length, widthSegments, heightSegments, lengthSegments, wireframeProperties);
                 }
                 return _grid;
             }
         }
 
-        public override Drawable drawable {
-			get{
-				return grid;
-			}
-		} 
+        public override Drawable drawable
+        {
+            get
+            {
+                return grid;
+            }
+        }
 
-        protected override void PreDraw() {
+        protected override void PreDraw()
+        {
             grid.width = width;
             grid.height = height;
             grid.length = length;
             grid.widthSegments = widthSegments;
             grid.heightSegments = heightSegments;
             grid.lengthSegments = lengthSegments;
-            grid.wireframeProperties = wireframeProperties ;
+            grid.wireframeProperties = wireframeProperties;
         }
 
-        public static LinefyGrid3d CreateInstance() {
+        public static LinefyGrid3d CreateInstance()
+        {
             GameObject go = new GameObject("New Grid3d");
             LinefyGrid3d result = go.AddComponent<LinefyGrid3d>();
             return result;

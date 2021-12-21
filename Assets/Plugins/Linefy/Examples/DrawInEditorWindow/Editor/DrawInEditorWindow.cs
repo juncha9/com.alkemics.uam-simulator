@@ -1,13 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using Linefy;
+﻿using Linefy;
 using Linefy.Primitives;
+using UnityEditor;
+using UnityEngine;
 
-namespace LinefyExamples {
-    public class DrawInEditorWindow : MonoBehaviour {
-        public class CustomEditorWindow : EditorWindow {
+namespace LinefyExamples
+{
+    public class DrawInEditorWindow : MonoBehaviour
+    {
+        public class CustomEditorWindow : EditorWindow
+        {
 
             EditorGUIViewport viewport;
             CircularPolyline circle;
@@ -16,11 +17,13 @@ namespace LinefyExamples {
             float rot2;
 
             [MenuItem("Window/Linefy Draw In Editor Window Example", false, 0)]
-            public static void OpenCustomWindow() {
+            public static void OpenCustomWindow()
+            {
                 EditorWindow.GetWindow(typeof(CustomEditorWindow), false, "Draw In Editor Window Example");
             }
 
-            private void OnEnable() {
+            private void OnEnable()
+            {
                 viewport = new EditorGUIViewport();
                 circle = new CircularPolyline(3, 1, new Linefy.Serialization.SerializationData_Polyline(2, Color.green, 1, true));
                 autoRepaintOnSceneChange = true;
@@ -34,13 +37,16 @@ namespace LinefyExamples {
 
             }
 
-            private void OnGUI() {
+            private void OnGUI()
+            {
                 Repaint();
-                if (Event.current.type == EventType.Repaint) {
+                if (Event.current.type == EventType.Repaint)
+                {
                     Rect r = new Rect(8, 8, position.width - 16, position.height - 16);
                     float maxSize = Mathf.Min(r.width, r.height) * 0.48f;
                     viewport.SetParams(r);
-                    for (int i = 0; i < 36; i++) {
+                    for (int i = 0; i < 36; i++)
+                    {
                         float _rot = i % 2 == 0 ? rot : rot2;
                         Matrix4x4 tm = Matrix4x4.TRS(viewport.GUItoLocalSpace(r.center), Quaternion.Euler(0, 0, _rot + i * 120f / 36), Vector3.one * maxSize);
                         viewport.DrawLocalSpace(circle, tm);

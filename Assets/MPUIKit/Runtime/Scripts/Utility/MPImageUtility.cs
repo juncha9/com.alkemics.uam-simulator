@@ -1,9 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace MPUIKIT {
-    internal class MPImageUtility {
-        internal static void FixAdditionalShaderChannelsInCanvas(Canvas canvas) {
+namespace MPUIKIT
+{
+    internal class MPImageUtility
+    {
+        internal static void FixAdditionalShaderChannelsInCanvas(Canvas canvas)
+        {
             Canvas c = canvas;
             if (canvas == null) return;
             AdditionalCanvasShaderChannels additionalShaderChannels = c.additionalShaderChannels;
@@ -15,7 +17,8 @@ namespace MPUIKIT {
             c.additionalShaderChannels = additionalShaderChannels;
         }
 
-        internal static Vector2 Encode_0_1_16(Vector4 input) {
+        internal static Vector2 Encode_0_1_16(Vector4 input)
+        {
             float e = 255f / 256f;
             float m = 65535f;
             float ms = m * m;
@@ -25,12 +28,15 @@ namespace MPUIKIT {
             float y = Mathf.Floor(value.z) / m + Mathf.Floor(value.w) / ms;
             return new Vector2(x, y);
         }
-        
+
         private static Sprite _emptySprite;
 
-        internal static Sprite EmptySprite {
-            get {
-                if (_emptySprite == null) {
+        internal static Sprite EmptySprite
+        {
+            get
+            {
+                if (_emptySprite == null)
+                {
                     _emptySprite = Resources.Load<Sprite>("mpui_default_empty_sprite");
                 }
 

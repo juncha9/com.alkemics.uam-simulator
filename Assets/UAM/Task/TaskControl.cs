@@ -66,7 +66,7 @@ namespace Alkemic.UAM
         public void Interrupt()
         {
             if (curTask == null) return;
-            if (IsDebug == true) { Debug.Log($"[{name}] Task[{curTask.GetType()}] has Inturrupted", gameObject); }
+            if (IsDebug == true) { Debug.Log($"[{name}:{GetType().Name}] Task[{curTask.GetType()}] has Inturrupted", gameObject); }
             curTask.Inturrupt();
         }
 
@@ -77,10 +77,10 @@ namespace Alkemic.UAM
             StartAutoCoroutine(CheckTaskRoutine());
         }
 
-        public void AddTask<T>(Action<T> initCallback = null) where T : Task
+        public void AssignTask<T>(Action<T> initMethod = null) where T : Task
         {
             T _task = gameObject.AddComponent<T>();
-            initCallback?.Invoke(_task);
+            initMethod?.Invoke(_task);
             this.TaskList.Add(_task);
         }
 
@@ -93,7 +93,7 @@ namespace Alkemic.UAM
                 if (curTask != null)
                 {
                     curRoutine = curTask.StartTask();
-                    if (IsDebug == true) { Debug.Log($"[{name}] Task{curTask.GetType()} started", gameObject); }
+                    if (IsDebug == true) { Debug.Log($"[{name}:{GetType().Name}] Task{curTask.GetType()} started", gameObject); }
                     yield return curRoutine;
                 }
                 else

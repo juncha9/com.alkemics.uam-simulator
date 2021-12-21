@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Linefy;
 using UnityEditor;
-using Linefy;
 
 namespace LinefyExamples
 {

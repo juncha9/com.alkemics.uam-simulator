@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Alkemic.UAM
 {
 
-
+    [RequireComponent(typeof(DataCache))]
     public class UAMSimulator : LeadComponent
     {
         public static IList<UAMSimulator> GetSimulators()
@@ -31,7 +32,6 @@ namespace Alkemic.UAM
         private LocationControl locationControl;
         public LocationControl LocationControl => locationControl;
 
-
         [SerializeField]
         private int _UAMCount = 50;
         public int UAMCount => _UAMCount;
@@ -40,16 +40,16 @@ namespace Alkemic.UAM
         private List<VTOL> m_EVTOLs = new List<VTOL>();
         public List<VTOL> EVTOLs => m_EVTOLs;
 
+
         protected override void OnValidate()
         {
             base.OnValidate();
-            if(string.IsNullOrWhiteSpace(key) == true)
+            if (string.IsNullOrWhiteSpace(key) == true)
             {
                 GenerateKey();
             }
 
         }
-
 
         protected override void OnPreAwake()
         {
@@ -62,9 +62,15 @@ namespace Alkemic.UAM
         {
             base.Awake();
 
-            Debug.Assert(locationControl != null, $"[{name}] {nameof(locationControl)} is null", gameObject);
+            Debug.Assert(locationControl != null, $"[{name}:{GetType().Name}] {nameof(locationControl)} is null", gameObject);
         }
 
+        protected override void Start()
+        {
+            base.Start();
+
+            StartAutoCoroutine(RandomTicketRoutine());
+        }
 
         [Button]
         public void GenerateKey()
@@ -73,6 +79,27 @@ namespace Alkemic.UAM
             this.key = guid.ToString();
         }
 
+        private IEnumerator RandomTicketRoutine()
+        {
+            WaitForSeconds delay = new WaitForSeconds(1f);
+            var entryVertiPorts = this.locationControl.vertiPorts
+                .Where(x => x.Routes != null && x.Routes.Count > 0)
+                .ToList();
+
+            while (true)
+            {
+                int i = UnityEngine.Random.Range(0, entryVertiPorts.Count);
+                var selectVP = entryVertiPorts[i];
+
+                selectVP.Ticket.OpenTicket()
+
+
+
+                yield return de
+            }
+
+
+        }
 
         /*
         [Button]
@@ -95,7 +122,7 @@ namespace Alkemic.UAM
                 }
                 else
                 {
-                    Debug.LogError($"[{name}] Error on create evtol", gameObject);
+                    Debug.LogError($"[{name}:{GetType().Name}] Error on create evtol", gameObject);
                 }
                 
             }

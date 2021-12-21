@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Linefy.Internal {
+namespace Linefy.Internal
+{
 
-    public struct Triangle2D {
+    public struct Triangle2D
+    {
         public Vector2 a;
         public Vector2 b;
         public Vector2 c;
@@ -15,7 +15,8 @@ namespace Linefy.Internal {
         float dot11;
         float invDenom;
 
-        public Triangle2D(Vector2 _a, Vector2 _b, Vector2 _c) {
+        public Triangle2D(Vector2 _a, Vector2 _b, Vector2 _c)
+        {
             a = _a;
             b = _b;
             c = _c;
@@ -28,7 +29,8 @@ namespace Linefy.Internal {
 
         }
 
-        public bool PointTest(Vector2 p, ref Vector3 bary) {
+        public bool PointTest(Vector2 p, ref Vector3 bary)
+        {
             Vector2 v2 = p - a;
             float dot02 = Vector2.Dot(v0, v2);
             float dot12 = Vector2.Dot(v1, v2);
@@ -38,7 +40,8 @@ namespace Linefy.Internal {
             return (bary.z >= 0) && (bary.y >= 0) && (bary.z + bary.y < 1f);
         }
 
-        public bool PointTest(Vector2 p) {
+        public bool PointTest(Vector2 p)
+        {
             Vector3 _bary;
             Vector2 v2 = p - a;
             float dot02 = Vector2.Dot(v0, v2);
@@ -49,23 +52,29 @@ namespace Linefy.Internal {
             return (_bary.z >= 0) && (_bary.y >= 0) && (_bary.z + _bary.y < 1f);
         }
 
-        public static bool PointTest(Vector2 pa, Vector2 pb, Vector2 pc, Vector2 pp, ref Vector3 _bary) {
-            if (pa.x < pp.x && pb.x < pp.x && pc.x < pp.x) {
+        public static bool PointTest(Vector2 pa, Vector2 pb, Vector2 pc, Vector2 pp, ref Vector3 _bary)
+        {
+            if (pa.x < pp.x && pb.x < pp.x && pc.x < pp.x)
+            {
                 return false;
             }
 
-            if (pa.x > pp.x && pb.x > pp.x && pc.x > pp.x) {
+            if (pa.x > pp.x && pb.x > pp.x && pc.x > pp.x)
+            {
                 return false;
             }
 
-            if (pa.y > 0 && pb.y > 0 && pc.y > 0) {
+            if (pa.y > 0 && pb.y > 0 && pc.y > 0)
+            {
                 return false;
             }
-            if (pa.y < pp.y && pb.y < pp.y && pc.y < pp.y) {
+            if (pa.y < pp.y && pb.y < pp.y && pc.y < pp.y)
+            {
                 return false;
             }
 
-            if (((pc.x - pa.x) * (pb.y - pa.y) - (pc.y - pa.y) * (pb.x - pa.x)) < 0) {
+            if (((pc.x - pa.x) * (pb.y - pa.y) - (pc.y - pa.y) * (pb.x - pa.x)) < 0)
+            {
                 return false;
             }
 
@@ -87,16 +96,20 @@ namespace Linefy.Internal {
             return (_bary.z >= 0) && (_bary.y >= 0) && (_bary.z + _bary.y < 1f);
         }
 
-        public static bool PointTestDoublesided(Vector2 pa, Vector2 pb, Vector2 pc, Vector2 pp, ref Vector3 _bary) {
-            if (pa.x < pp.x && pb.x < pp.x && pc.x < pp.x) {
+        public static bool PointTestDoublesided(Vector2 pa, Vector2 pb, Vector2 pc, Vector2 pp, ref Vector3 _bary)
+        {
+            if (pa.x < pp.x && pb.x < pp.x && pc.x < pp.x)
+            {
                 return false;
             }
 
-            if (pa.x > pp.x && pb.x > pp.x && pc.x > pp.x) {
+            if (pa.x > pp.x && pb.x > pp.x && pc.x > pp.x)
+            {
                 return false;
             }
- 
-            if (pa.y < pp.y && pb.y < pp.y && pc.y < pp.y) {
+
+            if (pa.y < pp.y && pb.y < pp.y && pc.y < pp.y)
+            {
                 return false;
             }
 
@@ -117,16 +130,20 @@ namespace Linefy.Internal {
             return (_bary.z >= 0) && (_bary.y >= 0) && (_bary.z + _bary.y < 1f);
         }
 
-        public static bool PointTestDoublesided(Vector2 pa, Vector2 pb, Vector2 pc, Vector2 pp ) {
-            if (pa.x < pp.x && pb.x < pp.x && pc.x < pp.x) {
+        public static bool PointTestDoublesided(Vector2 pa, Vector2 pb, Vector2 pc, Vector2 pp)
+        {
+            if (pa.x < pp.x && pb.x < pp.x && pc.x < pp.x)
+            {
                 return false;
             }
 
-            if (pa.x > pp.x && pb.x > pp.x && pc.x > pp.x) {
+            if (pa.x > pp.x && pb.x > pp.x && pc.x > pp.x)
+            {
                 return false;
             }
 
-            if (pa.y < pp.y && pb.y < pp.y && pc.y < pp.y) {
+            if (pa.y < pp.y && pb.y < pp.y && pc.y < pp.y)
+            {
                 return false;
             }
 
@@ -147,31 +164,41 @@ namespace Linefy.Internal {
             return (_baryz >= 0) && (_baryy >= 0) && (_baryz + _baryy < 1f);
         }
 
-        public static Vector3 InscribedCircle(Vector2 a, Vector2 b, Vector2 c) {
+        public static Vector3 InscribedCircle(Vector2 a, Vector2 b, Vector2 c)
+        {
             Vector2 aBisectorsDir = Vector2.LerpUnclamped((c - a).normalized, (b - a).normalized, 0.5f);
             Vector2 bBisectorsDir = Vector2.LerpUnclamped((c - b).normalized, (a - b).normalized, 0.5f);
             Vector2 center = new Vector2();
-            if (Edge2D.LineLineItersection(a, aBisectorsDir, b, bBisectorsDir, ref center)) {
+            if (Edge2D.LineLineItersection(a, aBisectorsDir, b, bBisectorsDir, ref center))
+            {
                 float lv = 0;
                 float radius = Edge2D.GetDistance(a, b, center, ref lv);
                 return new Vector3(center.x, center.y, radius);
-            } else {
+            }
+            else
+            {
                 return new Vector3(a.x, a.y, 0);
             }
         }
 
-        public static bool IsClockwise(Vector2 pa, Vector2 pb, Vector2 pc) {
+        public static bool IsClockwise(Vector2 pa, Vector2 pb, Vector2 pc)
+        {
             return ((pc.x - pa.x) * (pb.y - pa.y) - (pc.y - pa.y) * (pb.x - pa.x)) >= 0;
         }
 
-        public static int Clockwise(Vector2 pa, Vector2 pb, Vector2 pc) {
+        public static int Clockwise(Vector2 pa, Vector2 pb, Vector2 pc)
+        {
             float num = ((pc.x - pa.x) * (pb.y - pa.y) - (pc.y - pa.y) * (pb.x - pa.x));
-            if (MathUtility.ApproximatelyZero(num)) {
+            if (MathUtility.ApproximatelyZero(num))
+            {
                 return 0;
             }
-            if (num < 0) {
+            if (num < 0)
+            {
                 return -1;
-            } else {
+            }
+            else
+            {
                 return 1;
             }
         }

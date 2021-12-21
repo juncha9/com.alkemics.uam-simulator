@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿using Linefy;
+using Linefy.Internal;
 using System.Collections.Generic;
 using UnityEngine;
-using Linefy;
 using UnityEngine.UI;
-using Linefy.Internal;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [ExecuteInEditMode]
-    public class LinefyDemo_Painting : MonoBehaviour  {
+    public class LinefyDemo_Painting : MonoBehaviour
+    {
 
         public Slider ColorSlider;
         public Image ColorSliderThumb;
@@ -18,39 +19,47 @@ namespace LinefyExamples {
         public Texture2D uiSafeRectTexture;
 
         [System.Serializable]
-        public struct SafeRect {
+        public struct SafeRect
+        {
             public bool bottomAlign;
             public Rect rect;
 
-            public void DrawDebug(Texture2D debugTexture) {
+            public void DrawDebug(Texture2D debugTexture)
+            {
 
                 GUI.DrawTexture(r, debugTexture);
             }
 
-            Rect r { 
-                get {
+            Rect r
+            {
+                get
+                {
                     Rect r = rect;
-                    if (bottomAlign) {
+                    if (bottomAlign)
+                    {
                         r.position = new Vector2(r.position.x, Screen.height - r.height - r.position.y);
                     }
                     return r;
                 }
             }
 
-            public bool containsMouse { 
-                get {
- 
+            public bool containsMouse
+            {
+                get
+                {
+
                     return r.Contains(Event.current.mousePosition);
                 }
             }
         }
-        
+
         public SafeRect[] safeRects;
         public Color BrushColor;
         List<Stroke> strokes = new List<Stroke>();
- 
 
-        public class Stroke {
+
+        public class Stroke
+        {
 
             public Polyline pl;
 
@@ -59,7 +68,8 @@ namespace LinefyExamples {
             Vector2 extrapolatedPoint;
             Color color;
 
-            public Stroke(Vector2 firstPos, Color color) {
+            public Stroke(Vector2 firstPos, Color color)
+            {
                 this.latestPos = firstPos;
                 this.color = color;
                 pl = new Polyline(0);
@@ -67,26 +77,32 @@ namespace LinefyExamples {
                 pl.AddVertex(new PolylineVertex(firstPos, Color.red, 5, 0));
             }
 
-            public void Add(Vector2 pos) {
-                if (pl.count >= 2) {
+            public void Add(Vector2 pos)
+            {
+                if (pl.count >= 2)
+                {
                     pos = Vector2.Lerp(pos, extrapolatedPoint, 0.5f);
                 }
                 float dist = Vector2.Distance(pos, latestPos);
 
-                if (dist > 3) {
+                if (dist > 3)
+                {
                     totalLength += dist;
                     Vector3 posToAdd = pos;
                     pl.AddVertex(new PolylineVertex(posToAdd, Color.red, 5, totalLength));
                     latestPos = pos;
-                    if (pl.count >= 2) {
+                    if (pl.count >= 2)
+                    {
                         extrapolatedPoint = pl[pl.count - 1].position + pl[pl.count - 1].position - pl[pl.count - 2].position;
                     }
                 }
             }
 
-            public void ApplyWidth(float width) {
-                float fadeDistance = Mathf.Max( width, 20) * 10;
-                for (int i = 0; i < pl.count; i++) {
+            public void ApplyWidth(float width)
+            {
+                float fadeDistance = Mathf.Max(width, 20) * 10;
+                for (int i = 0; i < pl.count; i++)
+                {
                     PolylineVertex v = pl[i];
                     pl.feather = width / 5f;
                     float k = Mathf.Clamp01(Mathf.Min(v.textureOffset / fadeDistance, (totalLength - v.textureOffset) / fadeDistance));
@@ -124,9 +140,12 @@ namespace LinefyExamples {
         public int GridRenderOrder;
 
         public Lines _grid;
-        public Lines grid {
-            get {
-                if (_grid == null) {
+        public Lines grid
+        {
+            get
+            {
+                if (_grid == null)
+                {
                     _grid = new Lines("Grid", 10, true, 1);
                     _grid.feather = 1;
                     _grid.widthMultiplier = 1;
@@ -135,7 +154,8 @@ namespace LinefyExamples {
             }
         }
 
-        private void OnEnable() {
+        private void OnEnable()
+        {
             labelStyle = new GUIStyle();
             labelStyle.fontSize = 30;
             labelStyle.alignment = TextAnchor.MiddleCenter;
@@ -144,45 +164,56 @@ namespace LinefyExamples {
             yGridLines = -1;
         }
 
-        bool mouseInSafeRect() {
+        bool mouseInSafeRect()
+        {
             Event e = Event.current;
-            for (int i = 0; i<safeRects.Length; i++) {
-                if (safeRects[i].containsMouse ) {
+            for (int i = 0; i < safeRects.Length; i++)
+            {
+                if (safeRects[i].containsMouse)
+                {
                     return true;
                 }
             }
             return false;
         }
 
-        void OnGUI() {
-            if (drawSafeRects) {
-                for (int i = 0; i < safeRects.Length; i++) {
+        void OnGUI()
+        {
+            if (drawSafeRects)
+            {
+                for (int i = 0; i < safeRects.Length; i++)
+                {
                     safeRects[i].DrawDebug(uiSafeRectTexture);
- 
+
                 }
             }
 
-            if (Application.isPlaying) {
+            if (Application.isPlaying)
+            {
                 Event e = Event.current;
 
-                if (e.type == EventType.MouseDown && !mouseInSafeRect() && current == null ) {
+                if (e.type == EventType.MouseDown && !mouseInSafeRect() && current == null)
+                {
                     current = new Stroke(e.mousePosition, BrushColor);
                     current.pl.renderOrder = strokes.Count;
                     e.Use();
                 }
 
-                if (e.type == EventType.MouseDrag && current != null) {
+                if (e.type == EventType.MouseDrag && current != null)
+                {
                     current.Add(e.mousePosition);
                     e.Use();
                 }
 
-                if (e.type == EventType.MouseUp && current != null) {
+                if (e.type == EventType.MouseUp && current != null)
+                {
                     strokes.Add(current);
                     current = null;
                     e.Use();
                 }
 
-                if (current != null) {
+                if (current != null)
+                {
                     current.ApplyWidth(WidthSlider.value * 20);
                 }
             }
@@ -190,15 +221,19 @@ namespace LinefyExamples {
 
         public float gridZOffset = 0;
 
-        void Update() {
+        void Update()
+        {
             Matrix4x4 clipMatrix = Matrix4x4Utility.NearClipPlaneGUISpaceMatrix(cam, camOffset);
 
-            if (Application.isPlaying) {
-                if (current != null) {
+            if (Application.isPlaying)
+            {
+                if (current != null)
+                {
                     current.pl.Draw(clipMatrix);
                 }
 
-                for (int i = strokes.Count - 1; i >= 0; i--) {
+                for (int i = strokes.Count - 1; i >= 0; i--)
+                {
                     strokes[i].pl.Draw(clipMatrix);
                 }
             }
@@ -210,14 +245,16 @@ namespace LinefyExamples {
             ColorSliderThumb.color = BrushColor;
         }
 
-        void DrawGrid(Matrix4x4 clipMatrix) {
+        void DrawGrid(Matrix4x4 clipMatrix)
+        {
             float gridSize = GridSizeSlider.value;
             int nxGridLines = Mathf.CeilToInt(cam.pixelWidth / gridSize) + 1;
             int nyGridLines = Mathf.CeilToInt(cam.pixelHeight / gridSize) + 1;
 
             grid.renderOrder = GridRenderOrder;
 
-            if (nxGridLines != xGridLines || nyGridLines != yGridLines) {
+            if (nxGridLines != xGridLines || nyGridLines != yGridLines)
+            {
                 xGridLines = nxGridLines;
                 yGridLines = nyGridLines;
                 grid.count = xGridLines + yGridLines;
@@ -228,14 +265,16 @@ namespace LinefyExamples {
             grid.feather = gridFeather;
             grid.viewOffset = gridViewOffset;
 
-            for (int x = 0; x < xGridLines; x++) {
+            for (int x = 0; x < xGridLines; x++)
+            {
                 float xPos = x * gridSize;
                 Vector2 a = new Vector2(xPos, 0);
                 Vector2 b = new Vector2(xPos, cam.pixelHeight);
                 grid.SetPosition(x, a, b);
             }
 
-            for (int y = 0; y < yGridLines; y++) {
+            for (int y = 0; y < yGridLines; y++)
+            {
                 float yPos = y * gridSize;
                 Vector2 a = new Vector2(0, yPos);
                 Vector2 b = new Vector2(cam.pixelWidth, yPos);
@@ -244,6 +283,6 @@ namespace LinefyExamples {
 
             grid.Draw(clipMatrix);
         }
- 
+
     }
 }

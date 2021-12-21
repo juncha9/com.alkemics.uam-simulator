@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Linefy {
+namespace Linefy
+{
     /// <summary>
     /// Base class for all Linefy renderable classes - Lines, Dots, Polyline, PolygonalMesh, LabelsRenderer, primitives.  
     /// </summary>
-    public abstract class Drawable {
+    public abstract class Drawable
+    {
         protected Matrix4x4 identityMatrix = Matrix4x4.identity;
 
         /// <summary>
@@ -22,7 +22,8 @@ namespace Linefy {
         /// <summary>
         /// Actually sends objects to render with Identity transformation matrix. Use inside Update() and LateUpdate() only. 
         /// </summary>
-        public void Draw() {
+        public void Draw()
+        {
             Draw(identityMatrix, null, 0);
         }
 
@@ -30,7 +31,8 @@ namespace Linefy {
         /// Actually sends objects to render. Use inside Update() and LateUpdate() only.
         /// </summary>
         /// <param name="matrix">transformation matrix</param>
-        public void Draw(Matrix4x4 matrix) {
+        public void Draw(Matrix4x4 matrix)
+        {
             Draw(matrix, null, 0);
         }
 
@@ -38,7 +40,8 @@ namespace Linefy {
         /// Actually sends objects to render. Use inside Update() and LateUpdate() only.
         /// </summary>
         /// <param name="layer">Layer to use.</param>
-        public void Draw(int layer) {
+        public void Draw(int layer)
+        {
             Draw(identityMatrix, null, layer);
         }
 
@@ -47,7 +50,8 @@ namespace Linefy {
         /// </summary>
         /// <param name="matrix">transformation matrix</param>
         /// <param name="layer">Layer to use.</param>
-        public void Draw(Matrix4x4 matrix, int layer) {
+        public void Draw(Matrix4x4 matrix, int layer)
+        {
             Draw(matrix, null, layer);
         }
 
@@ -56,7 +60,8 @@ namespace Linefy {
         /// </summary>
         /// <param name="matrix">transformation matrix</param>
         /// <param name="camera"> If null (default), the mesh will be drawn in all cameras. Otherwise it will be rendered in the given camera only. </param>
-        public void Draw(Matrix4x4 matrix, Camera camera) {
+        public void Draw(Matrix4x4 matrix, Camera camera)
+        {
             Draw(matrix, camera, 0);
         }
 
@@ -75,8 +80,10 @@ namespace Linefy {
         /// <summary>
         /// Returns true when the LinefyEntity is disposed. You should not call methods on a disposed LinefyEntity.
         /// </summary>
-        public bool disposed {
-            get {
+        public bool disposed
+        {
+            get
+            {
                 return _disposed;
             }
         }

@@ -1,10 +1,4 @@
-﻿using Alkemic.UAM;
-using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor;
-using UnityEditor;
-using UnityEngine;
-
-namespace Alkemic.Editors
+﻿namespace Alkemic.Editors
 {
 
     /*

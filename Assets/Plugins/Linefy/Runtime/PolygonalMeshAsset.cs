@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using System;
- 
-namespace Linefy{
+
+namespace Linefy
+{
     [HelpURL("https://polyflow.xyz/content/linefy/documentation-1-1/linefy-documentation.html#PolygonalMeshAsset")]
-    public class PolygonalMeshAsset : ScriptableObject {
+    public class PolygonalMeshAsset : ScriptableObject
+    {
 
         public bool importFromObjFoldout = true;
         public string pathToObjFile;
@@ -14,13 +14,15 @@ namespace Linefy{
 
         public bool flipNormals;
         public SmoothingGroupsImportMode smoothingGroupsImportMode = SmoothingGroupsImportMode.FromSource;
-        public SerializedPolygonalMesh serializedPolygonalMesh ;
+        public SerializedPolygonalMesh serializedPolygonalMesh;
         public float lastImportMS;
- 
 
-        public bool ImportObjLocal() {
+
+        public bool ImportObjLocal()
+        {
             System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            if (serializedPolygonalMesh == null) {
+            if (serializedPolygonalMesh == null)
+            {
                 Debug.LogWarning("Something wrong with PolygonalMeshAsset serialization. serializedPolygonalMesh == null");
                 return false;
             }
@@ -30,7 +32,8 @@ namespace Linefy{
             return true;
         }
 
-        public PolygonalMeshRenderer InstantiateRenderer(Material material) {
+        public PolygonalMeshRenderer InstantiateRenderer(Material material)
+        {
             GameObject go = new GameObject(string.Format("{0} Polygonal Mesh Renderer", name));
             PolygonalMeshRenderer pmr = go.AddComponent<PolygonalMeshRenderer>();
             go.AddComponent<MeshFilter>();

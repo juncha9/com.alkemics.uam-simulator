@@ -1,10 +1,8 @@
 ﻿using Alkemic.Collections;
 using Alkemic.Scriptables;
-using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System;
-using System.Linq;
 using UnityEngine;
 
 namespace Alkemic.UAM
@@ -39,7 +37,7 @@ namespace Alkemic.UAM
             }
         }
 
-        
+
         [HideInInspector]
         [OdinSerialize, NonSerialized]
         private InnerKeyList<string, SimulateData> simulateDatas = new InnerKeyList<string, SimulateData>();
@@ -49,7 +47,7 @@ namespace Alkemic.UAM
         [Button]
         public void AddSimulate(string key)
         {
-            if(simulateDatas.ContainsKey(key) == true)
+            if (simulateDatas.ContainsKey(key) == true)
             {
                 Debug.LogError($"[{nameof(SimulateScriptable)}] SimulateData[{key}] is already exist");
                 return;

@@ -2,7 +2,6 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using Alkemic;
 
 namespace Alkemic.UAM
 {
@@ -48,7 +47,7 @@ namespace Alkemic.UAM
         {
             base.OnEnable();
 
-            if(UAMManager.Inst?.WayPointPrefab != null)
+            if (UAMManager.Inst?.WayPointPrefab != null)
             {
                 this.wayPointPrefab = UAMManager.Inst.WayPointPrefab;
             }
@@ -66,7 +65,7 @@ namespace Alkemic.UAM
 
             this.wayPointPrefab = null;
 
-            if(target.EditMode != LocationEditMode.None)
+            if (target.EditMode != LocationEditMode.None)
             {
                 target.EditMode = LocationEditMode.None;
             }
@@ -81,7 +80,7 @@ namespace Alkemic.UAM
             Vector2 pos;
             Ray ray;
 
-            if(Event.current.type == EventType.MouseDown)
+            if (Event.current.type == EventType.MouseDown)
             {
                 pos = Event.current.mousePosition;
                 float ppp = EditorGUIUtility.pixelsPerPoint;
@@ -103,7 +102,7 @@ namespace Alkemic.UAM
                     , Color.red, 2f);
                 */
 
-                if(Event.current.button == 0)
+                if (Event.current.button == 0)
                 {
                     var raycastResults = Physics.RaycastAll(ray);
                     var hits = raycastResults.Where(x => x.collider.isTrigger == true && x.collider.tag == "Hit").Select(x => x.collider.gameObject);
@@ -119,7 +118,7 @@ namespace Alkemic.UAM
                             break;
                         }
                     }
-                    if(location != null)
+                    if (location != null)
                     {
                         var controlID = GUIUtility.GetControlID(FocusType.Passive);
                         GUIUtility.hotControl = controlID;
@@ -199,7 +198,7 @@ namespace Alkemic.UAM
                     }
                 }
             }
-              
+
             // Keep the created object in focus
             //Selection.activeGameObject = target.gameObject;
 

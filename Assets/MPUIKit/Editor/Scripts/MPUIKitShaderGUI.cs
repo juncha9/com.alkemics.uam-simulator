@@ -12,7 +12,7 @@ namespace MPUIKIT.Editor
             EditorGUILayout.HelpBox(
                 "Nothing to modify here. Select an MPImage component in the hierarchy and modify the values in the inspector.",
                 MessageType.Info);
-            
+
             if (GUILayout.Button(_showValues ? "Hide Debug Values" : "Show Debug Values", EditorStyles.miniLabel)) _showValues = !_showValues;
 
             if (_showValues)

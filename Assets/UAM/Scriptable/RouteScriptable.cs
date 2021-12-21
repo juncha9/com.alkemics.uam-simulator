@@ -1,12 +1,10 @@
 ﻿using Alkemic.Scriptables;
-using Alkemic.Editors;
-using System.Collections.Generic;
-using UnityEngine;
-using Sirenix.OdinInspector;
-using Alkemic.Collections;
 using Alkemic.UI;
 using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Alkemic.UAM
 {
@@ -70,7 +68,7 @@ namespace Alkemic.UAM
         public bool LoadJSON(string path)
         {
             RouteScriptable inst = IOHelper.LoadJSON<RouteScriptable>(path);
-            if(inst == null)
+            if (inst == null)
             {
                 Debug.LogError($"[{nameof(RouteScriptable)}] {DebugEx.FAILED} to load, Path: {path}");
                 return false;

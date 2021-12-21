@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 
-namespace MPUIKIT {
+namespace MPUIKIT
+{
     /// <summary>
     /// Isosceles triangle where two sides of the triangle are equal. Width and height of the shape is
     /// the same as the rect-transform
     /// </summary>
     [Serializable]
-    public struct Triangle : IMPUIComponent {
+    public struct Triangle : IMPUIComponent
+    {
 
         [SerializeField] private Vector3 m_CornerRadius;
 #if UNITY_EDITOR
@@ -19,24 +21,28 @@ namespace MPUIKIT {
         /// <para>x => bottom-left, y => bottom-right</para>
         /// <para>z => top</para>
         /// </summary>
-        public Vector3 CornerRadius {
+        public Vector3 CornerRadius
+        {
             get => m_CornerRadius;
-            set {
+            set
+            {
                 m_CornerRadius = Vector3.Max(value, Vector3.zero);
-                if (ShouldModifySharedMat) {
+                if (ShouldModifySharedMat)
+                {
                     SharedMat.SetVector(SpTriangleCornerRadius, m_CornerRadius);
                 }
                 OnComponentSettingsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        
+
         private static readonly int SpTriangleCornerRadius = Shader.PropertyToID("_TriangleCornerRadius");
 
         public Material SharedMat { get; set; }
         public bool ShouldModifySharedMat { get; set; }
         public RectTransform RectTransform { get; set; }
 
-        public void Init(Material sharedMat, Material renderMat, RectTransform rectTransform) {
+        public void Init(Material sharedMat, Material renderMat, RectTransform rectTransform)
+        {
             this.SharedMat = sharedMat;
             this.ShouldModifySharedMat = sharedMat == renderMat;
             this.RectTransform = rectTransform;
@@ -44,15 +50,18 @@ namespace MPUIKIT {
 
         public event EventHandler OnComponentSettingsChanged;
 
-        public void OnValidate() {
+        public void OnValidate()
+        {
             CornerRadius = m_CornerRadius;
         }
 
-        public void InitValuesFromMaterial(ref Material material) {
+        public void InitValuesFromMaterial(ref Material material)
+        {
             m_CornerRadius = material.GetVector(SpTriangleCornerRadius);
         }
 
-        public void ModifyMaterial(ref Material material, params object[] otherProperties) {
+        public void ModifyMaterial(ref Material material, params object[] otherProperties)
+        {
             material.SetVector(SpTriangleCornerRadius, m_CornerRadius);
         }
     }

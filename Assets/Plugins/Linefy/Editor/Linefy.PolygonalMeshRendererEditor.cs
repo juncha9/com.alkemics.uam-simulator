@@ -1,12 +1,13 @@
 ﻿using UnityEditor;
-using UnityEngine;
 
 
-namespace Linefy.Editors {
+namespace Linefy.Editors
+{
 
     [CustomEditor(typeof(PolygonalMeshRenderer))]
     [CanEditMultipleObjects]
-    public class PolygonalMeshRendererEditor : Editor {
+    public class PolygonalMeshRendererEditor : Editor
+    {
 
         SerializedProperty prp_polygonalMeshAsset;
         SerializedProperty prp_polygonalMeshProperties;
@@ -14,8 +15,9 @@ namespace Linefy.Editors {
         SerializedProperty prp_wireframeEnabled;
         SerializedProperty prp_autoWireframeViewOffset;
         SerializedProperty prp_wireframeProperties;
- 
-        void OnEnable() {
+
+        void OnEnable()
+        {
             prp_polygonalMeshAsset = serializedObject.FindProperty("polygonalMeshAsset");
             prp_polygonalMeshProperties = serializedObject.FindProperty("polygonalMeshProperties");
             prp_drawDefault = serializedObject.FindProperty("drawDefault");
@@ -24,7 +26,8 @@ namespace Linefy.Editors {
             prp_wireframeProperties = serializedObject.FindProperty("wireframeProperties");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serializedObject.Update();
             EditorGUILayout.PropertyField(prp_polygonalMeshAsset);
             EditorGUILayout.PropertyField(prp_polygonalMeshProperties, true);

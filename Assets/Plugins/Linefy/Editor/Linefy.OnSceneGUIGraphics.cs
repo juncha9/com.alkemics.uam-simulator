@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Linefy.Internal;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
-using Linefy;
-using Linefy.Internal;
+using UnityEngine;
 
 
-namespace Linefy {
+namespace Linefy
+{
     [InitializeOnLoad]
-    public static class OnSceneGUIGraphics {
- 
+    public static class OnSceneGUIGraphics
+    {
+
         static List<Drawable> wordspaceItems;
         static List<Drawable> guispaceItems;
         static HashSet<Drawable> wordspaceHs;
@@ -27,9 +28,12 @@ namespace Linefy {
         static Camera sceneViewCamera;
 
         static Texture2D _transparentBlackTexture;
-        public static Texture2D transparentBlackTexture {
-            get {
-                if (_transparentBlackTexture == null) {
+        public static Texture2D transparentBlackTexture
+        {
+            get
+            {
+                if (_transparentBlackTexture == null)
+                {
                     _transparentBlackTexture = new Texture2D(1, 1);
                     _transparentBlackTexture.SetPixel(0, 0, new Color(0, 0, 0, 0.4f));
                     _transparentBlackTexture.Apply(true, true);
@@ -42,13 +46,17 @@ namespace Linefy {
         public static Action drawGUIAfterLinefyObjects = () => { };
 
         static bool _showStatistic = EditorPrefs.GetBool("PolyflowStudio.Linefy.ShowStatistic");
-        public static bool showStatistic {
-            get {
+        public static bool showStatistic
+        {
+            get
+            {
                 return _showStatistic;
             }
 
-            set {
-                if (value != _showStatistic) {
+            set
+            {
+                if (value != _showStatistic)
+                {
                     _showStatistic = value;
                     EditorPrefs.SetBool("PolyflowStudio.Linefy.ShowStatistic", _showStatistic);
                 }
@@ -56,13 +64,17 @@ namespace Linefy {
         }
 
         static bool _darkSkin = EditorPrefs.GetBool("PolyflowStudio.Linefy.DarkSkin");
-        public static bool darkSkin {
-            get {
+        public static bool darkSkin
+        {
+            get
+            {
                 return _darkSkin;
             }
 
-            set {
-                if (value != _darkSkin) {
+            set
+            {
+                if (value != _darkSkin)
+                {
                     _darkSkin = value;
                     EditorPrefs.SetBool("PolyflowStudio.Linefy.DarkSkin", _darkSkin);
                 }
@@ -70,13 +82,19 @@ namespace Linefy {
         }
 
         static LinefyReadMeAsset _readme;
-        public static LinefyReadMeAsset readme {
-            get {
-                if (_readme == null) {
+        public static LinefyReadMeAsset readme
+        {
+            get
+            {
+                if (_readme == null)
+                {
                     string[] assetGUIDs = AssetDatabase.FindAssets("t:LinefyReadMeAsset");
-                    if (assetGUIDs == null || assetGUIDs.Length == 0) {
+                    if (assetGUIDs == null || assetGUIDs.Length == 0)
+                    {
                         Debug.LogFormat("{0} not found. Please reinstall package", "LINEFY README.asset");
-                    } else {
+                    }
+                    else
+                    {
                         string path = AssetDatabase.GUIDToAssetPath(assetGUIDs[0]);
                         _readme = (LinefyReadMeAsset)AssetDatabase.LoadAssetAtPath(path, typeof(LinefyReadMeAsset));
                     }
@@ -86,7 +104,8 @@ namespace Linefy {
 
         }
 
-        static OnSceneGUIGraphics() {
+        static OnSceneGUIGraphics()
+        {
             wordspaceItems = new List<Drawable>(64);
             guispaceItems = new List<Drawable>(64);
 
@@ -98,46 +117,59 @@ namespace Linefy {
             statisticLabelStyle.fontSize = 12;
             statisticLabelStyle.normal.textColor = new Color(1, 1, 1, 0.5f);
 #if UNITY_2019_1_OR_NEWER
-        SceneView.duringSceneGui += OnSceneGUI;
+            SceneView.duringSceneGui += OnSceneGUI;
 #else
             SceneView.onSceneGUIDelegate += OnSceneGUI;
 #endif
 
         }
 
-        public static Vector3 WorldToGUIPoint(Vector3 worldPoint) {
-            if (sceneViewCamera) {
+        public static Vector3 WorldToGUIPoint(Vector3 worldPoint)
+        {
+            if (sceneViewCamera)
+            {
                 Vector3 r = sceneViewCamera.WorldToScreenPoint(Handles.matrix.MultiplyPoint3x4(worldPoint));
                 r.y = sceneViewCamera.pixelHeight - r.y;
                 return r;
-            } else {
+            }
+            else
+            {
                 return worldPoint;
             }
         }
 
-        public static Ray GUIPointToRay(Vector2 guiPoint) {
+        public static Ray GUIPointToRay(Vector2 guiPoint)
+        {
 
-            if (sceneViewCamera) {
+            if (sceneViewCamera)
+            {
 
                 return sceneViewCamera.ScreenPointToRay(GUIUtility.GUIToScreenPoint(guiPoint));
 
-            } else {
+            }
+            else
+            {
                 return new Ray();
             }
         }
 
-        public static Vector2 WorldToGUIPoint(Vector3 worldPoint, ref float distance) {
-            if (sceneViewCamera) {
+        public static Vector2 WorldToGUIPoint(Vector3 worldPoint, ref float distance)
+        {
+            if (sceneViewCamera)
+            {
                 Vector3 r = sceneViewCamera.WorldToScreenPoint(Handles.matrix.MultiplyPoint3x4(worldPoint));
                 distance = r.z;
                 r.y = sceneViewCamera.pixelHeight - r.y;
                 return r;
-            } else {
+            }
+            else
+            {
                 return worldPoint;
             }
         }
 
-        static void OnSceneGUI(SceneView sv) {
+        static void OnSceneGUI(SceneView sv)
+        {
 
             Handles.BeginGUI();
             drawGUIBeforeLinefyObjects();
@@ -145,7 +177,8 @@ namespace Linefy {
             Handles.EndGUI();
 
 
-            if (readme != null && readme.initedVersion != readme.versionName) {
+            if (readme != null && readme.initedVersion != readme.versionName)
+            {
                 readme.initedVersion = readme.versionName;
                 EditorUtility.SetDirty(readme);
                 string logText = string.Format("   ★★★ Welcome to Linefy {0} ★★★ \n", readme.versionName);
@@ -157,16 +190,20 @@ namespace Linefy {
             Event e = Event.current;
             sceneViewCamera = Camera.current;
 
-            if (e.type == EventType.Layout) {
+            if (e.type == EventType.Layout)
+            {
                 sv.Repaint();
-            } else if (sceneViewCamera != null && e.type == EventType.Repaint) {
+            }
+            else if (sceneViewCamera != null && e.type == EventType.Repaint)
+            {
                 selfStopwatch.Reset();
                 selfStopwatch.Start();
 
                 //wordspaceItems.Sort(OrderComparison);
                 //guispaceItems.Sort(OrderComparison);
 
-                foreach (Drawable entity in wordspaceItems) {
+                foreach (Drawable entity in wordspaceItems)
+                {
                     //Debug.LogFormat("entity.onSceneGUIMatrix = {0}", entity.onSceneGUIMatrix);
                     entity.DrawNow(entity.onSceneGUIMatrix);
                 }
@@ -174,7 +211,8 @@ namespace Linefy {
                 float clipPlaneOffset = (sceneViewCamera.farClipPlane - sceneViewCamera.nearClipPlane) * 0.00001f;
                 clipPlaneMatrix = Matrix4x4Utility.NearClipPlaneGUISpaceMatrix(sceneViewCamera, clipPlaneOffset);
 
-                foreach (Drawable entity in guispaceItems) {
+                foreach (Drawable entity in guispaceItems)
+                {
                     entity.DrawNow(clipPlaneMatrix * entity.onSceneGUIMatrix);
                 }
 
@@ -187,7 +225,8 @@ namespace Linefy {
                 frameStopwatch.Reset();
                 frameStopwatch.Start();
 
-                if (showStatistic) {
+                if (showStatistic)
+                {
                     statisticText = string.Format("draw: {0}ms total repaint: {1}ms  \n", selfMilliseconds.ToString("F2"), frameMilliseconds.ToString("F2"));
                     int linesGroupsCount = 0;
                     int linesCount = 0;
@@ -214,7 +253,8 @@ namespace Linefy {
             drawGUIAfterLinefyObjects();
             drawGUIAfterLinefyObjects = () => { };
 
-            if (showStatistic) {
+            if (showStatistic)
+            {
 
                 Rect infoRect = new Rect(12, 12, 320, 110);
                 GUI.skin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
@@ -224,7 +264,8 @@ namespace Linefy {
                 GUI.Label(infoRect, statisticText, statisticLabelStyle);
 
                 Rect closeButtonRect = new Rect(304, 32, 22, 22);
-                if (GUI.Button(closeButtonRect, "X")) {
+                if (GUI.Button(closeButtonRect, "X"))
+                {
                     showStatistic = false;
                     Editor ed = ScriptableObject.CreateInstance<Editor>();
 
@@ -235,15 +276,20 @@ namespace Linefy {
             Handles.EndGUI();
         }
 
-        static void CollectInfo(List<Drawable> list, ref int lgroups, ref int dgroups, ref int pgroups, ref int lcount, ref int dcount, ref int pcount) {
-            foreach (Drawable le in list) {
+        static void CollectInfo(List<Drawable> list, ref int lgroups, ref int dgroups, ref int pgroups, ref int lcount, ref int dcount, ref int pcount)
+        {
+            foreach (Drawable le in list)
+            {
                 le.GetStatistic(ref lgroups, ref lcount, ref dgroups, ref dcount, ref pgroups, ref pcount);
             }
         }
 
-        public static void DrawWorldspace(Drawable item) {
-            if (item != null) {
-                if (wordspaceHs.Add(item)) {
+        public static void DrawWorldspace(Drawable item)
+        {
+            if (item != null)
+            {
+                if (wordspaceHs.Add(item))
+                {
                     item.onSceneGUIMatrix = Matrix4x4.identity;
                     wordspaceItems.Add(item);
                 }
@@ -254,18 +300,24 @@ namespace Linefy {
         /// Actually sends objects to render on Scene View. Use in OnSceneGUI() only.
         /// </summary>
         /// <param name="matrix">transformation matrix</param>
-        public static void DrawWorldspace(Drawable item, Matrix4x4 matrix) {
-            if (item != null) {
-                if (wordspaceHs.Add(item)) {
+        public static void DrawWorldspace(Drawable item, Matrix4x4 matrix)
+        {
+            if (item != null)
+            {
+                if (wordspaceHs.Add(item))
+                {
                     item.onSceneGUIMatrix = matrix;
                     wordspaceItems.Add(item);
                 }
             }
         }
 
-        public static void DrawGUIspace(Drawable item) {
-            if (item != null) {
-                if (guispaceHs.Add(item)) {
+        public static void DrawGUIspace(Drawable item)
+        {
+            if (item != null)
+            {
+                if (guispaceHs.Add(item))
+                {
                     guispaceItems.Add(item);
                 }
             }
@@ -275,35 +327,45 @@ namespace Linefy {
         /// Actually sends objects to render on Scene View. Use in OnSceneGUI() only.
         /// </summary>
         /// <param name="matrix">screen Space matrix</param>
-        public static void DrawGUIspace(Drawable item, Matrix4x4 matrix) {
-            if (item != null) {
-                if (guispaceHs.Add(item)) {
+        public static void DrawGUIspace(Drawable item, Matrix4x4 matrix)
+        {
+            if (item != null)
+            {
+                if (guispaceHs.Add(item))
+                {
                     item.onSceneGUIMatrix = matrix;
                     guispaceItems.Add(item);
                 }
             }
         }
 
-        public static Vector2 GetSceneViewPixelSize() {
+        public static Vector2 GetSceneViewPixelSize()
+        {
             Vector2 result = Vector2.zero;
-            if (sceneViewCamera != null) { 
-                result.x = sceneViewCamera.pixelWidth ;
+            if (sceneViewCamera != null)
+            {
+                result.x = sceneViewCamera.pixelWidth;
                 result.y = sceneViewCamera.pixelHeight;
             }
             return result;
         }
 
         #region styles
-        public static bool useDarkSkin {
-            get {
+        public static bool useDarkSkin
+        {
+            get
+            {
                 return darkSkin || EditorGUIUtility.isProSkin;
             }
         }
 
         static GUIStyle _buttonStyle;
-        public static GUIStyle buttonStyle {
-            get {
-                if (_buttonStyle == null) {
+        public static GUIStyle buttonStyle
+        {
+            get
+            {
+                if (_buttonStyle == null)
+                {
                     _buttonStyle = new GUIStyle("Button");
                     _buttonStyle.normal.background = null;
                     _buttonStyle.padding = new RectOffset();
@@ -312,19 +374,27 @@ namespace Linefy {
             }
         }
 
-        public static bool DrawToggle(Rect r, EditorIconContent content, bool state) {
-            if (useDarkSkin) {
+        public static bool DrawToggle(Rect r, EditorIconContent content, bool state)
+        {
+            if (useDarkSkin)
+            {
                 return GUI.Toggle(r, state, content.bright, buttonStyle);
-            } else {
-                if (state) {
+            }
+            else
+            {
+                if (state)
+                {
                     return GUI.Toggle(r, state, content.bright, buttonStyle);
-                } else {
+                }
+                else
+                {
                     return GUI.Toggle(r, state, content.dark, buttonStyle);
                 }
             }
         }
 
-        public static void EditorGUILayoutSeparator() {
+        public static void EditorGUILayoutSeparator()
+        {
             EditorGUILayout.Space();
             Rect rect = EditorGUILayout.GetControlRect(false, 1);
             rect.height = 1;
@@ -333,13 +403,16 @@ namespace Linefy {
             EditorGUILayout.Space();
         }
 
-        public static void  GUILayoutSeparator( Rect rect ) {
+        public static void GUILayoutSeparator(Rect rect)
+        {
             Color c = OnSceneGUIGraphics.useDarkSkin ? new Color(1.0f, 1.0f, 1.0f, 0.5f) : new Color(0.0f, 0.0f, 0.0f, 0.5f);
             EditorGUI.DrawRect(rect, c);
         }
 
-        public static GUIStyle sceneViewFloaterBackgrond {
-            get {
+        public static GUIStyle sceneViewFloaterBackgrond
+        {
+            get
+            {
                 return useDarkSkin ? readme.sceneViewFloaterBackground_darkSkin : readme.sceneViewFloaterBackground_brightSkin;
             }
         }

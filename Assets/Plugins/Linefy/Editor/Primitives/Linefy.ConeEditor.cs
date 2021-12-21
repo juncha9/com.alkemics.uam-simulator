@@ -1,15 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Linefy.Primitives;
 using UnityEditor;
-using Linefy.Primitives;
+using UnityEngine;
 
-namespace Linefy.Editors{
+namespace Linefy.Editors
+{
     [CustomEditor(typeof(LinefyCone))]
-    public class ConeEditor : MonoBehaviourEditorsBase{
+    public class ConeEditor : MonoBehaviourEditorsBase
+    {
 
         [MenuItem("GameObject/3D Object/Linefy/Primitives/Cone", false, 2)]
-        public static void Create(MenuCommand menuCommand) {
+        public static void Create(MenuCommand menuCommand)
+        {
             GameObject go = LinefyCone.CreateInstance().gameObject;
             postCreate(go, menuCommand);
         }

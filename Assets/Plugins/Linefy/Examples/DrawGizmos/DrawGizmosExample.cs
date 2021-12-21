@@ -1,8 +1,10 @@
 ﻿using Linefy;
 using UnityEngine;
 
-namespace LinefyExamples {
-    public class DrawGizmosExample : MonoBehaviour {
+namespace LinefyExamples
+{
+    public class DrawGizmosExample : MonoBehaviour
+    {
 
         public Color gizmoColor = Color.white;
         public Color selectedGizmoColor = Color.red;
@@ -13,11 +15,12 @@ namespace LinefyExamples {
         Linefy.Primitives.CircularPolyline gizmoSelectedCircle;
 
 
-        private void OnDrawGizmos() 
+        private void OnDrawGizmos()
         {
-            
+
             Gizmos.matrix = transform.localToWorldMatrix;
-            if (gizmoCircle == null) {
+            if (gizmoCircle == null)
+            {
                 gizmoCircle = new Linefy.Primitives.CircularPolyline(64, 1);
                 gizmoCircle.wireframeProperties.widthMultiplier = 5;
             }
@@ -26,11 +29,13 @@ namespace LinefyExamples {
 
         }
 
-        private void OnDrawGizmosSelected() {
-            
+        private void OnDrawGizmosSelected()
+        {
+
 
             Gizmos.matrix = transform.localToWorldMatrix;
-            if (gizmoSelectedCircle == null) {
+            if (gizmoSelectedCircle == null)
+            {
                 gizmoSelectedCircle = new Linefy.Primitives.CircularPolyline(64, 1.1f);
                 gizmoSelectedCircle.wireframeProperties.widthMultiplier = 3;
             }
@@ -38,12 +43,14 @@ namespace LinefyExamples {
             gizmoSelectedCircle.wireframeProperties.textureScale = 40;
             gizmoSelectedCircle.wireframeProperties.texture = gizmosTexture;
 
-            
+
             gizmoSelectedCircle.DrawNow(Gizmos.matrix);
         }
 
-        private void OnDisable() {
-            if (gizmoCircle != null) {
+        private void OnDisable()
+        {
+            if (gizmoCircle != null)
+            {
                 gizmoCircle.Dispose();
                 gizmoCircle = null;
             }

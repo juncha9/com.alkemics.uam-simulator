@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 
-namespace LinefyExamples {
-    public class TransformMover : MonoBehaviour {
+namespace LinefyExamples
+{
+    public class TransformMover : MonoBehaviour
+    {
 
         public int axis;
         public float amplitude = 1;
@@ -13,7 +13,8 @@ namespace LinefyExamples {
 
 
         // Update is called once per frame
-        void Update() {
+        void Update()
+        {
             float a = Time.timeSinceLevelLoad * Mathf.PI;
             Vector3 p = new Vector3();
             p[axis] = Mathf.Sin(a) * amplitude;

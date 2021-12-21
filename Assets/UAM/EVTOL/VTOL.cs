@@ -11,61 +11,68 @@ namespace Alkemic.UAM
     [RequireComponent(typeof(Mover))]
     public class VTOL : LeadComponent
     {
-        public enum State
+        public enum States
         {
-            Idle,
+            Stop,
             Move,
             TakeOff,
+            Land,
         }
 
         [Serializable]
         public class LocationEvent : UnityEvent<Location> { }
 
-        private State m_State = State.Idle;
-        [ShowInInspector]
-        public State state
+        [PropertyGroup]
+        [RuntimeOnly]
+        private States state = States.Stop;
+        public States State
         {
             private set
             {
-                m_State = value;
+                state = value;
                 if (mover != null)
                 {
-                    switch (m_State)
+                    switch (state)
                     {
-                        case State.Idle:
+                        case States.Stop:
                             looker.enabled = false;
+                            shapeGameObject.SetActive(false);
                             break;
-                        case State.Move:
+                        case States.Move:
                             looker.enabled = true;
+                            shapeGameObject.SetActive(true);
                             break;
-                        case State.TakeOff:
+                        case States.TakeOff:
+                        case States.Land:
                             looker.enabled = true;
+                            shapeGameObject.SetActive(true);
                             break;
                         default:
                             break;
                     }
                 }
             }
-            get => m_State;
+            get => state;
         }
 
-        [BoxGroup("Component")]
+        [CacheComponent]
         private Looker looker;
 
-        [BoxGroup("Component")]
+        [CacheComponent]
         private Mover mover;
 
+        [PresetComponent]
+        private GameObject shapeGameObject;
 
-        private LocationEvent locationArrived = new LocationEvent();
-        public LocationEvent LocationArrived => locationArrived;
+        private LocationEvent onLocationArrived = new LocationEvent();
+        public LocationEvent OnLocationArrived => onLocationArrived;
 
-        [CacheGroup]
-        [Debug]
-        private TaskControl taskControl;
-        public TaskControl TaskControl => taskControl;
+        [CacheComponent]
+        private TaskControl task;
+        public TaskControl Task => task;
 
         [PropertyGroup]
-        [ShowOnly]
+        [RuntimeOnly]
         private Location curLocation = null;
         public Location CurLocation
         {
@@ -80,7 +87,7 @@ namespace Alkemic.UAM
         }
 
         [PropertyGroup]
-        [ShowOnly]
+        [RuntimeOnly]
         private Location preLocation = null;
         public Location PreLocation
         {
@@ -90,6 +97,10 @@ namespace Alkemic.UAM
             }
             get => preLocation;
         }
+
+        [PropertyGroup]
+        [RuntimeOnly]
+        private 
 
         [PropertyGroup]
         [RuntimeOnly]
@@ -120,8 +131,8 @@ namespace Alkemic.UAM
         {
             get
             {
-                if (taskControl == null) return false;
-                return taskControl.isTasking;
+                if (task == null) return false;
+                return task.isTasking;
             }
         }
 
@@ -151,15 +162,15 @@ namespace Alkemic.UAM
             base.OnPreAwake();
             this.CacheComponent(ref mover);
             this.CacheComponent(ref looker);
-            this.CacheComponentInChildren(ref taskControl);
+            this.CacheComponentInChildren(ref task);
         }
 
         protected override void Awake()
         {
             base.Awake();
-            Debug.Assert(mover != null, $"[{name}] {nameof(mover)} is null", gameObject);
-            Debug.Assert(looker != null, $"[{name}] {nameof(looker)} is null", gameObject);
-            Debug.Assert(taskControl != null, $"[{name}] {nameof(taskControl)} is null", gameObject);
+            Debug.Assert(mover != null, $"[{name}:{GetType().Name}] {nameof(mover)} is null", gameObject);
+            Debug.Assert(looker != null, $"[{name}:{GetType().Name}] {nameof(looker)} is null", gameObject);
+            Debug.Assert(task != null, $"[{name}:{GetType().Name}] {nameof(task)} is null", gameObject);
 
 
             /*
@@ -169,29 +180,23 @@ namespace Alkemic.UAM
 
             */
 
-            LocationArrived.AddListener((location) =>
+            OnLocationArrived.AddListener((location) =>
             {
                 curLocation = location;
             });
 
-            taskControl.OnTaskInited.AddListener(OnTaskInit);
-            taskControl.OnTaskTicked.AddListener(OnTaskTick);
-            taskControl.OnTaskOvered.AddListener(OnTaskOver);
-            taskControl.OnTaskUpdate.AddListener(OnTaskUpdate);
-            taskControl.OnTaskFixedUpdate.AddListener(OnTaskFixedUpdate);
+            task.OnTaskInited.AddListener(OnTaskInit);
+            task.OnTaskTicked.AddListener(OnTaskTick);
+            task.OnTaskOvered.AddListener(OnTaskOver);
+            task.OnTaskUpdate.AddListener(OnTaskUpdate);
+            task.OnTaskFixedUpdate.AddListener(OnTaskFixedUpdate);
         }
 
         protected override void Start()
         {
             base.Start();
 
-            taskControl.StartTasks();
-
-        }
-
-        private void OnDrawGizmos()
-        {
-
+            task.StartTasks();
 
         }
 
@@ -202,21 +207,50 @@ namespace Alkemic.UAM
 
         }
 
+        public void AssignRoute(Route route)
+        {
+            if (route == null)
+            {
+                Debug.LogError($"[{name}:{GetType().Name}] Route is null", gameObject);
+                return;
+            }
+
+            this.Task.AssignTask<TakeOffTask>();
+
+            var items = route.ToMoveTaskItems();
+            if(items == null)
+            {
+                Debug.LogError($"[{name}:{GetType().Name}] Failed to convert Route info to TaskItems", gameObject);
+            }
+            foreach(var item in items)
+            {
+                this.Task.AssignTask<MoveTask>((task) =>
+                {
+                    task.Way = item.way;
+                    task.TargetLocation = item.targetLocation;
+                });
+            }
+
+            this.Task.AssignTask<LandTask>();
+        }
 
         private void OnTaskInit(Task task)
         {
             switch (task)
             {
-                case VerticalMoveTask takeOffTask:
-                    this.state = State.TakeOff;
+                case TakeOffTask takeOffTask:
+                    this.State = States.TakeOff;
                     mover.StartMove();
                     break;
-
+                case LandTask landTask:
+                    this.State = States.Land;
+                    mover.StartMove();
+                    break;
                 case MoveTask moveTask:
                     looker.enabled = true;
                     this.Target = moveTask.TargetLocation;
                     mover.StartMove();
-                    this.state = State.Move;
+                    this.State = States.Move;
                     break;
             }
 
@@ -224,24 +258,20 @@ namespace Alkemic.UAM
 
         private void OnTaskUpdate(Task task)
         {
-
+            
         }
 
         private void OnTaskFixedUpdate(Task task)
         {
             switch (task)
             {
-                case VerticalMoveTask verticalTask:
-                    if (verticalTask.MoveType == VerticalMove.TakeOff)
-                    {
-                        mover.Direction = Vector3.up;
-                        mover.SpeedFactor = 40f * UAMStatic.knotPHour2Speed;
-                    }
-                    else if (verticalTask.MoveType == VerticalMove.Land)
-                    {
-                        mover.Direction = Vector3.down;
-                        mover.SpeedFactor = 40f * UAMStatic.knotPHour2Speed;
-                    }
+                case TakeOffTask verticalTask:
+                    mover.Direction = Vector3.up;
+                    mover.SpeedFactor = 20f * UAMStatic.knotPHour2Speed;
+                    break;
+                case LandTask landTask:
+                    mover.Direction = Vector3.down;
+                    mover.SpeedFactor = 20f * UAMStatic.knotPHour2Speed;
                     break;
 
                 case MoveTask moveTask:
@@ -254,7 +284,7 @@ namespace Alkemic.UAM
                             if (_index >= 0)
                             {
                                 var forwardVTOLs = way.MovingVTOLs.Take(_index).ToList();
-                                if(forwardVTOLs.Count > 0)
+                                if (forwardVTOLs.Count > 0)
                                 {
                                     float forwardSpeed = forwardVTOLs.Min(x => x.mover.CurSpeedFactor) * UAMStatic.speed2KnotPHour;
                                     if (speed < forwardSpeed)
@@ -284,18 +314,22 @@ namespace Alkemic.UAM
 
             switch (task)
             {
-                case VerticalMoveTask takeOffTask:
+                case TakeOffTask takeOffTask:
                     this.looker.enabled = false;
                     this.mover.StopMove();
                     this.mover.ResetMove();
-                    this.state = State.Idle;
+                    this.State = States.Stop;
+                    break;
+                case LandTask landTask:
+                    this.looker.enabled = false;
+                    this.mover.StopMove();
+                    this.mover.ResetMove();
+                    this.State = States.Stop;
                     break;
                 case MoveTask moveTask:
                     this.looker.enabled = false;
-                    this.mover.StopMove();
                     this.mover.ResetMove();
                     this.Target = null;
-                    this.state = State.Idle;
                     break;
             }
 
@@ -308,7 +342,7 @@ namespace Alkemic.UAM
                 var location = other.GetComponentInParent<Location>();
                 if (location != null)
                 {
-                    curLocation = location;
+                    CurLocation = location;
                 }
 
                 if (IsDebug == true)
@@ -325,9 +359,9 @@ namespace Alkemic.UAM
             if (other.tag == "Hit")
             {
                 var location = other.GetComponentInParent<Location>();
-                if (location != null && curLocation == location)
+                if (location != null && CurLocation == location)
                 {
-                    curLocation = null;
+                    CurLocation = null;
                 }
 
                 if (IsDebug == true)

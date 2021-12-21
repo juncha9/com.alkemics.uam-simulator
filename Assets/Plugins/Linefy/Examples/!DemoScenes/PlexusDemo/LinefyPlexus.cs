@@ -1,16 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Linefy;
-using System;
+﻿using Linefy;
 using Linefy.Internal;
 using Linefy.Primitives;
 using Linefy.Serialization;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
 
     [ExecuteInEditMode]
-    public class LinefyPlexus : MonoBehaviour {
+    public class LinefyPlexus : MonoBehaviour
+    {
 
         public Plexus plexus;
 
@@ -37,7 +38,7 @@ namespace LinefyExamples {
         public bool normalizeSpeed = true;
         public bool drawPaths;
         public bool editPointPositions;
- 
+
         [Header("Connections")]
         public Texture2D connectionTexture;
         public int linesCapacityChangeStep = 256;
@@ -49,19 +50,22 @@ namespace LinefyExamples {
         public AnimationCurve zFocusCurve;
         public float width = 1;
 
-        void Update() {
-            if (plexus == null) {
-                plexus = new Plexus( size, maxConnectionRadius, pointsCount);
+        void Update()
+        {
+            if (plexus == null)
+            {
+                plexus = new Plexus(size, maxConnectionRadius, pointsCount);
             }
-            if (cam == null) {
+            if (cam == null)
+            {
                 return;
             }
 
-            plexus.size.SetValue( size );
+            plexus.size.SetValue(size);
             plexus.maxRadius.SetValue(maxConnectionRadius);
             plexus.pointsCount.SetValue(pointsCount);
-            plexus.moveAmplitude.SetValue( moveAmplitude );
-            plexus.pathKnotsCount.SetValue( splineKnots );
+            plexus.moveAmplitude.SetValue(moveAmplitude);
+            plexus.pathKnotsCount.SetValue(splineKnots);
             plexus.pathSegments.SetValue(splineSegments);
             plexus.speed = speed;
             plexus.color = color;
@@ -78,7 +82,8 @@ namespace LinefyExamples {
             plexus.cameraFocusDistance = cameraFocusDistance;
             plexus.Draw(transform.localToWorldMatrix, gameObject.layer);
 
-            if (Application.isPlaying) {
+            if (Application.isPlaying)
+            {
                 plexus.UpdateTime();
             }
         }
@@ -90,15 +95,20 @@ namespace LinefyExamples {
 
 
 #if UNITY_EDITOR
-        void OnDrawGizmos() {
+        void OnDrawGizmos()
+        {
             Matrix4x4 ltw = transform.localToWorldMatrix;
-            if (drawPaths) {
-                for (int i = 0; i < plexus.points.Length; i++) {
+            if (drawPaths)
+            {
+                for (int i = 0; i < plexus.points.Length; i++)
+                {
                     plexus.points[i].spline.DrawNow(ltw);
                 }
             }
-            if (cam != null) {
-                if (cameraFocusGizmoLines == null) {
+            if (cam != null)
+            {
+                if (cameraFocusGizmoLines == null)
+                {
                     cameraFocusGizmoLines = new Lines(8, true, 1, 2, Color.yellow);
                 }
                 Matrix4x4 camtm = cam.transform.localToWorldMatrix;
@@ -109,7 +119,7 @@ namespace LinefyExamples {
                 Vector3 q1 = new Vector3(-hd, hd, cameraFocusDistance);
                 Vector3 q2 = new Vector3(hd, hd, cameraFocusDistance);
                 Vector3 q3 = new Vector3(hd, -hd, cameraFocusDistance);
-                cameraFocusGizmoLines.SetPosition(0, qz, q0 );
+                cameraFocusGizmoLines.SetPosition(0, qz, q0);
                 cameraFocusGizmoLines.SetPosition(1, qz, q1);
                 cameraFocusGizmoLines.SetPosition(2, qz, q2);
                 cameraFocusGizmoLines.SetPosition(3, qz, q3);
@@ -121,10 +131,13 @@ namespace LinefyExamples {
                 cameraFocusGizmoLines.DrawNow(camtm);
             }
 
-            if (plexus != null) {
-                if (drawSizeBounds) {
-                    if (sizeBox == null) {
-                        sizeBox = new Box(1,1,1,1,1,1, new SerializationData_Lines(2, Color.white, 1) );
+            if (plexus != null)
+            {
+                if (drawSizeBounds)
+                {
+                    if (sizeBox == null)
+                    {
+                        sizeBox = new Box(1, 1, 1, 1, 1, 1, new SerializationData_Lines(2, Color.white, 1));
                     }
 
                     sizeBox.width = size.x;
@@ -134,15 +147,17 @@ namespace LinefyExamples {
                     sizeBox.DrawNow(ltw);
                 }
 
-                if (drawCells) {
-                     
+                if (drawCells)
+                {
+
                     float cellSize = maxConnectionRadius;
                     Vector3Int cellSegments = plexus.cellsDimensions;
                     Vector3 cellVolumeSize = (Vector3)cellSegments * cellSize;
-                    if (cellGrid == null) {
-                        cellGrid = new Grid3d( cellVolumeSize.x, cellVolumeSize.y, cellVolumeSize.z, cellSegments.x, cellSegments.y, cellSegments.z, new SerializationData_LinesBase(2, new Color(0,1,0,0.5f), 1)); 
+                    if (cellGrid == null)
+                    {
+                        cellGrid = new Grid3d(cellVolumeSize.x, cellVolumeSize.y, cellVolumeSize.z, cellSegments.x, cellSegments.y, cellSegments.z, new SerializationData_LinesBase(2, new Color(0, 1, 0, 0.5f), 1));
                     }
-                  
+
 
                     cellGrid.width = cellVolumeSize.x;
                     cellGrid.height = cellVolumeSize.y;
@@ -151,19 +166,21 @@ namespace LinefyExamples {
                     cellGrid.widthSegments = cellSegments.x;
                     cellGrid.heightSegments = cellSegments.y;
                     cellGrid.lengthSegments = cellSegments.z;
- 
+
                     cellGrid.DrawNow(ltw);
                 }
-            }    
+            }
         }
 #endif
         #endregion
     }
 
-    public class Plexus : Drawable {
- 
-        public class Cell {
-            public Point[]  points = new Point[128];
+    public class Plexus : Drawable
+    {
+
+        public class Cell
+        {
+            public Point[] points = new Point[128];
             public int pointsCount = 0;
 
             public Cell[] adjacent;
@@ -172,13 +189,16 @@ namespace LinefyExamples {
 
 
 
-            public Cell(int index, int coordx, int coordy, int coordz) {
+            public Cell(int index, int coordx, int coordy, int coordz)
+            {
                 thisAdress = new Vector3Int(coordx, coordy, coordz);
                 this.index = index;
             }
 
-            public void AddPointToCell(Point point) {
-                if (pointsCount < points.Length) {
+            public void AddPointToCell(Point point)
+            {
+                if (pointsCount < points.Length)
+                {
                     points[pointsCount] = point;
                     pointsCount++;
                 }
@@ -186,7 +206,8 @@ namespace LinefyExamples {
 
         }
 
-        public class Point : IVector3GetSet {
+        public class Point : IVector3GetSet
+        {
             public int index;
             Plexus parent;
             Vector3 currentPos;
@@ -201,12 +222,14 @@ namespace LinefyExamples {
             public Color color;
             public Vector3 worldspacePos;
 
-            public Point(Plexus parent, int index) {
+            public Point(Plexus parent, int index)
+            {
                 this.parent = parent;
                 spline = new HermiteSplineClosed(parent.pathKnotsCount, parent.pathSegments, true, -1);
-                spline.properties = new SerializationData_Polyline(  2, new Color(0, 1, 1, 0.45f),1, true );
+                spline.properties = new SerializationData_Polyline(2, new Color(0, 1, 1, 0.45f), 1, true);
                 Vector3 pathCenter = GetRandomPos(parent.moveAmplitude);
-                for (int i = 0; i < spline.knotsCount; i++) {
+                for (int i = 0; i < spline.knotsCount; i++)
+                {
                     spline[i] = pathCenter + UnityEngine.Random.insideUnitSphere * parent.moveAmplitude * 0.5f;
                 }
                 spline.ApplyKnotsPositions();
@@ -216,34 +239,39 @@ namespace LinefyExamples {
                 parentCell = parent[currentPos];
             }
 
-            public void UpdatePositionBySpline() {
+            public void UpdatePositionBySpline()
+            {
                 currentPos = spline.GetPoint(pathPersentage);
                 UpdatePosition();
             }
 
-            public void UpdatePosition() {
+            public void UpdatePosition()
+            {
                 parentCell = parent[currentPos];
                 parentCell.AddPointToCell(this);
                 worldspacePos = parent.ltw.MultiplyPoint3x4(currentPos);
 
-                Vector3 localInFocusMatrix = parent.worldFocusMatrix.MultiplyPoint3x4(worldspacePos); 
+                Vector3 localInFocusMatrix = parent.worldFocusMatrix.MultiplyPoint3x4(worldspacePos);
 
-                zFocus = parent.zFocusCurve.Evaluate( Mathf.Abs(localInFocusMatrix.z)/ parent.halfZSize );
+                zFocus = parent.zFocusCurve.Evaluate(Mathf.Abs(localInFocusMatrix.z) / parent.halfZSize);
                 color = parent.color.Evaluate(zFocus);
                 screenPos = parent.camera.WorldToScreenPoint(worldspacePos);
                 curWidth = 0.5f + zFocus * 10;
                 parent.dots[index] = new Dot(currentPos, curWidth, 3, color);
             }
 
-            public void UpdateTime() {
+            public void UpdateTime()
+            {
                 pathPersentage += Time.deltaTime * parent.speed / spline.splineLength;
-                if (pathPersentage >= 1) {
+                if (pathPersentage >= 1)
+                {
                     pathPersentage = 0;
                 }
             }
 
-            public Vector3 GetRandomPos(float boundsMargin) {
-                Vector3 _size =  parent.size - new Vector3(boundsMargin, boundsMargin, boundsMargin);
+            public Vector3 GetRandomPos(float boundsMargin)
+            {
+                Vector3 _size = parent.size - new Vector3(boundsMargin, boundsMargin, boundsMargin);
 
                 _size = _size * 0.5f;
                 _size.x = Math.Max(0, _size.x);
@@ -256,39 +284,47 @@ namespace LinefyExamples {
                 return new Vector3(randomX, randomY, randomZ);
             }
 
-            public override string ToString() {
+            public override string ToString()
+            {
                 return string.Format("idx:{0} ", index);
             }
 
-            public Vector3 vector3{
-                get {
+            public Vector3 vector3
+            {
+                get
+                {
                     return currentPos;
                 }
 
-                set {
+                set
+                {
                     currentPos = value;
                 }
             }
         }
 
-        public struct Connection : IEquatable<Connection> {
+        public struct Connection : IEquatable<Connection>
+        {
             public int key;
             public int pointAidx;
             public int pointBidx;
             public float distance;
 
-            public Connection(int key, int pointA, int pointB, float distance ) {
+            public Connection(int key, int pointA, int pointB, float distance)
+            {
                 this.key = key;
                 this.pointAidx = pointA;
                 this.pointBidx = pointB;
                 this.distance = distance;
             }
 
-            public bool Equals(Connection other) {
+            public bool Equals(Connection other)
+            {
                 return other.key == key;
             }
 
-            public override int GetHashCode() {
+            public override int GetHashCode()
+            {
                 return key;
             }
         }
@@ -304,9 +340,9 @@ namespace LinefyExamples {
         public DIntValue pathKnotsCount;
         public DIntValue pathSegments;
         public DFloatValue moveAmplitude;
- 
+
         public float width;
- 
+
         public Texture2D connectionTexture;
         public Gradient color;
         public DotsAtlas pointsAtlas;
@@ -333,8 +369,9 @@ namespace LinefyExamples {
         Color clearColor = Color.clear;
         public float cameraFocusDistance;
 
-        public Plexus(Vector3 size, float maxRadius, int pointsCount) {
-            
+        public Plexus(Vector3 size, float maxRadius, int pointsCount)
+        {
+
             this.size = new DVector3Value(size, d_size, d_pointsParams);
             this.maxRadius = new DFloatValue(maxRadius, d_size, d_pointsParams);
             this.pointsCount = new DIntValue(pointsCount, d_pointsParams);
@@ -343,7 +380,7 @@ namespace LinefyExamples {
             this.moveAmplitude = new DFloatValue(1, d_pointsParams);
 
             dots = new Dots(this.pointsCount);
-            
+
             dots.transparent = true;
             dots.widthMode = WidthMode.WorldspaceBillboard;
 
@@ -352,9 +389,12 @@ namespace LinefyExamples {
 
             adjacentOffsets = new Vector3Int[27];
             int counter = 0;
-            for (int x = -1; x<2; x++) {
-                for (int y = -1; y < 2; y++) {
-                    for (int z = -1; z < 2; z++) {
+            for (int x = -1; x < 2; x++)
+            {
+                for (int y = -1; y < 2; y++)
+                {
+                    for (int z = -1; z < 2; z++)
+                    {
                         adjacentOffsets[counter] = new Vector3Int(x, y, z);
                         counter++;
                     }
@@ -362,8 +402,10 @@ namespace LinefyExamples {
             }
         }
 
-        public void UpdateTime() { 
-            for(int i = 0; i<points.Length; i++){
+        public void UpdateTime()
+        {
+            for (int i = 0; i < points.Length; i++)
+            {
                 points[i].UpdateTime();
             }
         }
@@ -376,15 +418,18 @@ namespace LinefyExamples {
 
         HashSet<Connection> connections = new HashSet<Connection>();
 
-        void PreDraw() {
-   
+        void PreDraw()
+        {
+
             dots.atlas = pointsAtlas;
             Vector3 _size = size;
             float _maxConnectionRadius = this.maxRadius;
             halfZSize = _size.z / 2;
-            if (d_size) {
+            if (d_size)
+            {
                 cellsDimensions = new Vector3Int();
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++)
+                {
                     cellsDimensions[i] = Mathf.CeilToInt(_size[i] / _maxConnectionRadius);
                     cellsDimensions[i] = Mathf.Max(cellsDimensions[i], 1);
                 }
@@ -393,24 +438,30 @@ namespace LinefyExamples {
 
                 int cellsCount = cellsDimensions.x * cellsDimensions.y * cellsDimensions.z;
                 cells = new Cell[cellsCount];
- 
+
                 int cellCounter = 0;
-                for (int y = 0; y < cellsDimensions.y; y++) {
-                    for (int z = 0; z < cellsDimensions.z; z++) {
-                         for (int x = 0; x < cellsDimensions.x; x++) {
+                for (int y = 0; y < cellsDimensions.y; y++)
+                {
+                    for (int z = 0; z < cellsDimensions.z; z++)
+                    {
+                        for (int x = 0; x < cellsDimensions.x; x++)
+                        {
                             cells[cellCounter] = new Cell(cellCounter, x, y, z);
                             cellCounter++;
-                         }
+                        }
                     }
                 }
 
                 List<Cell> tl = new List<Cell>();
-                for (int i = 0; i<cells.Length; i++) {
+                for (int i = 0; i < cells.Length; i++)
+                {
                     Cell c = cells[i];
-                    for (int a = 0; a<adjacentOffsets.Length; a++) {
+                    for (int a = 0; a < adjacentOffsets.Length; a++)
+                    {
                         Vector3Int aadress = c.thisAdress + adjacentOffsets[a];
                         int acellIdx = this[aadress.x, aadress.y, aadress.z];
-                        if (acellIdx >= 0) {
+                        if (acellIdx >= 0)
+                        {
                             tl.Add(cells[acellIdx]);
                         }
                     }
@@ -423,46 +474,58 @@ namespace LinefyExamples {
                 d_size.Reset();
             }
 
-            if (d_pointsParams) {
- 
+            if (d_pointsParams)
+            {
+
                 points = new Point[(int)pointsCount];
-                for (int i = 0; i<points.Length; i++) {
+                for (int i = 0; i < points.Length; i++)
+                {
                     points[i] = new Point(this, i);
                 }
- 
+
                 dots.count = (int)pointsCount;
- 
+
                 d_pointsParams.Reset();
             }
 
-            for (int i = 0; i < cells.Length; i++) {
+            for (int i = 0; i < cells.Length; i++)
+            {
                 cells[i].pointsCount = 0;
             }
 
-             
+
 
             Vector3 focusMatrixPos = camera.transform.position + camera.transform.forward * cameraFocusDistance;
             worldFocusMatrix = Matrix4x4.TRS(focusMatrixPos, camera.transform.rotation, Vector3.one);
             worldFocusMatrix = worldFocusMatrix.inverse;
 
-            if (editPointsPositions) {
-                for (int i = 0; i < points.Length; i++) {
+            if (editPointsPositions)
+            {
+                for (int i = 0; i < points.Length; i++)
+                {
                     points[i].UpdatePosition();
                 }
-            } else {
-                for (int i = 0; i < points.Length; i++) {
+            }
+            else
+            {
+                for (int i = 0; i < points.Length; i++)
+                {
                     points[i].UpdatePositionBySpline();
                 }
             }
- 
+
             connections.Clear();
 
-            foreach (Point point in points) {
-                foreach (Cell ac in point.parentCell.adjacent) {
-                    for (int i = 0; i<ac.pointsCount; i++) {
+            foreach (Point point in points)
+            {
+                foreach (Cell ac in point.parentCell.adjacent)
+                {
+                    for (int i = 0; i < ac.pointsCount; i++)
+                    {
                         Point adjacentPoint = ac.points[i];
                         float distance = Vector3.Distance(point.vector3, adjacentPoint.vector3);
-                        if (adjacentPoint != point && distance < maxRadius) {
+                        if (adjacentPoint != point && distance < maxRadius)
+                        {
                             int key = ConnectionKey(point.index, adjacentPoint.index);
                             connections.Add(new Connection(key, point.index, adjacentPoint.index, distance));
                         }
@@ -471,31 +534,32 @@ namespace LinefyExamples {
             }
 
             connectionsCount = connections.Count;
-            connectionsLines.count = connections.Count*3;
+            connectionsLines.count = connections.Count * 3;
             info_connectionsCount = connectionsCount;
             info_linesCount = connectionsLines.count;
             info_dotsCount = points.Length;
 
             int idxCounter = 0;
-            
-            foreach (Connection c in connections) {
+
+            foreach (Connection c in connections)
+            {
                 Point pA = points[c.pointAidx];
                 Point pB = points[c.pointBidx];
- 
+
                 Vector3 pa = pA.vector3;
                 Vector3 pb = pB.vector3;
- 
+
                 float screenDistance = Vector2.Distance(pA.screenPos, pB.screenPos);
                 float ip0lv = (pA.curWidth * connectionFadeOffset) / screenDistance;
                 ip0lv = Mathf.Min(ip0lv, 0.5f);
 
-                float ip1lv =  1f -((pB.curWidth* connectionFadeOffset) / screenDistance);
+                float ip1lv = 1f - ((pB.curWidth * connectionFadeOffset) / screenDistance);
                 ip1lv = Mathf.Max(ip1lv, 0.5f);
 
                 Vector3 ip0 = Vector3.LerpUnclamped(pa, pb, ip0lv);
                 Vector3 ip1 = Vector3.LerpUnclamped(pa, pb, ip1lv);
 
-                float magnitudeFadeFactor = connectionDistanceFadeCurve.Evaluate(  c.distance / maxRadius );
+                float magnitudeFadeFactor = connectionDistanceFadeCurve.Evaluate(c.distance / maxRadius);
 
                 Color ca = pA.color;
                 ca.a *= magnitudeFadeFactor;
@@ -504,7 +568,7 @@ namespace LinefyExamples {
 
                 connectionsLines[idxCounter] = new Line(pa, ip0, clearColor, ca, pA.curWidth, pA.curWidth, 0, 1);
                 idxCounter++;
-                connectionsLines[idxCounter] = new Line(ip0,ip1, ca, cb, pA.curWidth , pB.curWidth , 0,1);
+                connectionsLines[idxCounter] = new Line(ip0, ip1, ca, cb, pA.curWidth, pB.curWidth, 0, 1);
                 idxCounter++;
                 connectionsLines[idxCounter] = new Line(ip1, pb, cb, clearColor, pB.curWidth, pB.curWidth, 0, 1f);
                 idxCounter++;
@@ -515,63 +579,76 @@ namespace LinefyExamples {
             dots.widthMultiplier = width;
         }
 
-        public int ConnectionKey(int pointIdxA, int pointIdxB ) {
+        public int ConnectionKey(int pointIdxA, int pointIdxB)
+        {
             int summ = pointIdxA + pointIdxB;
             int min = Mathf.Min(pointIdxA, pointIdxB);
             return min * 10000 + (summ - min);
         }
 
-        public override void DrawNow(Matrix4x4 matrix) {
+        public override void DrawNow(Matrix4x4 matrix)
+        {
             //PreDraw();
         }
 
-        public override void Draw(Matrix4x4 matrix, Camera cam, int layer) {
+        public override void Draw(Matrix4x4 matrix, Camera cam, int layer)
+        {
             ltw = matrix;
             PreDraw();
             dots.Draw(matrix);
             connectionsLines.Draw(matrix);
         }
 
-        public Vector3Int LocalCoordsToCellAdress(Vector3 localCoords ) {
-            Vector3 ccords = (localCoords + cellsSpaceOffset)/maxRadius;
+        public Vector3Int LocalCoordsToCellAdress(Vector3 localCoords)
+        {
+            Vector3 ccords = (localCoords + cellsSpaceOffset) / maxRadius;
             return new Vector3Int(Mathf.FloorToInt(ccords.x), Mathf.FloorToInt(ccords.y), Mathf.FloorToInt(ccords.z));
         }
 
         /// <summary>
         /// returns index in cell array
         /// </summary>
-        public int this[int x, int y, int z] {
-            get {
-                if (x < 0 || x >= cellsDimensions.x) {
+        public int this[int x, int y, int z]
+        {
+            get
+            {
+                if (x < 0 || x >= cellsDimensions.x)
+                {
                     return -1;
                 }
-                if (y < 0 || y >= cellsDimensions.y) {
+                if (y < 0 || y >= cellsDimensions.y)
+                {
                     return -1;
                 }
-                if (z < 0 || z >= cellsDimensions.z) {
+                if (z < 0 || z >= cellsDimensions.z)
+                {
                     return -1;
                 }
- 
-                return  (y * cellsDimensions.x * cellsDimensions.z) + (z * cellsDimensions.x) + x ;
+
+                return (y * cellsDimensions.x * cellsDimensions.z) + (z * cellsDimensions.x) + x;
             }
         }
 
-        public Cell this[Vector3 localPoint] {
-            get {
+        public Cell this[Vector3 localPoint]
+        {
+            get
+            {
                 Vector3Int a = LocalCoordsToCellAdress(localPoint);
-                a.x = Mathf.Clamp(a.x, 0, cellsDimensions.x-1);
-                a.y = Mathf.Clamp(a.y, 0, cellsDimensions.y-1);
-                a.z = Mathf.Clamp(a.z, 0, cellsDimensions.z-1);
+                a.x = Mathf.Clamp(a.x, 0, cellsDimensions.x - 1);
+                a.y = Mathf.Clamp(a.y, 0, cellsDimensions.y - 1);
+                a.z = Mathf.Clamp(a.z, 0, cellsDimensions.z - 1);
 
                 return cells[(a.y * cellsDimensions.x * cellsDimensions.z) + (a.z * cellsDimensions.x) + a.x];
             }
         }
 
-        public override void Dispose() {
+        public override void Dispose()
+        {
 
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
+        {
             linesCount += 1;
             totallinesCount += connectionsLines.count;
 

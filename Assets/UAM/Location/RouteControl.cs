@@ -1,6 +1,4 @@
 ﻿using Alkemic.Collections;
-using Sirenix.OdinInspector;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -40,7 +38,7 @@ namespace Alkemic.UAM
         {
             string vertiPortKey = parentVertiPort?.Key;
             var routeDatas = UAM.Route.RouteDatas.Where(x => x.VertiPort == vertiPortKey);
-            foreach(var routeData in routeDatas)
+            foreach (var routeData in routeDatas)
             {
                 CreateRoute(routeData);
             }
@@ -52,7 +50,7 @@ namespace Alkemic.UAM
             newRoute.Setup(data);
             this.routes.Add(newRoute);
         }
-       
+
     }
 
 

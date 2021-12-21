@@ -1,16 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Linefy;
 using UnityEngine;
-using Linefy;
 
-namespace LinefyExamples {
+namespace LinefyExamples
+{
     [ExecuteInEditMode]
-    public class LinefyDemo_DottedImage :MonoBehaviour {
+    public class LinefyDemo_DottedImage : MonoBehaviour
+    {
 
         public Texture2D photo;
         public int dotsCount = 10000;
         public DotsAtlas atlas;
- 
+
         Dots dots;
         public float widthMult = 1;
         public Color colorMult = Color.black;
@@ -20,25 +20,33 @@ namespace LinefyExamples {
 
         int loadedGenerationHash = -1;
 
-        void Start() {
-            if (Application.isPlaying) {
+        void Start()
+        {
+            if (Application.isPlaying)
+            {
                 Update();
             }
         }
 
-        void Update() {
-            if (data != null) {
+        void Update()
+        {
+            if (data != null)
+            {
 
-                if (dots == null) {
+                if (dots == null)
+                {
                     dots = new Dots(data.points.Length);
-                    for (int i = 0; i< data.points.Length; i++) {
+                    for (int i = 0; i < data.points.Length; i++)
+                    {
                         dots[i] = new Dot(new Vector3(data.points[i].x, data.points[i].y), data.points[i].z, 0, Color.white);
                     }
                 }
 
-                if (loadedGenerationHash != data.generationHash) {
+                if (loadedGenerationHash != data.generationHash)
+                {
                     dots.count = data.points.Length;
-                    for (int i = 0; i < data.points.Length; i++) {
+                    for (int i = 0; i < data.points.Length; i++)
+                    {
                         dots[i] = new Dot(new Vector3(data.points[i].x, data.points[i].y), data.points[i].z, 0, Color.white);
                     }
                     loadedGenerationHash = data.generationHash;
@@ -49,12 +57,13 @@ namespace LinefyExamples {
                 dots.widthMultiplier = widthMult;
                 dots.Draw(transform.localToWorldMatrix);
 
-                if (generate) {
+                if (generate)
+                {
                     data.generate(photo, dotsCount);
                     generate = false;
                 }
             }
- 
+
         }
     }
 }

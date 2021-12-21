@@ -1,5 +1,4 @@
 ﻿using Alkemic.Scriptables;
-using System;
 using UnityEngine;
 
 namespace Alkemic.UAM

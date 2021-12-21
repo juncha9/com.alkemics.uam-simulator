@@ -1,15 +1,19 @@
-﻿using UnityEngine;
-using Linefy.Primitives;
+﻿using Linefy.Primitives;
+using UnityEngine;
 
-namespace UnityExamples {
-    public class DrawRuntime : MonoBehaviour {
+namespace UnityExamples
+{
+    public class DrawRuntime : MonoBehaviour
+    {
         Box box;
 
-        private void Start() {
+        private void Start()
+        {
             box = new Box();
         }
 
-        private void Update() {
+        private void Update()
+        {
             box.Draw();
         }
     }

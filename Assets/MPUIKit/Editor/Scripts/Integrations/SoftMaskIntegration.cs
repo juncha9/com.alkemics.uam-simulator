@@ -23,34 +23,35 @@ namespace MPUIKIT.Editor
                 {
                     if (toggle)
                     {
-                        if(lines[i].Contains("/*"))
+                        if (lines[i].Contains("/*"))
                             lines[i] = lines[i].Replace("/*", string.Empty);
                     }
                     else
                     {
-                        if(lines[i].Contains("/* //")) return;
+                        if (lines[i].Contains("/* //")) return;
                         lines[i] = lines[i].Replace("//", "/* //");
                     }
-                }else if (lines[i].Contains("SOFTMASK_HANDLE_END"))
+                }
+                else if (lines[i].Contains("SOFTMASK_HANDLE_END"))
                 {
                     if (toggle)
                     {
-                        if(lines[i].Contains("*/"))
+                        if (lines[i].Contains("*/"))
                             lines[i] = lines[i].Replace("*/", string.Empty);
                     }
                     else
                     {
-                        if(lines[i].Contains("*/ //")) return;
+                        if (lines[i].Contains("*/ //")) return;
                         lines[i] = lines[i].Replace("//", "*/ //");
                     }
                 }
-                
+
                 else if (lines[i].Contains("SOFTMASK_INCLUDE_HANDLE"))
                 {
                     lines[i] = "\t\t\t#include \"" + softMaskLocation + "\" //SOFTMASK_INCLUDE_HANDLE";
                 }
             }
-            
+
             File.WriteAllLines(shaderPath, lines);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

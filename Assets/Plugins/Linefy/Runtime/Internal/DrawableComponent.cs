@@ -1,37 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Linefy {
-    public class DrawableComponent : MonoBehaviour {
+namespace Linefy
+{
+    public class DrawableComponent : MonoBehaviour
+    {
 
         [HideInInspector]
         public Matrix4x4 cachedWorldMatrix;
 
-        public Matrix4x4 worldMatrix {
-            get {
-                if (transform.GetType() == typeof(RectTransform)) {
+        public Matrix4x4 worldMatrix
+        {
+            get
+            {
+                if (transform.GetType() == typeof(RectTransform))
+                {
                     return ((RectTransform)transform).GetCenteredWorldMatrix();
-                } else {
+                }
+                else
+                {
                     return transform.localToWorldMatrix;
                 }
             }
         }
 
-        public virtual Drawable drawable {
+        public virtual Drawable drawable
+        {
             get;
         }
 
         protected virtual void PreDraw() { }
 
-        private void LateUpdate() {
+        private void LateUpdate()
+        {
             PreDraw();
             cachedWorldMatrix = worldMatrix;
             drawable.Draw(cachedWorldMatrix, null, gameObject.layer);
         }
 
-        private void OnDestroy() {
-            if (drawable != null) {
+        private void OnDestroy()
+        {
+            if (drawable != null)
+            {
                 drawable.Dispose();
             }
         }
