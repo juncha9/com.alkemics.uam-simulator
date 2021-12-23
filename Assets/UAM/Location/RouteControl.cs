@@ -9,7 +9,7 @@ namespace Alkemic.UAM
     {
         [CacheGroup]
         [Debug]
-        private VertiPort parentVertiPort;
+        private VertiPort vertiPort;
 
         [InstanceGroup]
         [ShowOnly]
@@ -25,19 +25,25 @@ namespace Alkemic.UAM
         {
             base.OnPreAwake();
 
-            this.CacheComponentInParent(ref parentVertiPort);
+            this.CacheComponentInParent(ref vertiPort);
         }
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            Debug.Assert(vertiPort != null, $"[{name}:{GetType().Name}] {nameof(vertiPort)} is null", gameObject);
+        }
         protected override void Start()
         {
             base.Start();
+
             SyncRoutes();
         }
 
         private void SyncRoutes()
         {
-            string vertiPortKey = parentVertiPort?.Key;
-            var routeDatas = UAM.Route.RouteDatas.Where(x => x.VertiPort == vertiPortKey);
+            var routeDatas = UAM.Route.RouteDatas.Where(x => x.Source == vertiPort.Key);
             foreach (var routeData in routeDatas)
             {
                 CreateRoute(routeData);

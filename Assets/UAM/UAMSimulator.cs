@@ -1,7 +1,10 @@
 ﻿using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,14 +35,16 @@ namespace Alkemic.UAM
         private LocationControl locationControl;
         public LocationControl LocationControl => locationControl;
 
-        [SerializeField]
-        private int _UAMCount = 50;
-        public int UAMCount => _UAMCount;
-
+        [InstanceGroup]
         [ShowOnly]
-        private List<VTOL> m_EVTOLs = new List<VTOL>();
-        public List<VTOL> EVTOLs => m_EVTOLs;
+        private List<VTOL> _VTOLs = new List<VTOL>();
+        public List<VTOL> VTOLs => _VTOLs;
 
+        [OptionGroup]
+        [SerializeField]
+        private int maxTicketCount;
+        
+        
 
         protected override void OnValidate()
         {
@@ -83,26 +88,32 @@ namespace Alkemic.UAM
         {
             WaitForSeconds delay = new WaitForSeconds(1f);
             var entryVertiPorts = this.locationControl.vertiPorts
-                .Where(x => x.Routes != null && x.Routes.Count > 0)
+                .Where(x => x.IsAble == true && x.TicketControl.Tickets.Count < 5)
                 .ToList();
 
             while (true)
             {
-                int i = UnityEngine.Random.Range(0, entryVertiPorts.Count);
-                var selectVP = entryVertiPorts[i];
+                yield return delay;
 
-                selectVP.Ticket.OpenTicket()
+                int vpNo = UnityEngine.Random.Range(0, entryVertiPorts.Count);
+                var selectVP = entryVertiPorts[vpNo];
 
+                int routeNo = UnityEngine.Random.Range(0, selectVP.Routes.Count);
+                var selectRoute = selectVP.Routes[routeNo];
+                var source = selectRoute.Source as VertiPort;
+                var dest = selectRoute.Destination as VertiPort;
 
+                if(source == null || dest == null)
+                {
+                    continue;
+                }
 
-                yield return de
+                selectVP.TicketControl.OpenTicket(source, dest);
             }
-
-
         }
 
         /*
-        [Button]
+        [Button]1
         private void StartSim()
         {
 
@@ -124,7 +135,6 @@ namespace Alkemic.UAM
                 {
                     Debug.LogError($"[{name}:{GetType().Name}] Error on create evtol", gameObject);
                 }
-                
             }
         }
 

@@ -79,28 +79,38 @@ namespace Alkemic.UAM
             set
             {
                 if (curLocation == value) return;
-                preLocation = curLocation;
                 curLocation = value;
+                if(curLocation != null)
+                {
+                    PreLocation = curLocation;
+                }
                 if (IsDebug == true) { Debug.Log($"[{DName}] Location changed, [{preLocation?.Key}] to [{curLocation?.Key}]", gameObject); }
+
             }
             get => curLocation;
         }
 
         [PropertyGroup]
-        [RuntimeOnly]
+        [ShowOnly]
         private Location preLocation = null;
         public Location PreLocation
         {
             set
             {
                 preLocation = value;
+                this.vertiPort = preLocation as VertiPort;
             }
             get => preLocation;
         }
 
         [PropertyGroup]
-        [RuntimeOnly]
-        private 
+        [ShowOnly]
+        private VertiPort vertiPort;
+        public VertiPort VertiPort
+        {
+            get => vertiPort;
+        }
+
 
         [PropertyGroup]
         [RuntimeOnly]
@@ -241,6 +251,7 @@ namespace Alkemic.UAM
                 case TakeOffTask takeOffTask:
                     this.State = States.TakeOff;
                     mover.StartMove();
+                    vertiPort.ExitVTOL(this);
                     break;
                 case LandTask landTask:
                     this.State = States.Land;
@@ -325,7 +336,9 @@ namespace Alkemic.UAM
                     this.mover.StopMove();
                     this.mover.ResetMove();
                     this.State = States.Stop;
+                    vertiPort.EnterVTOL(this);
                     break;
+
                 case MoveTask moveTask:
                     this.looker.enabled = false;
                     this.mover.ResetMove();
