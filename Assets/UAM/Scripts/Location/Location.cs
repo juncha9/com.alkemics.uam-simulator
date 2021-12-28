@@ -124,8 +124,6 @@ namespace Alkemic.UAM
         {
             get
             {
-
-
                 if (ParentLocationControl == null)
                 {
                     return new List<Way>();

@@ -55,14 +55,19 @@ namespace Alkemic.UAM
         {
             base.Start();
 
+
             StartAutoCoroutine(SyncTicket());
+            StartAutoCoroutine(SyncHangar());
         }
 
         IEnumerator SyncTicket()
         {
-            WaitForSeconds delay = new WaitForSeconds(0.5f);
+            WaitForSeconds delay = new WaitForSeconds(AppDefine.DEFAULT_DELAY_TIME);
             while(true)
             {
+                yield return delay;
+                if (TicketControl == null) continue;
+
                 var tickets = TicketControl.Tickets;
                 for(int i = 0; i < TicketItems.Count; i++)
                 {
@@ -78,19 +83,20 @@ namespace Alkemic.UAM
                     {
                         item.Set("set_time", null);
                         item.Set("source", null);
-                        item.Set("dest", null);
+                        item.Set("destination", null);
                     }
                 }
-                yield return delay;
+                
             }
         }
 
-        IEnumerable SyncHangar()
+        IEnumerator SyncHangar()
         {
-            WaitForSeconds delay = new WaitForSeconds(0.5f);
+            WaitForSeconds delay = new WaitForSeconds(AppDefine.DEFAULT_DELAY_TIME);
             while (true)
             {
                 yield return delay;
+                if (HangarControl == null) continue;
                 var VTOLs = HangarControl.VTOLs;
                 for (int i = 0; i < VTOLItems.Count; i++)
                 {
@@ -107,8 +113,6 @@ namespace Alkemic.UAM
                     {
                         item.Set("key", null);
                         item.Set("state", null);
-                        //item.Set("source", null);
-                        //item.Set("dest", null);
                     }
                 }
                 
