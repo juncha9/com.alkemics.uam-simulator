@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -47,6 +49,10 @@ namespace Alkemic.UAM
         }
 #endif
 
+
+
+
+
         [JsonProperty("routeDatas")]
         [SerializeField]
         public List<RouteData> RouteDatas = new List<RouteData>();
@@ -80,7 +86,35 @@ namespace Alkemic.UAM
             return true;
         }
 
+        [Button]
+        private void ForceLoadRoute()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader("./Route.txt");
+                while(true)
+                {
+                    if(reader.EndOfStream == true)
+                    {
+                        break;
+                    }
+                    var line = reader.ReadLine();
+                    var texts = line.Split(';');
+                    var src = texts[0];
+                    var dest = texts[1];
+                    var route = texts[2];
+                    Debug.Log(src);
+                    Debug.Log(dest);
+                    Debug.Log(route);
 
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.LogError($"[{GetType().Name}] Failed to load, Ex: {ex}");
+            }
+        }
     }
 
 

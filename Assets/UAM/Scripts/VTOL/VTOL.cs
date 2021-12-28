@@ -1,13 +1,16 @@
 ﻿using Alkemic.Movement;
 using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 
 namespace Alkemic.UAM
 {
+    [RequireComponent(typeof(DataCache))]
     [RequireComponent(typeof(Looker))]
     [RequireComponent(typeof(Mover))]
     public class VTOL : LeadComponent
@@ -186,7 +189,15 @@ namespace Alkemic.UAM
             }
         }
 
-        public float TargetKnotPHour
+        public float CurKPH
+        {
+            get
+            {
+                return mover.CurSpeedFactor * UAMStatic.speed2KnotPHour;
+            }
+        }
+
+        public float TargetKPH
         {
             set
             {
@@ -204,8 +215,8 @@ namespace Alkemic.UAM
         [Range(UAMStatic.MinVTOLSpeed, UAMStatic.MaxVTOLSpeed)]
         [OptionGroup]
         [SerializeField]
-        private float maxSpeed = UAMStatic.speed2KnotPHour;
-        public float MaxSpeed => maxSpeed;
+        private float maxKPH = UAMStatic.speed2KnotPHour;
+        public float MaxKPH => maxKPH;
 
         protected override void OnValidate()
         {
@@ -261,6 +272,8 @@ namespace Alkemic.UAM
             InitWithStaticData();
 
             task.StartTasks();
+
+            StartAutoCoroutine(IndicateRoutine());
         }
 
         private void Update()
@@ -270,12 +283,30 @@ namespace Alkemic.UAM
 
         }
 
+        private IEnumerator IndicateRoutine()
+        {
+            WaitForSeconds delay = new WaitForSeconds(AppDefine.DEFAULT_DELAY_TIME);
+
+            while(true)
+            {
+                yield return delay;
+                this.DataCache.Set(DataCache.Path.KEY, Key);
+                this.DataCache.Set("state", this.State.ToString());
+                this.DataCache.Set("kph", $"{CurKPH.ToString("0")}/{MaxKPH.ToString("0")}");
+               
+            }
+
+
+        
+        }
+
+
         private void InitWithStaticData()
         {
             var preset = UAMManager.Inst.CurSimulationData?.VTOLPresets[this.VTOLTypeKey];
             if (preset != null)
             {
-                this.maxSpeed = preset.MaxSpeed;
+                this.maxKPH = preset.MaxSpeed;
             }
         }
 
@@ -348,16 +379,16 @@ namespace Alkemic.UAM
             {
                 case TakeOffTask verticalTask:
                     mover.Direction = Vector3.up;
-                    mover.SpeedFactor = 20f * UAMStatic.knotPHour2Speed;
+                    mover.SpeedFactor = 40f * UAMStatic.knotPHour2Speed;
                     break;
                 case LandTask landTask:
                     mover.Direction = Vector3.down;
-                    mover.SpeedFactor = 20f * UAMStatic.knotPHour2Speed;
+                    mover.SpeedFactor = 40f * UAMStatic.knotPHour2Speed;
                     break;
 
                 case MoveTask moveTask:
                     {
-                        float speed = this.MaxSpeed;
+                        float speed = this.MaxKPH;
                         var way = moveTask.Way;
                         if (way != null)
                         {
