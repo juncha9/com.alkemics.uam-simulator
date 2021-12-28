@@ -1,11 +1,11 @@
-﻿using Linefy;
-using Linefy.Serialization;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy;
+using Linefy.Serialization;
 
-namespace LinefyExamples
-{
-    public class ClewData : ScriptableObject
-    {
+namespace LinefyExamples {
+     public class ClewData : ScriptableObject {
 
         [Range(4, 256)]
         public int knotsCount = 64;

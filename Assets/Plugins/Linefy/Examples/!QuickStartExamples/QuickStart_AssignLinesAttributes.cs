@@ -1,17 +1,13 @@
-﻿using Linefy;
-using UnityEngine;
+﻿using UnityEngine;
+using Linefy;
 
-namespace LinefyExamples
-{
+namespace LinefyExamples {
     [ExecuteInEditMode]
-    public class QuickStart_AssignLinesAttributes : MonoBehaviour
-    {
+    public class QuickStart_AssignLinesAttributes : MonoBehaviour {
         Lines lines;
 
-        void Update()
-        {
-            if (lines == null)
-            {
+        void Update() {
+            if (lines == null) {
                 //create Lines instance with capacity 2
                 lines = new Lines(2);
 

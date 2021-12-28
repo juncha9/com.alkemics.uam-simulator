@@ -1,22 +1,18 @@
-﻿using Linefy;
+﻿using UnityEngine;
 using Linefy.Primitives;
-using UnityEngine;
+using Linefy;
 
-namespace LinefyExamples
-{
-    public class DrawInCanvas : MonoBehaviour
-    {
+namespace LinefyExamples {
+    public class DrawInCanvas : MonoBehaviour {
 
         public RectTransform parentRect;
         CircularPolyline circle;
 
-        private void Start()
-        {
+        private void Start() {
             circle = new CircularPolyline(6, 1);
         }
 
-        void Update()
-        {
+        void Update() {
             circle.Draw(parentRect.GetCenteredWorldMatrix());
         }
     }

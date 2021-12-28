@@ -1,50 +1,43 @@
-﻿using Linefy.Editors.Internal;
-using Linefy.Internal;
+﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
-using UnityEngine;
+using Linefy.Internal;
+using Linefy.Editors.Internal;
 
-namespace Linefy
-{
+namespace Linefy{
 
     [CustomEditor(typeof(PolygonalMeshAsset))]
-    public class PolygonalMeshAssetEditor : Editor
-    {
+    public class PolygonalMeshAssetEditor : Editor {
 
         AnimatedFoldout importFromObjFoldout;
-
+ 
         SerializedPropertyField scaleFactor;
         SerializedPropertyField swapZAxis;
         SerializedPropertyField flipNormals;
         SerializedPropertyField smoothingGroupsMode;
-
+ 
 
         SerializedProperty prp_path;
         GUIContent pathButtonContent = new GUIContent("obj", "objFile");
 
         GUIStyle _statisticStyle;
-        GUIStyle statisticStyle
-        {
-            get
-            {
-                if (_statisticStyle == null)
-                {
-                    if (EditorStyles.whiteBoldLabel != null)
-                    {
+        GUIStyle statisticStyle { 
+            get {
+                if (_statisticStyle == null) {
+                    if (EditorStyles.whiteBoldLabel != null) {
                         _statisticStyle = new GUIStyle(EditorStyles.label);
                         _statisticStyle.fontSize = 10;
-                    }
+                    }  
                     _statisticStyle.wordWrap = true;
                 }
                 return _statisticStyle;
             }
         }
-
+   
         string statistic;
         string lastImportStatistic;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             SerializedObject so = serializedObject;
             importFromObjFoldout = new AnimatedFoldout(so, "importFromObjFoldout", "Import from .obj", null, Repaint);
             prp_path = serializedObject.FindProperty("pathToObjFile");
@@ -55,43 +48,36 @@ namespace Linefy
             UpdateStatistic();
         }
 
-        void UpdateStatistic()
-        {
+        void UpdateStatistic() {
             PolygonalMeshAsset t = target as PolygonalMeshAsset;
-            if (t.serializedPolygonalMesh == null)
-            {
+            if (t.serializedPolygonalMesh == null) {
                 statistic = "empty";
-            }
-            else
-            {
+            } else {
                 statistic = string.Format(" Modification: \n");
                 statistic += string.Format("      name: {0}\n", t.serializedPolygonalMesh.modificationInfo.name);
                 statistic += string.Format("      date:  {0}\n", t.serializedPolygonalMesh.modificationInfo.date);
                 statistic += string.Format(" Polygonal Mesh: \n");
-                statistic += string.Format("      vertices: {0}\n", t.serializedPolygonalMesh.positions.Length);
+                statistic += string.Format("      vertices: {0}\n",  t.serializedPolygonalMesh.positions.Length);
                 statistic += string.Format("      normals: {0}\n", t.serializedPolygonalMesh.normals.Length);
                 statistic += string.Format("      polygons: {0}\n", t.serializedPolygonalMesh.polygons.Length);
-                statistic += string.Format("      edges: {0}\n", t.serializedPolygonalMesh.positionEdges.Length);
+                statistic += string.Format("      edges: {0}\n",  t.serializedPolygonalMesh.positionEdges.Length);
                 statistic += string.Format(" Unity Mesh: \n");
                 statistic += string.Format("     vertices:  {0}\n", t.serializedPolygonalMesh.vertices.Length);
                 statistic += string.Format("     triangles: {0}", t.serializedPolygonalMesh.trianglesCount);
             }
-            lastImportStatistic = string.Format("Last import took {0}ms\n", t.lastImportMS.ToString("F2"));
+            lastImportStatistic =  string.Format("Last import took {0}ms\n", t.lastImportMS.ToString("F2"));
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             PolygonalMeshAsset t = target as PolygonalMeshAsset;
-
+ 
             EditorGUILayout.LabelField(statistic, statisticStyle);
             EditorGUILayout.Space();
 
-            if (importFromObjFoldout.BeginDrawFoldout())
-            {
+            if (importFromObjFoldout.BeginDrawFoldout()) {
 
                 pathButtonContent.text = prp_path.stringValue;
-                if (string.IsNullOrEmpty(pathButtonContent.text))
-                {
+                if (string.IsNullOrEmpty(pathButtonContent.text)) {
                     pathButtonContent.text = "none";
                 }
 
@@ -99,12 +85,10 @@ namespace Linefy
 
                 EditorGUI.BeginChangeCheck();
 
-                if (GUILayout.Button(pathButtonContent))
-                {
+                if (GUILayout.Button(pathButtonContent)) {
                     string dir = EditorPrefs.GetString("Linefy.lastOpenedObjDirectory");
                     string nselect = EditorUtility.OpenFilePanelWithFilters("Select .obj file", dir, new string[2] { "obj", "OBJ" });
-                    if (System.IO.File.Exists(nselect))
-                    {
+                    if (System.IO.File.Exists(nselect)) {
                         EditorPrefs.SetString("Linefy.lastOpenedObjDirectory", new System.IO.FileInfo(nselect).Directory.FullName);
                     }
                     prp_path.stringValue = nselect;
@@ -115,13 +99,11 @@ namespace Linefy
                 flipNormals.DrawGUILayout();
                 smoothingGroupsMode.DrawGUILayout();
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     ApplyChanges(false);
                 }
 
-                if (GUILayout.Button("Import"))
-                {
+                if (GUILayout.Button("Import")) {
                     t.ImportObjLocal();
                     UpdateStatistic();
                     ApplyChanges(true);
@@ -132,31 +114,26 @@ namespace Linefy
 
             importFromObjFoldout.EndDrawFoldout();
         }
-
-        void ApplyChanges(bool databaseChanged)
-        {
+ 
+        void ApplyChanges(bool databaseChanged) {
             PolygonalMeshAsset t = target as PolygonalMeshAsset;
             prp_path.serializedObject.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(t);
-            if (databaseChanged)
-            {
+            if (databaseChanged) {
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 serializedObject.Update();
             }
         }
 
-        public class PolygonalMeshAssetFactory
-        {
+        public class PolygonalMeshAssetFactory {
             [MenuItem("Assets/Create/Linefy/Polygonal Mesh Asset", priority = 202)]
-            public static void MenuCreate()
-            {
+            public static void MenuCreate() {
                 var icon = FindPolygonalMeshAssetIcon();
                 ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<DoCreatePolygonalMeshAsset>(), "New Polygonal Mesh Asset.asset", icon, null);
             }
 
-            public static PolygonalMeshAsset CreateAssetAtPath(string path, int id)
-            {
+            public static PolygonalMeshAsset CreateAssetAtPath(string path, int id) {
                 var polygonalMeshAsset = ScriptableObject.CreateInstance<PolygonalMeshAsset>();
                 polygonalMeshAsset.serializedPolygonalMesh = ScriptableObject.CreateInstance<SerializedPolygonalMesh>();
                 polygonalMeshAsset.serializedPolygonalMesh.name = "Serialized Polygonal Mesh";
@@ -169,53 +146,41 @@ namespace Linefy
             }
         }
 
-        class DoCreatePolygonalMeshAsset : EndNameEditAction
-        {
-            public override void Action(int instanceId, string pathName, string resourceFile)
-            {
+        class DoCreatePolygonalMeshAsset : EndNameEditAction {
+            public override void Action(int instanceId, string pathName, string resourceFile) {
                 PolygonalMeshAsset data = PolygonalMeshAssetFactory.CreateAssetAtPath(pathName, instanceId);
                 ProjectWindowUtil.ShowCreatedAsset(data);
             }
         }
 
-        static Texture2D FindPolygonalMeshAssetIcon()
-        {
+        static Texture2D FindPolygonalMeshAssetIcon() {
             string[] guids = AssetDatabase.FindAssets("LinefyPolygonalMeshIcon");
-            if (guids == null || guids.Length == 0)
-            {
+            if (guids == null || guids.Length == 0) {
                 Debug.LogWarningFormat("Texture LinefyPolygonalMeshIcon not found. Please reinstall Linefy");
                 return null;
             }
             return (Texture2D)AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guids[0]), typeof(Texture2D));
         }
-
-        internal void OnSceneDrag(SceneView sceneView)
-        {
+        
+        internal void OnSceneDrag(SceneView sceneView) {
 
             Event e = Event.current;
             GameObject go = HandleUtility.PickGameObject(e.mousePosition, false);
 
-            if (e.type == EventType.DragUpdated)
-            {
-                if (go)
-                {
+            if (e.type == EventType.DragUpdated) {
+                if (go) {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Link;
-                }
-                else
-                {
+                } else {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
                 }
-
+ 
                 e.Use();
-            }
-            else if (e.type == EventType.DragPerform)
-            {
+            } else if (e.type == EventType.DragPerform) {
                 DragAndDrop.AcceptDrag();
                 e.Use();
 
                 PolygonalMeshRenderer pmRendererComponent = go ? go.GetComponent<PolygonalMeshRenderer>() : null;
-                if (pmRendererComponent == null)
-                {
+                if (pmRendererComponent == null) {
                     Plane floor = new Plane(Vector3.up, Vector3.zero);
                     Ray r = HandleUtility.GUIPointToWorldRay(e.mousePosition);
                     Vector3 pos = r.GetPoint(1);
@@ -223,7 +188,7 @@ namespace Linefy
                     PolygonalMeshAsset t = target as PolygonalMeshAsset;
                     pmRendererComponent = t.InstantiateRenderer(AssetDatabase.GetBuiltinExtraResource<Material>("Default-Diffuse.mat"));
                     Selection.activeGameObject = pmRendererComponent.gameObject;
-                    pmRendererComponent.transform.position = pos;
+                    pmRendererComponent.transform.position = pos; 
                 }
                 pmRendererComponent.polygonalMeshAsset = target as PolygonalMeshAsset;
                 pmRendererComponent.LateUpdate();
@@ -233,17 +198,15 @@ namespace Linefy
 
         }
 
-        protected override void OnHeaderGUI()
-        {
+        protected override void OnHeaderGUI() {
             base.OnHeaderGUI();
-            if (Event.current.type == EventType.Repaint)
-            {
-                Rect r = GUILayoutUtility.GetLastRect();
-                r.position += new Vector2(44, 22);
+            if (Event.current.type == EventType.Repaint) {
+                Rect r =  GUILayoutUtility.GetLastRect();
+                r.position += new Vector2(44,22);
                 GUI.Label(r, "Polygonal Mesh Asset", EditorStyles.miniLabel);
             }
         }
 
-
+ 
     }
 }

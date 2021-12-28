@@ -1,23 +1,19 @@
 ﻿using Linefy.Serialization;
 using UnityEngine;
 
-namespace Linefy
-{
+namespace Linefy {
     /// <summary>
     ///  Base class for Lines, Dots, Polylines
     /// </summary>
-    public abstract class PrimitivesGroup : LinefyDrawcall
-    {
+    public abstract class PrimitivesGroup : LinefyDrawcall {
         int id_widthMultiplier = Shader.PropertyToID("_WidthMultiplier");
         int id_persentOfScreenHeightMode = Shader.PropertyToID("_PersentOfScreenHeightMode");
-
+ 
         /// <summary>
         /// maximum count
         /// </summary>
-        public virtual int maxCount
-        {
-            get
-            {
+        public virtual int maxCount {
+            get {
                 Debug.LogError("not implemeted");
                 return 0;
             }
@@ -34,15 +30,12 @@ namespace Linefy
         /// A lower value saves the GPU performance, but leads to a frequent allocation of memory when the count changing. 
         /// Set CapacityChangeStep = 1 in case of you do not plan to dynamically change the count. 
         /// </summary>
-        public int capacityChangeStep
-        {
-            get
-            {
+        public int capacityChangeStep {
+            get {
                 return _capacityChangeStep;
             }
 
-            set
-            {
+            set {
                 _capacityChangeStep = value;
             }
         }
@@ -50,37 +43,28 @@ namespace Linefy
         /// <summary>
         /// Number of elements
         /// </summary>
-        public virtual int count
-        {
-            get
-            {
+        public virtual int count {
+            get {
                 return _count;
             }
 
-            set
-            {
+            set {
                 int pCount = _count;
                 int nCount = Mathf.Max(0, value);
-                if (nCount > maxCount)
-                {
-                    Debug.LogWarningFormat("The count {0} is limited to the maximum value {1} for {2} ", nCount, maxCount, GetType());
+                if (nCount > maxCount) {
+                    Debug.LogWarningFormat("The count {0} is limited to the maximum value {1} for {2} ", nCount,  maxCount, GetType());
                     nCount = maxCount;
                 }
-                if (nCount != _count)
-                {
+                if (nCount != _count) {
                     _count = nCount;
-                    if (capacityChangeStep <= 0)
-                    {
+                    if (capacityChangeStep <= 0) {
                         float blocks = Mathf.Max(1, _count / (float)16);
-                        capacity = Mathf.Max(capacity, Mathf.CeilToInt(blocks) * 64);
-                    }
-                    else
-                    {
+                        capacity =  Mathf.Max(capacity, Mathf.CeilToInt(blocks) * 64);
+                    } else {
                         float blocks = Mathf.Max(1, _count / (float)capacityChangeStep);
                         capacity = Mathf.CeilToInt(blocks) * capacityChangeStep;
                     }
-                    if (prevCapacity != capacity)
-                    {
+                    if (prevCapacity != capacity) {
                         SetCapacity(prevCapacity);
                         prevCapacity = capacity;
                     }
@@ -89,13 +73,11 @@ namespace Linefy
             }
         }
 
-        protected virtual void SetCapacity(int prevCapacity)
-        {
+        protected virtual void SetCapacity(int prevCapacity) {
             Debug.LogErrorFormat("SetCapacity() not implemented in {0}", GetType());
         }
 
-        protected virtual void SetCount(int prevCount)
-        {
+        protected virtual void SetCount(int prevCount) {
             Debug.LogErrorFormat("SetCount() not implemented in {0}", GetType());
         }
 
@@ -103,17 +85,13 @@ namespace Linefy
         /// <summary>
         /// Width factor. The used measuremnt units are defined by the <see cref="widthMode"/>
         /// </summary>
-        public float widthMultiplier
-        {
-            get
-            {
+        public float widthMultiplier {
+            get {
                 return _widthMultiplier;
             }
 
-            set
-            {
-                if (value != _widthMultiplier)
-                {
+            set {
+                if (value != _widthMultiplier) {
                     _widthMultiplier = value;
                     material.SetFloat(id_widthMultiplier, _widthMultiplier);
                 }
@@ -124,16 +102,12 @@ namespace Linefy
         /// <summary>
         /// Algorithm for calculating the width.
         /// </summary>
-        public WidthMode widthMode
-        {
-            get
-            {
+        public WidthMode widthMode {
+            get {
                 return _widthMode;
             }
-            set
-            {
-                if (value != _widthMode)
-                {
+            set {
+                if (value != _widthMode) {
                     _widthMode = value;
                     ResetMaterial();
                     material.SetFloat(id_persentOfScreenHeightMode, (int)_widthMode == 2 ? 1 : 0);
@@ -142,16 +116,14 @@ namespace Linefy
             }
         }
 
-        protected override void OnAfterMaterialCreated()
-        {
+        protected override void OnAfterMaterialCreated() {
             base.OnAfterMaterialCreated();
             material.SetFloat(id_persentOfScreenHeightMode, (int)_widthMode == 2 ? 1 : 0);
             material.SetFloat(id_widthMultiplier, _widthMultiplier);
         }
 
         [System.Obsolete("SetVisualPropertyBlock is Obsolete , use LoadSerializationData instead")]
-        public override void SetVisualPropertyBlock(VisualPropertiesBlock block)
-        {
+        public override void SetVisualPropertyBlock(VisualPropertiesBlock block) {
             base.SetVisualPropertyBlock(block);
             this.widthMode = block.widthMode;
         }
@@ -159,8 +131,7 @@ namespace Linefy
         /// <summary>
         /// Read and apply PrimitivesGroup data (deserialization)
         /// </summary>
-        public void LoadSerializationData(SerializationData_PrimitivesGroup inputData)
-        {
+        public void LoadSerializationData(SerializationData_PrimitivesGroup inputData) {
             LoadSerializationData((SerializationData_LinefyDrawcall)inputData);
             capacityChangeStep = inputData.capacityChangeStep;
             widthMultiplier = inputData.widthMultiplier;
@@ -170,8 +141,7 @@ namespace Linefy
         /// <summary>
         /// Save PrimitivesGroup data (serialization)
         /// </summary>
-        public void SaveSerializationData(SerializationData_PrimitivesGroup outputData)
-        {
+        public void SaveSerializationData(SerializationData_PrimitivesGroup outputData) {
             SaveSerializationData((SerializationData_LinefyDrawcall)outputData);
             outputData.capacityChangeStep = capacityChangeStep;
             outputData.widthMultiplier = widthMultiplier;

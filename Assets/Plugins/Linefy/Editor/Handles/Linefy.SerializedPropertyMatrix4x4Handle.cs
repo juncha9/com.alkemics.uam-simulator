@@ -1,18 +1,15 @@
-﻿
-using System;
+﻿ 
 using UnityEditor;
 using UnityEngine;
+using System;
 
-namespace Linefy
-{
+namespace Linefy{
 
-    public class SerializedPropertyMatrix4x4Handle : Matrix4x4Handle
-    {
+    public class SerializedPropertyMatrix4x4Handle : Matrix4x4Handle {
         SerializedProperty[] arr;
         public SerializedProperty matrixProperty;
 
-        public SerializedPropertyMatrix4x4Handle(SerializedProperty matrixProperty, int id, Action<int> onDragBegin, Action<int> onDragUpdate, Action<string, int, Matrix4x4> onDragEnd) : base(matrixProperty.name, id, onDragBegin, onDragUpdate, onDragEnd)
-        {
+        public SerializedPropertyMatrix4x4Handle(SerializedProperty matrixProperty, int id, Action<int> onDragBegin, Action<int> onDragUpdate, Action<string, int, Matrix4x4> onDragEnd) :base(matrixProperty.name, id, onDragBegin, onDragUpdate, onDragEnd){
             this.matrixProperty = matrixProperty;
             SerializedProperty m00 = matrixProperty.FindPropertyRelative("e00");
             SerializedProperty m01 = matrixProperty.FindPropertyRelative("e01");
@@ -33,40 +30,33 @@ namespace Linefy
             SerializedProperty m31 = matrixProperty.FindPropertyRelative("e31");
             SerializedProperty m32 = matrixProperty.FindPropertyRelative("e32");
             SerializedProperty m33 = matrixProperty.FindPropertyRelative("e33");
-
+            
             arr = new SerializedProperty[] { m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33 };
         }
-
-        public Matrix4x4 matrix4x4Value
-        {
-            get
-            {
+ 
+        public Matrix4x4 matrix4x4Value {
+            get {
                 Matrix4x4 r = new Matrix4x4();
-                for (int i = 0; i < 16; i++)
-                {
+                for (int i = 0; i < 16; i++) {
                     r[i] = arr[i].floatValue;
                 }
                 return r;
             }
 
-            set
-            {
-                for (int i = 0; i < 16; i++)
-                {
+            set {
+                for (int i = 0; i < 16; i++) {
                     arr[i].floatValue = value[i];
                 }
             }
         }
 
-        public void DrawPropertyHandle(float size, bool active)
-        {
+        public void DrawPropertyHandle(float size, bool active) {
             Matrix4x4 matrix = matrix4x4Value;
-            base.DrawOnSceneGUI(ref matrix, size, active);
+            base.DrawOnSceneGUI( ref matrix, size, active);
             matrix4x4Value = matrix;
         }
 
-        public void DrawPropertyHandle(float size, bool active, bool drawIdLabel, bool drawNameLabel)
-        {
+        public void DrawPropertyHandle(float size, bool active, bool drawIdLabel, bool drawNameLabel) {
             Matrix4x4 matrix = matrix4x4Value;
             base.DrawOnSceneGUI(ref matrix, size, active, drawIdLabel, drawNameLabel);
             matrix4x4Value = matrix;

@@ -1,5 +1,8 @@
-﻿using Linefy;
+﻿
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy;
 
 
 namespace LinefyExamples
@@ -12,7 +15,7 @@ namespace LinefyExamples
         public Texture2D OutlineTexture;
         public string Name;
         public float thicknessMultiplier = 1;
-
+       
         [System.Serializable]
         public struct Type
         {
@@ -64,14 +67,13 @@ namespace LinefyExamples
                 linesConnections.widthMode = WidthMode.PercentOfScreenHeight;
             }
 
-            if (linesConnectionsOutline == null)
-            {
+            if (linesConnectionsOutline == null) {
                 linesConnectionsOutline = new Lines("Line", 0, false, 0);
                 linesConnectionsOutline.widthMode = WidthMode.PercentOfScreenHeight;
             }
-
+        
             linesConnections.count = Connections.Length * 2;
-            linesConnectionsOutline.count = Connections.Length * 2;
+            linesConnectionsOutline.count = Connections.Length *2 ;
             linesConnections.texture = LineTexture;
             linesConnectionsOutline.texture = OutlineTexture;
 
@@ -95,12 +97,10 @@ namespace LinefyExamples
                     linesConnectionsOutline[lineIndexFirst] = l0;
                     linesConnectionsOutline[lineIndexSecond] = l1;
                     linesConnections[lineIndexFirst] = l0;
-                    linesConnections[lineIndexSecond] = l1;
+                    linesConnections[lineIndexSecond] = l1 ;
 
 
-                }
-                else
-                {
+                } else {
                     Line l0 = new Line(posA, center, colA, colA, w, w, 0.55f, 0.95f);
                     Line l1 = new Line(posB, center, colB, colB, w, w, 0.55f, 0.95f);
                     linesConnectionsOutline[lineIndexFirst] = l0;
@@ -123,14 +123,12 @@ namespace LinefyExamples
 
         public void DrawAtoms(Matrix4x4 tm)
         {
-            if (dots == null)
-            {
-                dots = new Dots(0, atlas, false);
+            if (dots == null){
+                dots = new Dots( 0, atlas, false);
                 dots.widthMode = WidthMode.PercentOfScreenHeight;
 
             }
-            if (dotsOutline == null)
-            {
+            if (dotsOutline == null) {
                 dotsOutline = new Dots("Atoms", 0, atlas);
                 dotsOutline.transparent = false;
                 dotsOutline.colorMultiplier = Color.black;
@@ -144,10 +142,10 @@ namespace LinefyExamples
                 Type CurrentType = AtomTypes[TypeIndex];
                 Vector3 Pos = Atoms[i].Pos;
                 float size = 75 * thicknessMultiplier;
-
+                
                 Atoms[i].Name = CurrentType.Name;
                 dots[i] = new Dot(Pos, size, CurrentType.AtlasID, Color.white);
-                dotsOutline[i] = new Dot(Pos, size + 8 * thicknessMultiplier, CurrentType.AtlasID, Color.black);
+                dotsOutline[i] = new Dot(Pos, size+8*thicknessMultiplier, CurrentType.AtlasID, Color.black);
 
             }
 
@@ -157,11 +155,11 @@ namespace LinefyExamples
             dotsOutline.viewOffset = atomsOutlineViewOffset;
             dotsOutline.Draw(tm);
         }
-
+     
 
         private void Update()
         {
-
+            
 
             Matrix4x4 tm = transform.localToWorldMatrix;
             DrawAtoms(tm);

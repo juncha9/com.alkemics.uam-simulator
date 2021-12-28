@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace Linefy
-{
+namespace Linefy {
     [HelpURL("https://polyflow.xyz/content/linefy/documentation/")]
-    public class LinefyReadMeAsset : ScriptableObject
-    {
+    public class LinefyReadMeAsset : ScriptableObject {
         [Header("Press R to enable release view")]
 
         public GUIStyle urlLink;
@@ -34,10 +34,10 @@ namespace Linefy
 
         [Header("GUI Content")]
         public EditorIconContent onSceneGUIEditModeEditablePolyline;
-        public EditorIconContent onSceneGUIEditModeEditableLines;
-        public EditorIconContent onSceneGUIEditModeEditableDots;
-
-        public EditorIconContent drawLabelsToggle;
+		public EditorIconContent onSceneGUIEditModeEditableLines;
+		public EditorIconContent onSceneGUIEditModeEditableDots;
+		
+		public EditorIconContent drawLabelsToggle;
 
     }
 }

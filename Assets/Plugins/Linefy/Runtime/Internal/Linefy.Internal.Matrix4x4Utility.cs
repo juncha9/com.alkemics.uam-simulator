@@ -1,14 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 
-namespace Linefy.Internal
-{
+namespace Linefy.Internal{
 
-    public static class Matrix4x4Utility
-    {
-
-        public static Matrix4x4 Interpolate(Matrix4x4 a, Matrix4x4 b, float t)
-        {
+    public static class Matrix4x4Utility  {
+        
+        public static Matrix4x4 Interpolate(Matrix4x4 a, Matrix4x4 b, float t) {
             Vector3 up = Vector3.LerpUnclamped(a.GetColumn(1), b.GetColumn(1), t);
             Vector3 fwd = Vector3.LerpUnclamped(a.GetColumn(2), b.GetColumn(2), t);
             Vector3 pos = Vector3.LerpUnclamped(a.GetColumn(3), b.GetColumn(3), t);
@@ -24,8 +23,7 @@ namespace Linefy.Internal
         /// </summary>
         /// <param name="tm"></param>
         /// <returns></returns>
-        public static Matrix4x4 OrthonormalUnscaledInverse(this Matrix4x4 tm)
-        {
+        public static Matrix4x4 OrthonormalUnscaledInverse (this Matrix4x4 tm) {
             Matrix4x4 r = tm;
             r.m01 = tm.m10;
             r.m02 = tm.m20;
@@ -57,8 +55,7 @@ namespace Linefy.Internal
         /// <param name="forward"></param>
         /// <param name="upward"></param>
         /// <returns></returns>
-        public static Matrix4x4 UnscaledTRSInverse(Vector3 position, Vector3 forward, Vector3 upward)
-        {
+        public static Matrix4x4 UnscaledTRSInverse(Vector3 position, Vector3 forward, Vector3 upward) {
             Vector3 right = Vector3.Cross(upward, forward);
             Vector3.OrthoNormalize(ref forward, ref upward, ref right);
             Matrix4x4 r = new Matrix4x4();
@@ -97,9 +94,8 @@ namespace Linefy.Internal
         /// <param name="forward"></param>
         /// <param name="upward"></param>
         /// <returns></returns>
-        public static Matrix4x4 UnscaledTRS(Vector3 position, Vector3 forward, Vector3 upward)
-        {
-            Vector3 right = Vector3.Cross(upward, forward);
+        public static Matrix4x4 UnscaledTRS(Vector3 position, Vector3 forward, Vector3 upward) {
+            Vector3 right = Vector3.Cross(  upward, forward);
             Vector3.OrthoNormalize(ref forward, ref upward, ref right);
             Matrix4x4 r = new Matrix4x4();
             r.m00 = right.x;
@@ -121,37 +117,31 @@ namespace Linefy.Internal
             return r;
         }
 
-        public static void Normalize(ref Matrix4x4 tm)
-        {
+        public static void Normalize(ref Matrix4x4 tm) {
             tm.SetColumn(0, ((Vector3)tm.GetColumn(0)).normalized);
             tm.SetColumn(1, ((Vector3)tm.GetColumn(1)).normalized);
             tm.SetColumn(2, ((Vector3)tm.GetColumn(2)).normalized);
         }
 
-        public static Matrix4x4 ToUnscaled(this Matrix4x4 tm)
-        {
+        public static Matrix4x4 ToUnscaled(this Matrix4x4 tm) {
             return UnscaledTRS(tm.GetPosition(), tm.GetColumn(2), tm.GetColumn(1));
         }
 
-        public static Matrix4x4 SetRotation(this Matrix4x4 tm, Quaternion rot)
-        {
+        public static Matrix4x4 SetRotation(this Matrix4x4 tm, Quaternion rot) {
             return Matrix4x4.TRS(tm.GetColumn(3), rot, Vector3.one);
         }
 
-        public static Matrix4x4 SetPosition(this Matrix4x4 tm, Vector3 position)
-        {
+        public static Matrix4x4 SetPosition(this Matrix4x4 tm, Vector3 position) {
             return Matrix4x4.TRS(position, tm.GetRotation(), Vector3.one);
         }
 
-        public static Quaternion GetRotation(this Matrix4x4 tm)
-        {
+        public static Quaternion GetRotation(this Matrix4x4 tm) {
             Vector3 zDir = tm.GetColumn(2);
             Vector3 yDir = tm.GetColumn(1);
             return Quaternion.LookRotation(zDir, yDir);
         }
 
-        public static Vector3 GetPosition(this Matrix4x4 tm)
-        {
+        public static Vector3 GetPosition(this Matrix4x4 tm) {
             return tm.GetColumn(3);
         }
 
@@ -164,8 +154,7 @@ namespace Linefy.Internal
         /// </summary>
         /// <param name="offset">Offset along camera`s Z axis from its near clip plane.</param>
         /// <returns></returns>
-        public static Matrix4x4 NearClipPlaneGUISpaceMatrix(Camera cam, float offset)
-        {
+        public static Matrix4x4 NearClipPlaneGUISpaceMatrix(Camera cam, float offset) {
             Ray rBlue = cam.ViewportPointToRay(new Vector3(0, 1, 0));
             Ray rRed = cam.ViewportPointToRay(new Vector3(1, 1, 0));
             Ray rGreen = cam.ViewportPointToRay(new Vector3(0, 0, 0));
@@ -192,8 +181,7 @@ namespace Linefy.Internal
         /// </summary>
         /// <param name="offset">Offset along camera`s Z axis from its near clip plane.</param>
         /// <returns></returns>
-        public static Matrix4x4 NearClipPlaneScreenSpaceMatrix(Camera camera, float offset)
-        {
+        public static Matrix4x4 NearClipPlaneScreenSpaceMatrix(Camera camera, float offset) {
             Ray rBlue = camera.ViewportPointToRay(new Vector3(0, 0, 0));
             Ray rRed = camera.ViewportPointToRay(new Vector3(1, 0, 0));
             Ray rGreen = camera.ViewportPointToRay(new Vector3(0, 1, 0));
@@ -218,9 +206,8 @@ namespace Linefy.Internal
         /// <summary>
         /// Returns the transformation matrix located on the far clipping plane of camera.  
         /// </summary>
-        /// <returns></returns>
-        public static Matrix4x4 FarClipPlaneViewportMatrix(Camera camera)
-        {
+         /// <returns></returns>
+        public static Matrix4x4 FarClipPlaneViewportMatrix(Camera camera ) {
             Ray rBlue = camera.ViewportPointToRay(new Vector3(0, 0, 0));
             Ray rRed = camera.ViewportPointToRay(new Vector3(1, 0, 0));
             Ray rGreen = camera.ViewportPointToRay(new Vector3(0, 1, 0));
@@ -234,16 +221,15 @@ namespace Linefy.Internal
 
             Vector3 pGreen = Vector3.zero;
             PlaneExtension.RaycastDoublesided(far, rGreen, ref pGreen);
-
-            Vector3 axisRed = (pRed - pC);
-            Vector3 greenAxis = (pGreen - pC);
+ 
+            Vector3 axisRed = (pRed - pC) ;
+            Vector3 greenAxis = (pGreen - pC)  ;
             Vector4 column3 = pC;
             column3.w = 1;
             return new Matrix4x4(axisRed, greenAxis, rBlue.direction, column3);
         }
 
-        public static string GetInfo(this Matrix4x4 tm)
-        {
+        public static string GetInfo(this Matrix4x4 tm) {
             Vector3 pos = tm.GetPosition();
             Vector3 euler = tm.GetRotation().eulerAngles;
             return string.Format("pos:{0} rot:{1}", pos.ToString("F3"), euler.ToString("F0"));

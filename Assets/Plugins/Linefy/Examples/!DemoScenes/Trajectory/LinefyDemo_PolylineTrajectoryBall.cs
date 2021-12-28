@@ -1,13 +1,12 @@
-﻿using Linefy;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy;
 
-namespace LinefyExamples
-{
-    public class LinefyDemo_PolylineTrajectoryBall : MonoBehaviour
-    {
+namespace LinefyExamples {
+    public class LinefyDemo_PolylineTrajectoryBall : MonoBehaviour {
 
-        public enum State
-        {
+        public enum State {
             waitSpawn,
             animation,
             animationFade
@@ -30,8 +29,7 @@ namespace LinefyExamples
         float visibleDistance = 10;
         Dots dots;
 
-        public void OnAfterCreate(int index, LinefyDemo_PolylineTrajectory parent)
-        {
+        public void OnAfterCreate(int index, LinefyDemo_PolylineTrajectory parent) {
             mr = GetComponent<MeshRenderer>();
             mpb = new MaterialPropertyBlock();
             this.parent = parent;
@@ -44,8 +42,7 @@ namespace LinefyExamples
         }
 
 
-        public void Spawn()
-        {
+        public void Spawn() {
             gameObject.SetActive(true);
             disableFadeTimer = 0;
             forceIsAdded = false;
@@ -63,63 +60,48 @@ namespace LinefyExamples
             overallTransparency = 1;
         }
 
-        public void Disable()
-        {
+        public void Disable() {
             pathPolyline.count = 0;
             state = State.waitSpawn;
             rb.isKinematic = true;
             gameObject.SetActive(false);
         }
 
-        public void FixedUpdate()
-        {
-            if (state != State.waitSpawn)
-            {
-                if (forceIsAdded == false)
-                {
+        public void FixedUpdate() {
+            if (state != State.waitSpawn) {
+                if (forceIsAdded == false) {
                     rb.AddForce(Random.insideUnitSphere.normalized * 100f);
                     forceIsAdded = true;
                 }
             }
         }
 
-        public void Update()
-        {
-            if (state == State.animation)
-            {
-                if (transform.position.y < parent.DisableAltitude)
-                {
+        public void Update() {
+            if (state == State.animation) {
+                if (transform.position.y < parent.DisableAltitude) {
                     state = State.animationFade;
                     disableFadeTimer = parent.DisableFadeLength;
                 }
-            }
-            else if (state == State.animationFade)
-            {
+            } else if (state == State.animationFade) {
                 overallTransparency = disableFadeTimer / parent.DisableFadeLength;
                 disableFadeTimer -= Time.deltaTime;
-                if (disableFadeTimer < 0)
-                {
+                if (disableFadeTimer < 0) {
                     Disable();
                 }
             }
 
-            if (state != State.waitSpawn)
-            {
-                if (updateCounter == updateEveryFrame)
-                {
+            if (state != State.waitSpawn) {
+                if (updateCounter == updateEveryFrame) {
                     pathPolyline.AddWithDistance(new PolylineVertex(transform.position, color, parent.trajectoryWidth));
                     updateCounter = 0;
                     float totalPathLength = pathPolyline[pathPolyline.count - 1].textureOffset;
                     float vd = Mathf.Min(visibleDistance, totalPathLength);
-                    for (int i = 0; i < pathPolyline.count; i++)
-                    {
+                    for (int i = 0; i < pathPolyline.count; i++) {
                         float d = pathPolyline.GetDistance(i);
                         float op = (1f - (totalPathLength - d) / vd) * overallTransparency;
                         pathPolyline.SetAlpha(i, op);
                     }
-                }
-                else
-                {
+                } else {
                     updateCounter++;
                 }
                 pathPolyline.Draw();

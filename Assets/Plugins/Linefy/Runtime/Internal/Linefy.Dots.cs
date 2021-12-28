@@ -1,12 +1,10 @@
-﻿using Linefy.Internal;
+﻿using UnityEngine;
+using Linefy.Internal;
 using Linefy.Serialization;
-using UnityEngine;
 
-namespace Linefy
-{
+namespace Linefy {
 
-    public class Dots : PrimitivesGroup
-    {
+    public class Dots : PrimitivesGroup {
 
         Vector3[] mpos;
         Vector3[] mnorm;
@@ -23,8 +21,7 @@ namespace Linefy
         bool uvs2Dirty;
         bool topologyDirty;
 
-        protected override void SetDirtyAttributes()
-        {
+        protected override void SetDirtyAttributes() {
             boundsDirty = true;
             posDirty = true;
             colorsDirty = true;
@@ -44,86 +41,73 @@ namespace Linefy
         /// <summary>
         /// The used DotsAtlas. If null then used default atlas that located in Assets\Plugins\Linefy\Resources\Default DotsAtlas
         /// </summary>
-        public DotsAtlas atlas
-        {
-            get
-            {
+        public DotsAtlas atlas {
+            get {
                 return _atlas;
             }
 
-            set
-            {
-                if (value == null)
-                {
+            set {
+                if (value == null) {
                     value = DotsAtlas.Default;
                     atlasModificationsHash = value.modificationHash - 1;
                 }
 
-                if (_atlas != value)
-                {
+                if (_atlas != value) {
                     _atlas = value;
                     atlasModificationsHash = _atlas.modificationHash - 1;
                 }
 
             }
         }
-
-
+ 
+ 
         Vector3 np0 = new Vector3(-5f, 5f, 1);
         Vector3 np1 = new Vector3(-5f, -5f, 1);
         Vector3 np2 = new Vector3(5f, -5f, 1);
         Vector3 np3 = new Vector3(5f, 5f, 1);
 
         Color whiteColor = Color.white;
-
-        public Dots(SerializationData_Dots data)
-        {
+ 		
+		public Dots(SerializationData_Dots data) {
             //CreateNonSerializedData();
             LoadSerializationData(data);
         }
 
-        public Dots(int count)
-        {
+        public Dots( int count ) {
             atlas = DotsAtlas.Default;
             //CreateNonSerializedData();
             this.count = count;
         }
 
-        public Dots(int count, bool transparent)
-        {
+        public Dots(int count, bool transparent) {
             atlas = DotsAtlas.Default;
             //CreateNonSerializedData();
             this.transparent = transparent;
             this.count = count;
         }
 
-        public Dots(string name, int count, DotsAtlas atlas)
-        {
+        public Dots(string name, int count, DotsAtlas atlas) {
             base.name = name;
             this.atlas = atlas;
             //CreateNonSerializedData();
             this.count = count;
         }
 
-        public Dots(int count, DotsAtlas atlas)
-        {
+        public Dots( int count, DotsAtlas atlas) {
             this.atlas = atlas;
-            // CreateNonSerializedData();
+           // CreateNonSerializedData();
             this.count = count;
         }
 
-        public Dots(int count, DotsAtlas atlas, bool transparent)
-        {
+        public Dots(int count, DotsAtlas atlas, bool transparent) {
             this.atlas = atlas;
             //CreateNonSerializedData();
             this.transparent = transparent;
             this.count = count;
         }
-
-        public override int maxCount
-        {
-            get
-            {
+ 
+        public override int maxCount {
+            get {
 #if UNITY_2017_3_OR_NEWER
                 return 160000;
 #else
@@ -132,16 +116,13 @@ namespace Linefy
             }
         }
 
-        protected override void SetCount(int prevCount)
-        {
-            for (int i = 0; i < capacity; i++)
-            {
+        protected override void SetCount(int prevCount) {
+            for (int i = 0; i< capacity; i++) {
                 SetEnabledUnchecked(i, i < _count);
             }
         }
 
-        protected override void SetCapacity(int _prevCapacity)
-        {
+        protected override void SetCapacity(int _prevCapacity ) {
             int newVertsCapacity = capacity * vertsStride;
             System.Array.Resize(ref mpos, newVertsCapacity);
             System.Array.Resize(ref mnorm, newVertsCapacity);
@@ -152,14 +133,13 @@ namespace Linefy
 
             int newTriangleCapacity = capacity * trisStride;
             System.Array.Resize(ref mtriangles, newTriangleCapacity);
-
-            for (int i = _prevCapacity; i < capacity; i++)
-            {
+    
+            for (int i = _prevCapacity; i< capacity; i++) {
                 int vid0 = i * vertsStride;
-                int vid1 = vid0 + 1;
-                int vid2 = vid0 + 2;
-                int vid3 = vid0 + 3;
-
+                int vid1 = vid0+1;
+                int vid2 = vid0+2;
+                int vid3 = vid0+3;
+ 
                 mnorm[vid0] = np0;
                 mnorm[vid1] = np1;
                 mnorm[vid2] = np2;
@@ -169,7 +149,7 @@ namespace Linefy
                 mcolors[vid1] = whiteColor;
                 mcolors[vid2] = whiteColor;
                 mcolors[vid3] = whiteColor;
-
+ 
                 int toffset = i * trisStride;
                 mtriangles[toffset] = vid0;
                 mtriangles[toffset + 1] = vid1;
@@ -186,16 +166,13 @@ namespace Linefy
         /// <summary>
         /// set the dot visiblity
         /// </summary>
-        public void SetEnabled(int dotIdx, bool enabled)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetEnabled(int dotIdx, bool enabled) {
+            if (validateDotIdx(dotIdx)) {
                 SetEnabledUnchecked(dotIdx, enabled);
             }
         }
 
-        void SetEnabledUnchecked(int dotIdx, bool enabled)
-        {
+        void SetEnabledUnchecked(int dotIdx, bool enabled) {
             int vid0 = dotIdx * vertsStride;
             int vid1 = vid0 + 1;
             int vid2 = vid0 + 2;
@@ -206,68 +183,56 @@ namespace Linefy
             mnorm[vid2].z = w;
             mnorm[vid3].z = w;
             normalsOrWidthDirty = true;
-        }
+         }
 
-        protected override void PreDraw()
-        {
+        protected override void PreDraw() {
             base.PreDraw();
-            if (topologyDirty)
-            {
+            if (topologyDirty) {
                 mesh.Clear();
             }
 
-            if (atlas.modificationHash != atlasModificationsHash)
-            {
-                for (int i = 0; i < count; i++)
-                {
+            if (atlas.modificationHash != atlasModificationsHash) {
+                for (int i = 0; i < count; i++) {
                     SetRectIndex(i, this[i].rectIndex);
                 }
                 atlasModificationsHash = atlas.modificationHash;
             }
-
+  
             texture = atlas.texture;
 
-            if (posDirty)
-            {
+            if (posDirty) {
                 mesh.vertices = mpos;
                 posDirty = false;
                 boundsDirty = true;
             }
 
-            if (colorsDirty)
-            {
+            if (colorsDirty) {
                 mesh.colors = mcolors;
                 colorsDirty = false;
             }
 
-            if (uvsDirty)
-            {
+            if (uvsDirty) {
                 mesh.uv = muvs0;
                 uvsDirty = false;
             }
 
-            if (normalsOrWidthDirty)
-            {
+            if (normalsOrWidthDirty) {
                 mesh.normals = mnorm;
                 normalsOrWidthDirty = false;
             }
 
-            if (uvs2Dirty)
-            {
+            if (uvs2Dirty) {
                 mesh.uv2 = muvs2;
                 uvs2Dirty = false;
             }
 
-            if (topologyDirty)
-            {
+            if (topologyDirty) {
                 mesh.triangles = mtriangles;
                 topologyDirty = false;
             }
 
-            if (boundsDirty)
-            {
-                if (boundSize <= 0)
-                {
+            if (boundsDirty) {
+                if (boundSize <= 0) {
                     mesh.RecalculateBounds();
                     mBounds = mesh.bounds;
                 }
@@ -276,10 +241,8 @@ namespace Linefy
             }
         }
 
-        public void SetPosition(int dotIdx, Vector3 position)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetPosition(int dotIdx, Vector3 position ) {
+            if (validateDotIdx(dotIdx)) {
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
@@ -292,10 +255,8 @@ namespace Linefy
             }
         }
 
-        public void SetPositionAndWidth(int dotIdx, Vector3 position, float width)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetPositionAndWidth(int dotIdx, Vector3 position, float width) {
+            if (validateDotIdx(dotIdx)) {
                 float halfWidth = 0.5f * width;
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
@@ -318,10 +279,8 @@ namespace Linefy
             }
         }
 
-        public void SetWidth(int dotIdx, float width)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetWidth(int dotIdx, float width ) {
+            if (validateDotIdx(dotIdx)) {
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
@@ -331,18 +290,16 @@ namespace Linefy
                 mnorm[vid0].y = halfWidth;
                 mnorm[vid1].x = -halfWidth;
                 mnorm[vid1].y = -halfWidth;
-                mnorm[vid2].x = halfWidth;
-                mnorm[vid2].y = -halfWidth;
+                mnorm[vid2].x =  halfWidth;
+                mnorm[vid2].y =  -halfWidth;
                 mnorm[vid3].x = halfWidth;
                 mnorm[vid3].y = halfWidth;
                 normalsOrWidthDirty = true;
             }
         }
 
-        public void SetSize(int dotIdx, Vector2 size)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetSize(int dotIdx, Vector2 size) {
+            if (validateDotIdx(dotIdx)) {
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
@@ -361,26 +318,22 @@ namespace Linefy
             }
         }
 
-        public void SetPixelOffset(int dotIdx, Vector2 pixelOffset)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetPixelOffset(int dotIdx, Vector2 pixelOffset) {
+            if (validateDotIdx(dotIdx)) {
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
                 int vid3 = vid0 + 3;
-                muvs2[vid0] = pixelOffset;
-                muvs2[vid1] = pixelOffset;
-                muvs2[vid2] = pixelOffset;
-                muvs2[vid3] = pixelOffset;
+                muvs2[vid0]  = pixelOffset;
+                muvs2[vid1]  = pixelOffset;
+                muvs2[vid2]  = pixelOffset;
+                muvs2[vid3]  = pixelOffset;
                 uvs2Dirty = true;
             }
         }
 
-        public void SetColor(int dotIdx, Color color)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetColor(int dotIdx, Color color) {
+            if (validateDotIdx(dotIdx)) {
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
@@ -393,15 +346,12 @@ namespace Linefy
             }
         }
 
-        public Color GetColor(int dotIdx)
-        {
+        public Color GetColor(int dotIdx) {
             return mcolors[dotIdx * 4];
         }
 
-        public void SetRectIndex(int dotIdx, int rectIndex)
-        {
-            if (validateDotIdx(dotIdx))
-            {
+        public void SetRectIndex(int dotIdx, int rectIndex) {
+            if (validateDotIdx(dotIdx)) {
                 int vid0 = dotIdx * 4;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
@@ -416,8 +366,7 @@ namespace Linefy
             }
         }
 
-        public void SetRectIndexUnchecked(int dotIdx, int rectIndex)
-        {
+        public void SetRectIndexUnchecked(int dotIdx, int rectIndex) {
             int vid0 = dotIdx * 4;
             int vid1 = vid0 + 1;
             int vid2 = vid0 + 2;
@@ -431,50 +380,43 @@ namespace Linefy
             uvsDirty = true;
         }
 
-        public Dot this[int dotIdx]
-        {
-            get
-            {
-                if (validateDotIdx(dotIdx))
-                {
+        public Dot this [int dotIdx]{
+            get {
+                if (validateDotIdx(dotIdx)) {
                     Dot result;
                     int ida = dotIdx * 4;
                     result.position = mpos[ida];
                     result.color = mcolors[ida];
                     result.rectIndex = rectIDs[dotIdx];
-
-                    result.size2d = mnorm[ida + 3];
+                    
+                    result.size2d = mnorm[ida+3];
                     result.enabled = mnorm[ida].z == 1;
                     result.offset = muvs2[ida];
                     return result;
-                }
-                else
-                {
+                } else {
                     return new Dot();
                 }
             }
 
-            set
-            {
-                if (validateDotIdx(dotIdx))
-                {
+            set {
+                if (validateDotIdx(dotIdx)) {
                     int vid0 = dotIdx * 4;
                     int vid1 = vid0 + 1;
                     int vid2 = vid0 + 2;
                     int vid3 = vid0 + 3;
-                    float w = value.enabled ? 1 : 0;
+                    float w =   value.enabled?  1 : 0;
                     Vector2 halfSize = value.size2d * 0.5f;
-                    mnorm[vid0] = new Vector3(-halfSize.x, +halfSize.y, w);
-                    mnorm[vid1] = new Vector3(-halfSize.x, -halfSize.y, w);
-                    mnorm[vid2] = new Vector3(halfSize.x, -halfSize.y, w);
-                    mnorm[vid3] = new Vector3(halfSize.x, halfSize.y, w);
+                    mnorm[vid0] = new Vector3( -halfSize.x, +halfSize.y, w);
+                    mnorm[vid1] = new Vector3( -halfSize.x, -halfSize.y, w);
+                    mnorm[vid2] = new Vector3( halfSize.x, -halfSize.y, w);
+                    mnorm[vid3] = new Vector3( halfSize.x, halfSize.y, w);
                     mpos[vid0] = value.position;
                     mpos[vid1] = value.position;
                     mpos[vid2] = value.position;
                     mpos[vid3] = value.position;
                     rectIDs[dotIdx] = value.rectIndex;
-                    DotsAtlas.Rect ri = atlas.rects[MathUtility.RoundedArrayIdx(value.rectIndex, atlas.rects.Length)];
-                    //atlas.rects[ value.rectIndex % atlas.rects.Length ];
+                    DotsAtlas.Rect ri = atlas.rects[ MathUtility.RoundedArrayIdx(value.rectIndex, atlas.rects.Length) ];
+					//atlas.rects[ value.rectIndex % atlas.rects.Length ];
                     muvs0[vid0] = ri.v0;
                     muvs0[vid1] = ri.v1;
                     muvs0[vid2] = ri.v2;
@@ -496,35 +438,27 @@ namespace Linefy
             }
         }
 
-        protected override string opaqueShaderName()
-        {
-            if (widthMode == WidthMode.WorldspaceBillboard)
-            {
+        protected override string opaqueShaderName() {
+            if (widthMode == WidthMode.WorldspaceBillboard) {
                 return "Hidden/Linefy/DotsWorldspaceBillboard";
             }
-            if (widthMode == WidthMode.WorldspaceXY)
-            {
+            if (widthMode == WidthMode.WorldspaceXY) {
                 return "Hidden/Linefy/DotsWorldspaceXY";
             }
-            if (_pixelPerfect)
-            {
+            if (_pixelPerfect) {
                 return "Hidden/Linefy/DotsPixelPerfectBillboard";
             }
             return "Hidden/Linefy/DotsPixelBillboard";
         }
 
-        protected override string transparentShaderName()
-        {
-            if (widthMode == WidthMode.WorldspaceBillboard)
-            {
+        protected override string transparentShaderName() {
+            if (widthMode == WidthMode.WorldspaceBillboard) {
                 return "Hidden/Linefy/DotsTransparentWorldspaceBillboard";
             }
-            if (widthMode == WidthMode.WorldspaceXY)
-            {
+            if (widthMode == WidthMode.WorldspaceXY) {
                 return "Hidden/Linefy/DotsTransparentWorldspaceXY";
             }
-            if (_pixelPerfect)
-            {
+            if (_pixelPerfect) {
                 return "Hidden/Linefy/DotsTransparentPixelPerfectBillboard";
             }
             return "Hidden/Linefy/DotsTransparentPixelBillboard";
@@ -535,17 +469,13 @@ namespace Linefy
         /// <summary>
         /// Enables pixel perfect rendering mode, which ensures that the onscreen size and defined dot size are always the same. Only works for widthMode == PixelsBillboard.
         /// </summary>
-        public bool pixelPerfect
-        {
-            get
-            {
+        public bool pixelPerfect {
+            get {
                 return _pixelPerfect;
             }
 
-            set
-            {
-                if (value != _pixelPerfect)
-                {
+            set {
+                if (value != _pixelPerfect) {
                     _pixelPerfect = value;
                     ResetMaterial();
                 }
@@ -555,15 +485,11 @@ namespace Linefy
         /// <summary>
         /// Reads and apply inputData to this Dots instance (deserialization)
         /// </summary>
-        public void LoadSerializationData(SerializationData_Dots inputData)
-        {
-            if (inputData == null)
-            {
+        public void LoadSerializationData(SerializationData_Dots inputData) {
+            if (inputData == null) {
                 Debug.LogError("Dots.SetSerializableData (inputData)  data == null");
-            }
-            else
-            {
-                base.LoadSerializationData(inputData);
+            } else {
+                base.LoadSerializationData( inputData );
                 atlas = inputData.atlas;
                 texture = atlas.texture;
                 pixelPerfect = inputData.pixelPerfect;
@@ -573,26 +499,20 @@ namespace Linefy
         /// <summary>
         /// Writes the current Dots properties to the outputData (serialization)
         /// </summary>
-        public void SaveSerializationData(SerializationData_Dots outputData)
-        {
-            if (outputData == null)
-            {
+        public void SaveSerializationData(SerializationData_Dots outputData ) {
+            if (outputData == null) {
                 Debug.LogError("Dots.GetSerializableData (outputData)  data == null");
-            }
-            else
-            {
+            } else {
                 base.SaveSerializationData(outputData);
                 outputData.atlas = atlas;
                 outputData.pixelPerfect = pixelPerfect;
             }
         }
 
-        bool validateDotIdx(int dotIdx)
-        {
+        bool validateDotIdx(int dotIdx) {
             bool result = true;
 #if UNITY_EDITOR
-            if (_count == 0 || dotIdx < 0 || dotIdx >= _count)
-            {
+            if (_count == 0 || dotIdx < 0 || dotIdx >= _count) {
                 result = false;
                 Debug.LogWarningFormat("Index {0} is out of range. Dots count {1}", dotIdx, _count);
             }
@@ -600,28 +520,23 @@ namespace Linefy
 #endif
             return result;
         }
-
-        protected override void OnAfterMaterialCreated()
-        {
+ 
+        protected override void OnAfterMaterialCreated() {
             base.OnAfterMaterialCreated();
-
+ 
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
-        {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
             dotsCount += 1;
             totalDotsCount += count;
         }
 
-        public int GetNearestXY(Vector2 point, ref float dist)
-        {
+        public int GetNearestXY(Vector2 point, ref float dist) {
             float minDist = float.MaxValue;
             int result = 0;
-            for (int i = 0; i < _count; i++)
-            {
-                float d = Vector2.Distance(point, mpos[i * vertsStride]);
-                if (d < minDist)
-                {
+            for (int i = 0; i < _count; i++) {
+                float d = Vector2.Distance(point, mpos[i*vertsStride]);
+                if (d < minDist) {
                     result = i;
                     dist = d;
                     minDist = dist;

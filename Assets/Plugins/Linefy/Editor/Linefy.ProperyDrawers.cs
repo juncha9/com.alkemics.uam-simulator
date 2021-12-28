@@ -1,20 +1,18 @@
-﻿using UnityEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using Linefy.Internal;
 
-namespace Linefy
-{
+namespace Linefy {
 
     [CustomPropertyDrawer(typeof(Matrix4x4InspectorAttribute))]
-    public class Matrix4x4PropertyDrawer : PropertyDrawer
-    {
+    public class Matrix4x4PropertyDrawer : PropertyDrawer {
 
         GUIStyle _cellsStyle;
-        GUIStyle cellsStyle
-        {
-            get
-            {
-                if (_cellsStyle == null)
-                {
+        GUIStyle cellsStyle {
+            get {
+                if (_cellsStyle == null) {
                     //Debug.Log("create cell style");
 
                     _cellsStyle = new GUIStyle(EditorStyles.helpBox);
@@ -25,12 +23,9 @@ namespace Linefy
         }
 
         GUIStyle _mprefixStyle;
-        GUIStyle mprefixStyle
-        {
-            get
-            {
-                if (_mprefixStyle == null)
-                {
+        GUIStyle mprefixStyle {
+            get {
+                if (_mprefixStyle == null) {
                     //Debug.Log("create cell style");
 
                     _mprefixStyle = new GUIStyle(EditorStyles.helpBox);
@@ -72,8 +67,7 @@ namespace Linefy
         SerializedProperty m32;
         SerializedProperty m33;
 
-        void FillPropertyesAndMatrix(SerializedProperty property)
-        {
+        void FillPropertyesAndMatrix(SerializedProperty property) {
             so = property.serializedObject;
             m00 = property.FindPropertyRelative("e00");
             m01 = property.FindPropertyRelative("e01");
@@ -118,10 +112,8 @@ namespace Linefy
 
         }
 
-        void DrawValuesGrid(ref Rect position)
-        {
-            if (Event.current.type == EventType.Repaint)
-            {
+        void DrawValuesGrid(ref Rect position) {
+            if (Event.current.type == EventType.Repaint) {
                 float mprefixspace = 13;
                 Rect indentedRect = EditorGUI.IndentedRect(position);
                 Vector2 gridPosition = indentedRect.position;
@@ -132,10 +124,8 @@ namespace Linefy
                 Vector2 cellPositionStep = new Vector2(inspectorWidthSpace / 4, 21);
                 Rect cellRect = new Rect(0, 0, cellPositionStep.x - spacing, cellPositionStep.y - spacing);
 
-                for (int r = 0; r < 4; r++)
-                {
-                    for (int c = 0; c < 4; c++)
-                    {
+                for (int r = 0; r < 4; r++) {
+                    for (int c = 0; c < 4; c++) {
                         cellRect.x = gridPosition.x + c * cellPositionStep.x;
                         cellRect.y = gridPosition.y + r * cellPositionStep.y;
                         string str = string.Format("{0: 0.000;-0.000}", tm[r, c]);
@@ -154,8 +144,7 @@ namespace Linefy
             position.y += valuesGridHeight;
         }
 
-        void ResetPosition()
-        {
+        void ResetPosition() {
             m03.floatValue = 0;
             m13.floatValue = 0;
             m23.floatValue = 0;
@@ -163,8 +152,7 @@ namespace Linefy
             m03.serializedObject.ApplyModifiedProperties();
         }
 
-        void ApplyAxis(Matrix4x4 ntm)
-        {
+        void ApplyAxis(Matrix4x4 ntm) {
             m00.floatValue = ntm.m00;
             m10.floatValue = ntm.m10;
             m20.floatValue = ntm.m20;
@@ -181,8 +169,7 @@ namespace Linefy
             m32.floatValue = 0;
         }
 
-        void ResetEuler()
-        {
+        void ResetEuler() {
             Vector3 _position = tm.GetColumn(3);
             Vector3 _right = tm.GetColumn(0);
             Vector3 _up = tm.GetColumn(1);
@@ -193,8 +180,7 @@ namespace Linefy
             so.ApplyModifiedProperties();
         }
 
-        void ResetScale()
-        {
+        void ResetScale() {
             Vector4 _position = tm.GetColumn(3);
             Vector3 _right = tm.GetColumn(0).normalized;
             Vector3 _up = tm.GetColumn(1).normalized;
@@ -208,8 +194,7 @@ namespace Linefy
             so.ApplyModifiedProperties();
         }
 
-        void ResetToIdentity()
-        {
+        void ResetToIdentity() {
             m00.floatValue = 1;
             m10.floatValue = 0;
             m20.floatValue = 0;
@@ -232,8 +217,7 @@ namespace Linefy
             so.ApplyModifiedProperties();
         }
 
-        void MirrorX()
-        {
+        void MirrorX() {
             m00.floatValue = -m00.floatValue;
             m10.floatValue = -m10.floatValue;
             m20.floatValue = -m20.floatValue;
@@ -241,8 +225,7 @@ namespace Linefy
             so.ApplyModifiedProperties();
         }
 
-        void MirrorY()
-        {
+        void MirrorY() {
             m01.floatValue = -m01.floatValue;
             m11.floatValue = -m11.floatValue;
             m21.floatValue = -m21.floatValue;
@@ -250,8 +233,7 @@ namespace Linefy
             so.ApplyModifiedProperties();
         }
 
-        void MirrorZ()
-        {
+        void MirrorZ() {
             m02.floatValue = -m02.floatValue;
             m12.floatValue = -m12.floatValue;
             m22.floatValue = -m22.floatValue;
@@ -259,8 +241,7 @@ namespace Linefy
             so.ApplyModifiedProperties();
         }
 
-        void DrawInputFields(ref Rect position)
-        {
+        void DrawInputFields(ref Rect position) {
             EditorGUI.BeginChangeCheck();
             EditorGUIUtility.labelWidth = 80;
             EditorGUIUtility.wideMode = true;
@@ -273,8 +254,7 @@ namespace Linefy
             //POS FIELD
 
             Vector3 _nposition = EditorGUI.Vector3Field(fieldRect, "Position", _position);
-            if (_nposition != _position)
-            {
+            if (_nposition != _position) {
                 m03.floatValue = _nposition.x;
                 m13.floatValue = _nposition.y;
                 m23.floatValue = _nposition.z;
@@ -295,25 +275,20 @@ namespace Linefy
             fieldRect.y += (inputFieldlineHeight + inputFieldlineSpacing);
             bool validFwdScale = true;
             bool validUpScale = true;
-            if (Mathf.Approximately(fwd.magnitude, 0))
-            {
+            if (Mathf.Approximately(fwd.magnitude, 0)) {
                 validFwdScale = false;
             }
             Vector3 _prevEuler = Vector3.zero;
             Vector3 _neuler = Vector3.zero;
 
-            if (Mathf.Approximately(up.magnitude, 0))
-            {
+            if (Mathf.Approximately(up.magnitude, 0)) {
                 validUpScale = false;
             }
 
-            if (validFwdScale && validUpScale)
-            {
+            if (validFwdScale && validUpScale) {
                 _prevEuler = Quaternion.LookRotation(fwd, up).eulerAngles;
                 _neuler = EditorGUI.Vector3Field(fieldRect, "Euler", _prevEuler);
-            }
-            else
-            {
+            } else {
                 GUI.Label(fieldRect, "Euler   Extract rotation failed. Matrix has zero length column.");
             }
 
@@ -321,8 +296,7 @@ namespace Linefy
             fieldRect.y += (inputFieldlineHeight + inputFieldlineSpacing);
             Vector3 _nscale = EditorGUI.Vector3Field(fieldRect, "Scale", _prevScale);
 
-            if (_neuler != _prevEuler || _nscale != _prevScale)
-            {
+            if (_neuler != _prevEuler || _nscale != _prevScale) {
                 Matrix4x4 ntm = Matrix4x4.TRS(_nposition, Quaternion.Euler(_neuler), _nscale);
                 m00.floatValue = ntm.m00;
                 m10.floatValue = ntm.m10;
@@ -340,22 +314,18 @@ namespace Linefy
                 m32.floatValue = 0;
             }
 
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 m00.serializedObject.ApplyModifiedProperties();
             }
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             Matrix4x4InspectorAttribute a = attribute as Matrix4x4InspectorAttribute;
             Rect headerRect = new Rect(position.x, position.y, position.width, 18);
             EditorGUI.PropertyField(headerRect, property);
 
-            if (property.isExpanded)
-            {
-                if (Event.current.type == EventType.ContextClick && position.Contains(Event.current.mousePosition))
-                {
+            if (property.isExpanded) {
+                if (Event.current.type == EventType.ContextClick && position.Contains(Event.current.mousePosition)) {
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(new GUIContent("Reset to Identity"), false, ResetToIdentity);
                     menu.AddSeparator("");
@@ -372,30 +342,24 @@ namespace Linefy
 
                 FillPropertyesAndMatrix(property);
 
-                if (a.showValuesGrid)
-                {
+                if (a.showValuesGrid) {
                     DrawValuesGrid(ref position);
                 }
 
-                if (a.showInputFields)
-                {
+                if (a.showInputFields) {
                     DrawInputFields(ref position);
                 }
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             Matrix4x4InspectorAttribute a = attribute as Matrix4x4InspectorAttribute;
             float result = 14;
-            if (property.isExpanded)
-            {
-                if (a.showValuesGrid)
-                {
+            if (property.isExpanded) {
+                if (a.showValuesGrid) {
                     result += valuesGridHeight;
                 }
-                if (a.showInputFields)
-                {
+                if (a.showInputFields) {
                     result += (inputFieldlineHeight + inputFieldlineSpacing) * 3 + inputFieldlineSpacing;
                 }
 
@@ -405,10 +369,8 @@ namespace Linefy
     }
 
     [CustomPropertyDrawer(typeof(PolygonCorner))]
-    public class PolygonCornerDrawer : PropertyDrawer
-    {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+    public class PolygonCornerDrawer : PropertyDrawer {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             label.text = string.Format("  #{0}", label.text.Remove(0, 7));
             EditorGUI.BeginProperty(position, label, property);
             position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
@@ -429,11 +391,11 @@ namespace Linefy
         }
     }
 
-    // [CustomPropertyDrawer(typeof(PolylineVertex))]
-
+   // [CustomPropertyDrawer(typeof(PolylineVertex))]
+    
 
     //public class PolygonxCornerDrawer : PropertyDrawer {
-
+     
 
 
     //    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
@@ -458,10 +420,8 @@ namespace Linefy
     //}
 
     [CustomPropertyDrawer(typeof(InfoStringAttribute))]
-    public class InfoStringDrawer : PropertyDrawer
-    {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+    public class InfoStringDrawer : PropertyDrawer {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             string str = property.stringValue;
             //EditorGUI.BeginProperty(position, label, property);
 
@@ -476,7 +436,7 @@ namespace Linefy
     //    protected GUIContent c_renderOrder = new GUIContent("Render Order", "Determine in which order objects are renderered.");
     //    protected GUIContent c_transparent = new GUIContent("Transparent", "If true will be use the unlit, transparent shader, otherwise the unlit, opaque with alpha clipping.");
     //    protected GUIContent c_colorMultiplier = new GUIContent("Color Multiplier", "The main color. An color of each encapsulated item will multiplied by this color.");
-
+        
     //    protected GUIContent c_widthMode = new GUIContent("Width Mode", "Worldspace: Billboarded orientation, width measured in worldspace units , respects an perspective distortion  \n\n  Pixels: Billboarded orientation, constant width measured in pixels, perspective distortions are ignored.  \n\n  PersentOfScreenHeight: Billboarded orientation, constant width measured in persents of Screen.height , perspective distortions are ignored. ");
 
 
@@ -496,7 +456,7 @@ namespace Linefy
     //        SerializedProperty p = root.FindPropertyRelative(prpname);
     //        float height = EditorGUI.GetPropertyHeight(p, false);
     //        position.height = height;
-
+ 
     //        //Debug.Log(pos);
     //        EditorGUI.PropertyField(position, p, c, false);
 
@@ -511,7 +471,7 @@ namespace Linefy
     //    //public 
 
     //    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-
+            
     //        //string str = property.stringValue;
     //        EditorGUI.BeginProperty(position, label, property);
     //        Rect headerRect = position;
@@ -533,9 +493,9 @@ namespace Linefy
     //            DrawIntendedProperty(property, "capacityChangeStep", "Determines how often the internal arrays capacity will change when count changes. " +
     //            "A lower value saves the GPU performance, but leads to a frequent allocation of memory when the count changing. " +
     //            "Set CapacityChangeStep = 1 in case of you do not plan to dynamically change the count. ", ref r);
-
+ 
     //            DrawIntendedProperty(property, "widthMultiplier", "The main multiplier for the width of all elements. Note that the units of this value are controlled by the widthMode.", ref r);
-
+                 
     //            DrawIntendedProperty(property, "widthMode", c_widthMode, ref r);
     //            //a wrapper  for shader Offset
     //            //viewOffset - shifts all vertices along the direction of the camera view. Useful for preventing z-fight of surfaces.

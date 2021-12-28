@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace Linefy.Internal
-{
+namespace Linefy.Internal {
 
-    public class LinefyLogo : Drawable
-    {
+    public class LinefyLogo : Drawable {
 
         public DVector3Value logoCenter;
         public DFloatValue linesWidths;
@@ -28,15 +28,12 @@ namespace Linefy.Internal
         Color crossColor11 = Color.magenta;
 
         Texture _linesTexture;
-        public Texture linesTexture
-        {
-            get
-            {
+        public Texture linesTexture {
+            get {
                 return _linesTexture;
             }
 
-            set
-            {
+            set {
                 _linesTexture = value;
                 cross.texture = _linesTexture;
                 rombus.texture = _linesTexture;
@@ -48,22 +45,18 @@ namespace Linefy.Internal
         public DVector3Value textOffset;
         public DFloatValue textSize;
         DotsAtlas _font;
-        public DotsAtlas font
-        {
-            get
-            {
+        public DotsAtlas font {
+            get {
                 return _font;
             }
 
-            set
-            {
+            set {
                 _font = value;
                 text.atlas = _font;
             }
         }
 
-        public LinefyLogo()
-        {
+        public LinefyLogo( ) {
             d_positions = new DFlag("positions", true);
             logoCenter = new DVector3Value(new Vector3(-20, 0, 0), d_positions);
             linesWidths = new DFloatValue(1.7f, d_positions);
@@ -95,7 +88,7 @@ namespace Linefy.Internal
             rombusShadow[2] = new PolylineVertex(Vector3.zero, Color.white, 1, 0.72f);
             rombusShadow[3] = new PolylineVertex(Vector3.zero, Color.white, 1, 0.73f);
             rombusShadow.SetTextureOffset(4, 0.74f);
-
+  
             rombusShadow.renderOrder = 0;
 
             cross = new Lines(12);
@@ -111,34 +104,28 @@ namespace Linefy.Internal
             text[0] = new Label("LINEFY", Vector3.zero, Vector2Int.zero);
         }
 
-        public override void DrawNow(Matrix4x4 matrix)
-        {
+        public override void DrawNow(Matrix4x4 matrix) {
             throw new System.NotImplementedException();
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
-        {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
             throw new System.NotImplementedException();
         }
 
-        public override void Draw(Matrix4x4 matrix, Camera cam, int layer)
-        {
+        public override void Draw(Matrix4x4 matrix, Camera cam, int layer) {
             PreDraw();
             rombusShadow.Draw(matrix, cam, layer);
             rombus.Draw(matrix, cam, layer);
             cross.Draw(matrix, cam, layer);
-
+ 
             text.Draw(matrix, cam, layer);
         }
 
-        void PreDraw()
-        {
+        void PreDraw() {
 
-            if (d_positions)
-            {
+            if (d_positions) {
                 Color shadowColor = new Color(0, 0, 0, shadowTransparency);
-                for (int i = 0; i < 4; i++)
-                {
+                for (int i = 0; i < 4; i++) {
                     float _a = i * 0.25f * Mathf.PI * 2;
                     float _x = Mathf.Cos(_a) * rombusRadius;
                     float _y = Mathf.Sin(_a) * rombusRadius;
@@ -201,8 +188,7 @@ namespace Linefy.Internal
             text.size = textSize;
         }
 
-        public override void Dispose()
-        {
+        public override void Dispose() {
             rombus.Dispose();
             rombusShadow.Dispose();
             cross.Dispose();

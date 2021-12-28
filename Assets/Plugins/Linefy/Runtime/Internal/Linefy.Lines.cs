@@ -1,10 +1,11 @@
-﻿using Linefy.Serialization;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy.Internal;
+using Linefy.Serialization;
 
-namespace Linefy
-{
-    public class Lines : LinesBase
-    {
+namespace Linefy {
+    public class Lines : LinesBase {
         int id_autoTextureOffset = Shader.PropertyToID("_AutoTextureOffset");
         Vector3[] mpos;
         Vector3[] mnorm;
@@ -19,10 +20,8 @@ namespace Linefy
         bool topologyIsDirty;
         bool visualTopologyIsDirty;
 
-        public override int maxCount
-        {
-            get
-            {
+        public override int maxCount {
+            get {
 #if UNITY_2017_3_OR_NEWER
                 return 160000;
 #else
@@ -31,8 +30,7 @@ namespace Linefy
             }
         }
 
-        protected override void SetDirtyAttributes()
-        {
+        protected override void SetDirtyAttributes() {
             boundsDirty = true;
             posDirty = true;
             colorsDirty = true;
@@ -44,56 +42,46 @@ namespace Linefy
         const int vertsStride = 4;
         const int trisStride = 6;
 
-        public Lines(int count)
-        {
+        public Lines(int count) {
             InternalConstructor("", count, false, 0);
         }
 
-        public Lines(int count, bool transparent)
-        {
+        public Lines(int count, bool transparent) {
             InternalConstructor("", count, transparent, 1);
         }
 
-        public Lines(string name, int count, bool transparent, float feather)
-        {
+        public Lines(string name, int count, bool transparent, float feather) {
             InternalConstructor(name, count, transparent, feather);
         }
 
-        public Lines(int count, bool transparent, float feather, float widthMult, Color colorMult)
-        {
+        public Lines( int count, bool transparent, float feather, float widthMult, Color colorMult) {
             InternalConstructor(name, count, transparent, feather);
             this.widthMultiplier = widthMult;
             this.colorMultiplier = colorMult;
         }
 
-        public Lines(string name, Line[] lines, bool transparent, float feather)
-        {
+        public Lines(string name, Line[] lines, bool transparent, float feather) {
             InternalConstructor(name, lines.Length, transparent, feather);
-            for (int i = 0; i < lines.Length; i++)
-            {
+            for (int i = 0; i < lines.Length; i++) {
                 this[i] = lines[i];
             }
         }
 
-        public Lines(SerializationData_Lines data)
-        {
+        public Lines(SerializationData_Lines data) {
             LoadSerializationData(data);
         }
 
-        void InternalConstructor(string name, int count, bool transparent, float feather)
-        {
+        void InternalConstructor(string name, int count, bool transparent, float feather) {
             base.name = name;
             base.transparent = transparent;
             this.feather = feather;
             this.count = count;
-            for (int i = 0; i < this.count; i++)
-            {
+            for (int i = 0; i< this.count; i++) {
                 this[i] = new Line(1, Color.white);
             }
         }
 
-        protected override void SetCapacity(int prevCapacity)
-        {
+        protected override void SetCapacity(int prevCapacity) {
 
             int newVerticesLength = capacity * vertsStride;
 
@@ -106,8 +94,7 @@ namespace Linefy
             int newTrianglesLength = capacity * trisStride;
             System.Array.Resize(ref mtriangles, newTrianglesLength);
 
-            for (int i = prevCapacity; i < capacity; i++)
-            {
+            for (int i = prevCapacity; i < capacity; i++) {
                 int vid0 = i * vertsStride;
                 int vid1 = vid0 + 1;
                 int vid2 = vid0 + 2;
@@ -130,78 +117,66 @@ namespace Linefy
             SetDirtyAttributes();
         }
 
-        protected override void SetCount(int prevCount)
-        {
+        protected override void SetCount(int prevCount) {
             int _from = Mathf.Min(prevCount, _count);
             int _to = Mathf.Max(prevCount, _count);
-            _from = Mathf.Clamp(_from - 1, 0, capacity);
-            _to = Mathf.Clamp(_to + 1, 0, capacity);
-
-            for (int i = _from; i < _to; i++)
-            {
+            _from = Mathf.Clamp(_from-1, 0, capacity);
+            _to = Mathf.Clamp(_to+1, 0, capacity);
+ 
+            for (int i = _from; i < _to; i++) {
                 int enabledId = i < _count ? 0 : 1;
-                if (enabledId == 0)
-                {
+                if (enabledId == 0) {
                     this[i] = new Line(1, Color.white);
-                }
-                int vid0 = i * vertsStride;
-                int vid1 = vid0 + 1;
-                int vid2 = vid0 + 2;
-                int vid3 = vid0 + 3;
-                muvs2[vid0].y = enabledId;
-                muvs2[vid1].y = enabledId;
-                muvs2[vid2].y = enabledId;
-                muvs2[vid3].y = enabledId;
+                }  
+                 int vid0 = i * vertsStride;
+                 int vid1 = vid0 + 1;
+                 int vid2 = vid0 + 2;
+                 int vid3 = vid0 + 3;
+                 muvs2[vid0].y = enabledId;
+                 muvs2[vid1].y = enabledId;
+                 muvs2[vid2].y = enabledId;
+                 muvs2[vid3].y = enabledId;
             }
             visualTopologyIsDirty = true;
         }
 
-        protected override void PreDraw()
-        {
+        protected override void PreDraw() {
             base.PreDraw();
 
-            if (topologyIsDirty)
-            {
+            if (topologyIsDirty) {
                 mesh.Clear();
             }
 
-            if (posDirty)
-            {
+            if (posDirty) {
                 mesh.vertices = mpos;
                 mesh.normals = mnorm;
                 posDirty = false;
                 boundsDirty = true;
             }
 
-            if (colorsDirty)
-            {
+            if (colorsDirty) {
                 mesh.colors = mcolors;
                 colorsDirty = false;
             }
 
-            if (widthDirty)
-            {
-                mesh.uv = muvs0;
+            if (widthDirty) {
+                mesh.uv =  muvs0;
                 widthDirty = false;
             }
 
-            if (visualTopologyIsDirty)
-            {
+            if (visualTopologyIsDirty) {
                 mesh.uv2 = muvs2;
                 visualTopologyIsDirty = false;
             }
 
-            if (topologyIsDirty)
-            {
+            if (topologyIsDirty) {
 
                 mesh.triangles = mtriangles;
                 topologyIsDirty = false;
             }
 
-            if (boundsDirty)
-            {
-                if (boundSize <= 0)
-                {
+            if (boundsDirty) {
+                if (boundSize <= 0) {
                     mesh.RecalculateBounds();
                     mBounds = mesh.bounds;
                 }
@@ -213,10 +188,8 @@ namespace Linefy
         /// <summary>
         /// Sets start end positions of line  
         /// </summary>
-        public void SetPosition(int lineIdx, Vector3 positionA, Vector3 positionB)
-        {
-            if (validateLineIdx(lineIdx))
-            {
+        public void SetPosition(int lineIdx, Vector3 positionA, Vector3 positionB) {
+            if (validateLineIdx(lineIdx)) {
                 int ida = lineIdx * vertsStride;
                 int ida0 = ida + 1;
                 int idb = ida + 2;
@@ -236,10 +209,8 @@ namespace Linefy
         /// <summary>
         /// Sets the x texure coordinates offset of line start and end  
         /// </summary>
-        public void SetTextureOffset(int lineIdx, float textureOffsetA, float textureOffsetB)
-        {
-            if (validateLineIdx(lineIdx))
-            {
+        public void SetTextureOffset(int lineIdx, float textureOffsetA, float textureOffsetB) {
+            if (validateLineIdx(lineIdx)) {
                 int ida = lineIdx * vertsStride;
                 int ida0 = ida + 1;
                 int idb = ida + 2;
@@ -255,10 +226,8 @@ namespace Linefy
         /// <summary>
         /// Sets the line color 
         /// </summary>
-        public void SetColor(int lineIdx, Color color)
-        {
-            if (validateLineIdx(lineIdx))
-            {
+        public void SetColor(int lineIdx, Color color) {
+            if (validateLineIdx(lineIdx)) {
                 int ida = lineIdx * vertsStride;
                 int ida0 = ida + 1;
                 int idb = ida + 2;
@@ -274,10 +243,8 @@ namespace Linefy
         /// <summary>
         /// Sets the colors of line start and end  
         /// </summary>
-        public void SetColor(int lineIdx, Color colorA, Color colorB)
-        {
-            if (validateLineIdx(lineIdx))
-            {
+        public void SetColor(int lineIdx, Color colorA, Color colorB) {
+            if (validateLineIdx(lineIdx)) {
                 int ida = lineIdx * vertsStride;
                 int ida0 = ida + 1;
                 int idb = ida + 2;
@@ -290,10 +257,8 @@ namespace Linefy
             }
         }
 
-        public void SetColorAlpha(int lineIdx, float alphaA, float alphaB)
-        {
-            if (validateLineIdx(lineIdx))
-            {
+        public void SetColorAlpha(int lineIdx, float alphaA, float alphaB) {
+            if (validateLineIdx(lineIdx)) {
                 int ida = lineIdx * vertsStride;
                 int ida0 = ida + 1;
                 int idb = ida + 2;
@@ -309,9 +274,8 @@ namespace Linefy
         /// <summary>
         /// Sets the start and end widths of line 
         /// </summary>
-        public void SetWidth(int lineIdx, float widthA, float widthB)
-        {
-            int ida = lineIdx * vertsStride;
+        public void SetWidth(int lineIdx, float widthA, float widthB) {
+             int ida = lineIdx * vertsStride;
             int ida0 = ida + 1;
             int idb = ida + 2;
             int idb0 = ida + 3;
@@ -325,10 +289,8 @@ namespace Linefy
         /// <summary>
         /// Sets the width of line
         /// </summary>
-        public void SetWidth(int lineIdx, float width)
-        {
-            if (validateLineIdx(lineIdx))
-            {
+        public void SetWidth(int lineIdx, float width) {
+            if (validateLineIdx(lineIdx)) {
                 int ida = lineIdx * vertsStride;
                 int ida0 = ida + 1;
                 int idb = ida + 2;
@@ -345,14 +307,11 @@ namespace Linefy
         /// Access the individual Line by index  
         /// </summary>
         /// <param name="lineIdx">index of line</param>
-        public Line this[int lineIdx]
-        {
-            get
-            {
+        public Line this[int lineIdx] {
+            get {
                 Line result = new Line();
-                if (validateLineIdx(lineIdx))
-                {
-
+                if (validateLineIdx(lineIdx)) {
+ 
                     int ida = lineIdx * 4;
                     int idb = ida + 2;
                     result.positionA = mpos[ida];
@@ -367,10 +326,8 @@ namespace Linefy
                 return result;
             }
 
-            set
-            {
-                if (validateLineIdx(lineIdx))
-                {
+            set {
+                if (validateLineIdx(lineIdx)) {
                     int ida = lineIdx * 4;
                     int ida0 = ida + 1;
                     int idb = ida + 2;
@@ -389,8 +346,8 @@ namespace Linefy
                     mcolors[ida0] = value.colorA;
                     mcolors[idb] = value.colorB;
                     mcolors[idb0] = value.colorB;
-                    Vector2 uv0a = new Vector3(value.textureOffsetA, value.widthA);
-                    Vector2 uv0b = new Vector3(value.textureOffsetB, value.widthB);
+                    Vector2 uv0a = new Vector3( value.textureOffsetA, value.widthA );
+                    Vector2 uv0b = new Vector3( value.textureOffsetB, value.widthB );
                     muvs0[ida] = uv0a;
                     muvs0[ida0] = uv0a;
                     muvs0[idb] = uv0b;
@@ -402,52 +359,41 @@ namespace Linefy
             }
         }
 
-        protected override string opaqueShaderName()
-        {
-            if (widthMode == WidthMode.WorldspaceBillboard)
-            {
+        protected override string opaqueShaderName() {
+            if (widthMode == WidthMode.WorldspaceBillboard) { 
                 return "Hidden/Linefy/LinesWorldspaceBillboard";
             }
-            if (widthMode == WidthMode.WorldspaceXY)
-            {
+            if (widthMode == WidthMode.WorldspaceXY) {
                 return "Hidden/Linefy/LinesWorldspaceXY";
             }
             return "Hidden/Linefy/LinesPixelBillboard";
         }
 
-        protected override string transparentShaderName()
-        {
-            if (widthMode == WidthMode.WorldspaceBillboard)
-            {
+        protected override string transparentShaderName() {
+            if (widthMode == WidthMode.WorldspaceBillboard) {
                 return "Hidden/Linefy/LinesTransparentWorldspaceBillboard";
             }
-            if (widthMode == WidthMode.WorldspaceXY)
-            {
+            if (widthMode == WidthMode.WorldspaceXY) {
                 return "Hidden/Linefy/LinesTransparentWorldspaceXY";
             }
             return "Hidden/Linefy/LinesTransparentPixelBillboard";
         }
 
-
-        public override bool autoTextureOffset
-        {
-            get
-            {
+  
+        public override bool autoTextureOffset {
+            get {
                 return _autoTextureOffset;
             }
 
-            set
-            {
-                if (_autoTextureOffset != value)
-                {
+            set {
+                if (_autoTextureOffset != value) {
                     _autoTextureOffset = value;
-                    material.SetFloat(id_autoTextureOffset, _autoTextureOffset ? 1 : 0);
+                    material.SetFloat(id_autoTextureOffset, _autoTextureOffset?1:0);
                 }
             }
         }
 
-        protected override void OnAfterMaterialCreated()
-        {
+        protected override void OnAfterMaterialCreated() {
             base.OnAfterMaterialCreated();
             material.SetFloat(id_autoTextureOffset, _autoTextureOffset ? 1 : 0);
         }
@@ -455,14 +401,10 @@ namespace Linefy
         /// <summary>
         /// Reads and apply inputData to this Lines instance  (deserialization)
         /// </summary>
-        public void LoadSerializationData(SerializationData_Lines inputData)
-        {
-            if (inputData == null)
-            {
+        public void LoadSerializationData(SerializationData_Lines inputData) {
+            if (inputData == null) {
                 Debug.LogError("Lines.SetSerializableData (inputData)  inputData  == null");
-            }
-            else
-            {
+            } else {
                 base.LoadSerializationData(inputData);
                 autoTextureOffset = inputData.autoTextureOffset;
             }
@@ -471,37 +413,30 @@ namespace Linefy
         /// <summary>
         /// Writes the current Lines state to the outputData (serialization)
         /// </summary>
-        public void SaveSerializationData(ref SerializationData_Lines outputData)
-        {
-            if (outputData == null)
-            {
+        public void SaveSerializationData(ref SerializationData_Lines outputData) {
+            if (outputData == null) {
                 Debug.LogError("Lines.GetSerializableData (outputData)  outputData == null");
-            }
-            else
-            {
+            } else {
                 base.SaveSerializationData(outputData);
                 outputData.autoTextureOffset = autoTextureOffset;
             }
         }
 
-        bool validateLineIdx(int vertexIdx)
-        {
-            bool result = true;
+        bool validateLineIdx( int vertexIdx) {
+             bool result = true;
 #if UNITY_EDITOR
-            if (_count == 0 || vertexIdx < 0 || vertexIdx >= _count)
-            {
+            if (_count == 0 || vertexIdx < 0 || vertexIdx >= _count) {
                 result = false;
                 Debug.LogWarningFormat("Index {0} is out of range. Lines count {1}", vertexIdx, _count);
             }
 #endif
             return result;
-
+ 
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
-        {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
             linesCount += 1;
-            totallinesCount += count;
+            totallinesCount += count; 
         }
     }
 }

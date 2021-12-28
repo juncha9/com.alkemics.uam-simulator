@@ -22,6 +22,18 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   RouteDatas:
-  - Key: R_ICNV1
-    VertiPort: ICNV1
-    Ways: []
+  - Key: default
+    Source: ICNV1
+    Destination: JSLV2
+    Ways:
+    - ICNV1_ICN00
+    - ICN00_ICN01
+    - ICN01_ICN02
+    - ICN02_GMP06
+    - GMP06_GMP03
+    - GMP03_GMP04
+    - GMP04_GMP05
+    - GMP05_JSL05
+    - JSL05_JSL06
+    - JSL10_JSL06
+    - JSLV2_JSL10

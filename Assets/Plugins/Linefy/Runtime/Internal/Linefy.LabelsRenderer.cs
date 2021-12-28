@@ -1,33 +1,32 @@
-﻿using Linefy.Internal;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy;
+using System;
+using Linefy.Internal;
 
-namespace Linefy
-{
+namespace Linefy{
 
     /// <summary>
     ///  See <see href="https://polyflow.xyz/content/linefy/documentation-1-1/linefy-documentation.html#LabelsRenderer"/> 
     /// </summary>
-    public class LabelsRenderer : Drawable
-    {
+    public class LabelsRenderer : Drawable {
         DFlag d_background = new DFlag("d_background", true);
         DFlag d_anyText = new DFlag("d_anyText", true);
         DFlag d_anyPixelOffset = new DFlag("d_anyPixelOffset", true);
         DFlag d_anyColors = new DFlag("d_anyColors", true);
         DFlag d_anyPositions = new DFlag("d_anyPositions", true);
-        DIntValue atlasInstanceID;
+        DIntValue  atlasInstanceID;
         DIntValue fontSettingsHash;
         public int itemsModificationId = -1;
         public int propertiesModificationId = -1;
 
-        public UnityEngine.Rendering.CompareFunction zTest
-        {
-            get
-            {
+        public UnityEngine.Rendering.CompareFunction zTest {
+            get {
                 return dots.zTest;
             }
 
-            set
-            {
+            set {
                 dots.zTest = value;
             }
         }
@@ -35,34 +34,27 @@ namespace Linefy
         /// <summary>
         /// Render queue
         /// </summary>
-        public int renderOrder
-        {
-            get
-            {
+        public int renderOrder {
+            get {
                 return dots.renderOrder;
             }
 
-            set
-            {
-                dots.renderOrder = value;
+            set {
+                  dots.renderOrder = value;
             }
         }
-
+ 
         TextAlignment _horizontalAlignment = TextAlignment.Center;
         /// <summary>
         /// The positioning of the text reliative its center
         /// </summary>
-        public TextAlignment horizontalAlignment
-        {
-            get
-            {
+        public TextAlignment horizontalAlignment {
+            get {
                 return _horizontalAlignment;
             }
 
-            set
-            {
-                if (_horizontalAlignment != value)
-                {
+            set {
+                if (_horizontalAlignment != value) {
                     _horizontalAlignment = value;
                     d_anyPixelOffset.Set();
                 }
@@ -74,38 +66,30 @@ namespace Linefy
         /// <summary>
         /// multiplier of all size properties 
         /// </summary>
-        public float size
-        {
-            get
-            {
+        public float size {
+            get {
                 return _sizeMultiplier;
             }
 
-            set
-            {
-                if (_sizeMultiplier != value)
-                {
+            set {
+                if (_sizeMultiplier != value) {
                     d_anyPixelOffset.Set();
                     _sizeMultiplier = value;
                 }
             }
         }
-
+ 
         bool _drawBackground;
         /// <summary>
         /// Displays background rect under text. Background is calculated using 9-grid slice technique. The indices of background rects defines in DotAtlas settings.
         /// </summary>
-        public bool drawBackground
-        {
-            get
-            {
+        public bool drawBackground {
+            get {
                 return _drawBackground;
             }
 
-            set
-            {
-                if (_drawBackground != value)
-                {
+            set {
+                if (_drawBackground != value) {
                     _drawBackground = value;
                     d_anyText.Set();
                     d_background.Set();
@@ -114,17 +98,13 @@ namespace Linefy
         }
 
         Color _textColor = Color.white;
-        public Color textColor
-        {
-            get
-            {
+        public Color textColor {
+            get {
                 return _textColor;
             }
 
-            set
-            {
-                if (_textColor != value)
-                {
+            set {
+                if (_textColor != value) {
                     _textColor = value;
                     d_anyColors.Set();
                 }
@@ -132,17 +112,13 @@ namespace Linefy
         }
 
         Color _backgroundColor = Color.gray;
-        public Color backgroundColor
-        {
-            get
-            {
+        public Color backgroundColor {
+            get {
                 return _backgroundColor;
             }
 
-            set
-            {
-                if (_backgroundColor != value)
-                {
+            set {
+                if (_backgroundColor != value) {
                     _backgroundColor = value;
                     d_anyColors.Set();
                 }
@@ -150,59 +126,47 @@ namespace Linefy
         }
 
         WidthMode _widthMode;
-        public WidthMode widthMode
-        {
-            get
-            {
+        public WidthMode widthMode {
+            get {
                 return _widthMode;
             }
 
-            set
-            {
-                if (value != _widthMode)
-                {
+            set {
+                if (value != _widthMode) {
                     _widthMode = value;
-                    if (_widthMode == WidthMode.WorldspaceBillboard)
-                    {
+                    if (_widthMode == WidthMode.WorldspaceBillboard) {
                         dots.widthMode = WidthMode.PixelsBillboard;
                         return;
                     }
-
+ 
                     dots.widthMode = _widthMode;
                 }
             }
         }
 
-        Vector2 _backgroundExtraSize = new Vector2(0, 0);
+        Vector2 _backgroundExtraSize = new Vector2(0,0);
         /// <summary>
         /// The size to be added to the automatically calculated background size.  
         /// </summary>
-        public Vector2 backgroundExtraSize
-        {
-            get
-            {
+        public Vector2 backgroundExtraSize { 
+            get {
                 return _backgroundExtraSize;
             }
 
-            set
-            {
-                if (_backgroundExtraSize != value)
-                {
+            set {
+                if (_backgroundExtraSize != value) {
                     _backgroundExtraSize = value;
                     d_anyPixelOffset.Set();
                 }
             }
         }
 
-        public bool transparent
-        {
-            get
-            {
+        public bool transparent {
+            get {
                 return dots.transparent;
             }
 
-            set
-            {
+            set {
                 dots.transparent = value;
             }
         }
@@ -210,57 +174,45 @@ namespace Linefy
         /// <summary>
         /// Snaps the position of glyphs to the nearest pixels on the screen so that guarantee exact pixel dimensions of glyphs.
         /// </summary>
-        public bool pixelPerfect
-        {
-            get
-            {
+        public bool pixelPerfect {
+            get {
                 return dots.pixelPerfect;
             }
 
-            set
-            {
+            set {
                 dots.pixelPerfect = value;
             }
         }
 
-        public float fadeAlphaDistanceFrom
-        {
-            get
-            {
+        public float fadeAlphaDistanceFrom {
+            get {
                 return dots.fadeAlphaDistanceFrom;
             }
 
-            set
-            {
-                dots.fadeAlphaDistanceFrom = value;
+            set {
+                  dots.fadeAlphaDistanceFrom = value;
             }
         }
 
-        public float fadeAlphaDistanceTo
-        {
-            get
-            {
+        public float fadeAlphaDistanceTo {
+            get {
                 return dots.fadeAlphaDistanceTo;
             }
 
-            set
-            {
+            set {
                 dots.fadeAlphaDistanceTo = value;
             }
         }
 
-        class label
-        {
+        class label {
 
-            public struct GlyphInfo
-            {
+            public struct GlyphInfo {
                 public int rectIdx;
                 public int dotidx;
                 public Vector2 pixelOffset;
                 public bool isWhitespace;
 
-                public GlyphInfo(int rectIdx, bool isWhitespace)
-                {
+                public GlyphInfo(int rectIdx, bool isWhitespace) {
                     this.rectIdx = rectIdx;
                     this.dotidx = 0;
                     this.pixelOffset = new Vector2();
@@ -277,17 +229,13 @@ namespace Linefy
             public DFlag d_pixelOffset = new DFlag("d_pixelOffset", true);
 
             string _text = string.Empty;
-            public string text
-            {
-                get
-                {
+            public string text {
+                get {
                     return _text;
                 }
 
-                set
-                {
-                    if (value != _text)
-                    {
+                set {
+                    if (value != _text) {
                         d_text.Set();
                         root.d_anyText.Set();
                         _text = value;
@@ -297,17 +245,13 @@ namespace Linefy
             }
 
             Vector3 _position;
-            public Vector3 position
-            {
-                get
-                {
+            public Vector3 position {
+                get {
                     return _position;
                 }
 
-                set
-                {
-                    if (value != _position)
-                    {
+                set {
+                    if (value != _position) {
                         root.d_anyPositions.Set();
                         d_positions.Set();
                         _position = value;
@@ -316,17 +260,13 @@ namespace Linefy
             }
 
             Vector2 _offset;
-            public Vector2 offset
-            {
-                get
-                {
+            public Vector2 offset { 
+                get {
                     return _offset;
                 }
-
-                set
-                {
-                    if (value != _offset)
-                    {
+            
+                set {
+                    if (value != _offset) {
                         _offset = value;
                         d_pixelOffset.Set();
                         root.d_anyPixelOffset.Set();
@@ -335,17 +275,14 @@ namespace Linefy
                 }
             }
 
-            public void ParceText()
-            {
-                if (root._drawBackground)
-                {
-                    if (_text.Length == 0)
-                    {
+            public void ParceText() {
+                if (root._drawBackground) {
+                    if (_text.Length == 0) {
                         System.Array.Resize(ref glyphInfos, 0);
                         return;
                     }
-
-                    System.Array.Resize(ref glyphInfos, _text.Length + 9);
+ 
+                    System.Array.Resize(ref glyphInfos, _text.Length+9);
                     glyphInfos[0] = new GlyphInfo(root.atlas.background9SliseIndices.topLeft, false);
                     glyphInfos[1] = new GlyphInfo(root.atlas.background9SliseIndices.top, false);
                     glyphInfos[2] = new GlyphInfo(root.atlas.background9SliseIndices.topRight, false);
@@ -355,72 +292,57 @@ namespace Linefy
                     glyphInfos[6] = new GlyphInfo(root.atlas.background9SliseIndices.bottomLeft, false);
                     glyphInfos[7] = new GlyphInfo(root.atlas.background9SliseIndices.bottom, false);
                     glyphInfos[8] = new GlyphInfo(root.atlas.background9SliseIndices.bottomRight, false);
-
-                    for (int i = 0; i < _text.Length; i++)
-                    {
+ 
+                    for (int i = 0; i < _text.Length; i++) {
                         int utfPoint = char.ConvertToUtf32(_text, i);
                         glyphInfos[i + 9] = (new GlyphInfo(root.atlas.GetRectByUtf32(utfPoint), utfPoint == 32));
                     }
-                }
-                else
-                {
+                 } else {
                     System.Array.Resize(ref glyphInfos, _text.Length);
-                    for (int i = 0; i < _text.Length; i++)
-                    {
+                    for (int i = 0; i < _text.Length; i++) {
                         int utfPoint = char.ConvertToUtf32(_text, i);
                         glyphInfos[i] = (new GlyphInfo(root.atlas.GetRectByUtf32(utfPoint), utfPoint == 32));
                     }
                 }
             }
 
-            public label(LabelsRenderer root, Vector3 position, string text)
-            {
+            public label(LabelsRenderer root, Vector3 position, string text) {
                 this.root = root;
                 this.position = position;
                 this.text = text;
 
             }
 
-            public void UpdatePixelOffset()
-            {
-                if (_text.Length == 0)
-                {
+            public void UpdatePixelOffset() {
+                if (_text.Length == 0) {
                     return;
                 }
-
-                float _sizeMultiplier = root._sizeMultiplier;
+ 
+                float _sizeMultiplier =  root._sizeMultiplier;
                 float horizontalSpacing = root.atlas.horizontalSpacing * _sizeMultiplier;
                 float whitespaceWidth = root.atlas.whitespaceWidth * _sizeMultiplier;
                 Vector2 scaledPixelSize = (Vector2)root.atlas.rectPixelSize * _sizeMultiplier;
                 Vector2 pixelPosAccum = new Vector2(0, 0);
-
-                if (glyphInfos.Length > 0)
-                {
+ 
+                if (glyphInfos.Length > 0) {
                     pixelPosAccum.x += scaledPixelSize.x / 2;
                 }
 
                 int charsStartIdx = root._drawBackground ? 9 : 0;
 
-                if (root.atlas.monowidth)
-                {
-                    for (int i = charsStartIdx; i < glyphInfos.Length; i++)
-                    {
-                        if (glyphInfos[i].isWhitespace)
-                        {
+                if (root.atlas.monowidth) {
+                    for (int i = charsStartIdx; i < glyphInfos.Length; i++) {
+                        if (glyphInfos[i].isWhitespace) {
                             pixelPosAccum.x += whitespaceWidth;
                             continue;
                         }
-                        glyphInfos[i].pixelOffset = new Vector2(pixelPosAccum.x, pixelPosAccum.y);
+                        glyphInfos[i].pixelOffset = new Vector2(pixelPosAccum.x , pixelPosAccum.y);
                         pixelPosAccum.x += horizontalSpacing;
                     }
                     linePixelWidth = pixelPosAccum.x;
-                }
-                else
-                {
-                    for (int i = charsStartIdx; i < glyphInfos.Length; i++)
-                    {
-                        if (glyphInfos[i].isWhitespace)
-                        {
+                } else {
+                    for (int i = charsStartIdx; i < glyphInfos.Length; i++) {
+                        if (glyphInfos[i].isWhitespace) {
                             pixelPosAccum.x += whitespaceWidth;
                             continue;
                         }
@@ -434,58 +356,48 @@ namespace Linefy
                     linePixelWidth = pixelPosAccum.x - horizontalSpacing - scaledPixelSize.x / 2;
                 }
 
+      
+                float halfLineWidth =  (linePixelWidth / 2f);
 
-                float halfLineWidth = (linePixelWidth / 2f);
-
-                if (root._horizontalAlignment == TextAlignment.Center)
-                {
+                if (root._horizontalAlignment == TextAlignment.Center) {
                     float lineOffset = halfLineWidth;
-                    for (int i = charsStartIdx; i < glyphInfos.Length; i++)
-                    {
+                    for (int i = charsStartIdx; i < glyphInfos.Length; i++) {
                         glyphInfos[i].pixelOffset.x -= lineOffset;
                     }
-                }
-                else if (root._horizontalAlignment == TextAlignment.Right)
-                {
+                } else if (root._horizontalAlignment == TextAlignment.Right) {
                     float lineOffset = linePixelWidth;
-                    for (int i = charsStartIdx; i < glyphInfos.Length; i++)
-                    {
+                    for (int i = charsStartIdx; i < glyphInfos.Length; i++) {
                         glyphInfos[i].pixelOffset.x -= lineOffset;
                     }
                 }
 
-                for (int i = charsStartIdx; i < glyphInfos.Length; i++)
-                {
+                for (int i = charsStartIdx; i < glyphInfos.Length; i++) {
                     int dotIdx = glyphInfos[i].dotidx;
-                    root.dots.SetPixelOffset(glyphInfos[i].dotidx, glyphInfos[i].pixelOffset + offset);
+                    root.dots.SetPixelOffset(glyphInfos[i].dotidx, glyphInfos[i].pixelOffset+offset);
                     root.dots.SetSize(dotIdx, scaledPixelSize);
                 }
 
-                if (root._drawBackground)
-                {
-                    Vector2 centerRectSize = new Vector2(linePixelWidth, scaledPixelSize.y) + root._backgroundExtraSize * _sizeMultiplier;
-                    float x0 = -(centerRectSize.x / 2 + scaledPixelSize.x / 2);
+                if (root._drawBackground) {
+                    Vector2 centerRectSize = new Vector2(linePixelWidth, scaledPixelSize.y) + root._backgroundExtraSize * _sizeMultiplier ;
+                    float x0 = - (centerRectSize.x/2 + scaledPixelSize.x/2 );
                     float x1 = 0;
-                    float x2 = -x0;
+                    float x2 = -x0 ;
                     float y1 = 0;
-                    float y0 = -centerRectSize.y / 2 - scaledPixelSize.y / 2;
+                    float y0 = - centerRectSize.y/2 - scaledPixelSize.y/2;
                     float y2 = -y0;
 
-                    if (root._horizontalAlignment == TextAlignment.Left)
-                    {
+                    if (root._horizontalAlignment == TextAlignment.Left) {
                         x0 += halfLineWidth;
                         x1 += halfLineWidth;
                         x2 += halfLineWidth;
-                    }
-                    else if (root._horizontalAlignment == TextAlignment.Right)
-                    {
+                    } else if (root._horizontalAlignment == TextAlignment.Right) {
                         x0 -= halfLineWidth;
                         x1 -= halfLineWidth;
                         x2 -= halfLineWidth;
                     }
 
                     //0  
-                    root.dots.SetPixelOffset(glyphInfos[0].dotidx, new Vector2(x0, y0) + offset);
+                    root.dots.SetPixelOffset(glyphInfos[0].dotidx, new Vector2(x0,y0)+offset);
                     root.dots.SetSize(glyphInfos[0].dotidx, scaledPixelSize);
 
                     //1 
@@ -519,33 +431,27 @@ namespace Linefy
                     //8  
                     root.dots.SetPixelOffset(glyphInfos[8].dotidx, new Vector2(x2, y2) + offset);
                     root.dots.SetSize(glyphInfos[8].dotidx, scaledPixelSize);
-
+ 
                 }
             }
 
-            public void UpdateRectIndices()
-            {
-                for (int i = 0; i < glyphInfos.Length; i++)
-                {
+            public void UpdateRectIndices() {
+                for (int i = 0; i < glyphInfos.Length; i++) {
                     GlyphInfo info = glyphInfos[i];
                     root.dots.SetRectIndex(info.dotidx, info.rectIdx);
-                    root.dots.SetEnabled(info.dotidx, info.isWhitespace == false);
+                    root.dots.SetEnabled(info.dotidx, info.isWhitespace==false);
                 }
             }
 
-            public void UpdateColors(Color textColor)
-            {
-                for (int i = 0; i < glyphInfos.Length; i++)
-                {
+            public void UpdateColors(Color textColor ) {
+                for (int i = 0; i < glyphInfos.Length; i++) {
                     GlyphInfo info = glyphInfos[i];
                     root.dots.SetColor(info.dotidx, textColor);
                 }
             }
 
-            public void UpdateColors(Color textColor, Color backgroundColor)
-            {
-                if (_text.Length == 0)
-                {
+            public void UpdateColors(Color textColor, Color backgroundColor) {
+                if (_text.Length == 0) {
                     return;
                 }
                 root.dots.SetColor(glyphInfos[0].dotidx, backgroundColor);
@@ -558,22 +464,18 @@ namespace Linefy
                 root.dots.SetColor(glyphInfos[7].dotidx, backgroundColor);
                 root.dots.SetColor(glyphInfos[8].dotidx, backgroundColor);
 
-                for (int i = 9; i < glyphInfos.Length; i++)
-                {
+                for (int i = 9; i < glyphInfos.Length; i++) {
                     GlyphInfo info = glyphInfos[i];
                     root.dots.SetColor(info.dotidx, textColor);
                 }
             }
 
-            public void UpdatePositions()
-            {
-                if (d_positions)
-                {
-                    for (int i = 0; i < glyphInfos.Length; i++)
-                    {
-                        GlyphInfo info = glyphInfos[i];
-                        root.dots.SetPosition(info.dotidx, _position);
-                    }
+            public void UpdatePositions() {
+                if (d_positions) {
+                     for (int i = 0; i < glyphInfos.Length; i++) {
+                         GlyphInfo info = glyphInfos[i];
+                         root.dots.SetPosition(info.dotidx, _position);
+                     }
                     d_positions.Reset();
                 }
             }
@@ -582,39 +484,32 @@ namespace Linefy
         /// <summary>
         /// Font atlas.
         /// </summary>
-        public DotsAtlas atlas
-        {
-            get
-            {
+        public DotsAtlas atlas {
+            get {
                 return dots.atlas;
             }
 
-            set
-            {
-                if (value == null)
-                {
+            set {
+                if (value == null) {
                     value = DotsAtlas.DefaultFont11px;
                 }
                 dots.atlas = value;
             }
         }
-
+ 
         Dots dots;
 
         label[] labels = new label[0];
 
-        public LabelsRenderer(int labelsCount)
-        {
+        public LabelsRenderer( int labelsCount ) {
             InternalCtor(null, labelsCount);
         }
 
-        public LabelsRenderer(DotsAtlas atlas, int labelsCount)
-        {
+        public LabelsRenderer(DotsAtlas atlas, int labelsCount) {
             InternalCtor(atlas, labelsCount);
         }
 
-        void InternalCtor(DotsAtlas atlas, int labelsCount)
-        {
+        void InternalCtor(DotsAtlas atlas, int labelsCount) {
             dots = new Dots(16);
             dots.capacityChangeStep = 8;
             dots.widthMode = WidthMode.PixelsBillboard;
@@ -630,22 +525,17 @@ namespace Linefy
         /// <summary>
         /// Labels count
         /// </summary>
-        public int count
-        {
-            get
-            {
+        public int count {
+            get {
                 return labels == null ? 0 : labels.Length;
             }
 
-            set
-            {
+            set {
                 value = Mathf.Max(0, value);
                 int prevCount = labels == null ? 0 : labels.Length;
-                if (prevCount != value)
-                {
+                if (prevCount != value) {
                     System.Array.Resize(ref labels, value);
-                    for (int i = prevCount; i < value; i++)
-                    {
+                    for (int i = prevCount; i < value; i++) {
                         labels[i] = new label(this, Vector3.zero, string.Empty);
                     }
                     d_anyText.Set();
@@ -653,26 +543,19 @@ namespace Linefy
             }
         }
 
-        public Label this[int idx]
-        {
-
-            get
-            {
-                if (validateLabelIdx(idx))
-                {
+        public Label this [int idx] {
+        
+            get {
+                if (validateLabelIdx(idx)) {
                     label l = labels[idx];
                     return new Label(l.text, l.position, l.offset);
-                }
-                else
-                {
+                } else {
                     return new Label();
                 }
             }
 
-            set
-            {
-                if (validateLabelIdx(idx))
-                {
+            set {
+                if (validateLabelIdx(idx)) {
                     label l = labels[idx];
                     l.position = value.position;
                     l.text = value.text;
@@ -681,36 +564,28 @@ namespace Linefy
             }
         }
 
-        public void SetPosition(int idx, Vector3 position)
-        {
-            if (validateLabelIdx(idx))
-            {
+        public void SetPosition(int idx, Vector3 position) {
+            if (validateLabelIdx(idx)) {
                 labels[idx].position = position;
             }
         }
 
-        public void SetText(int idx, string text)
-        {
-            if (validateLabelIdx(idx))
-            {
+        public void SetText(int idx, string text) {
+            if (validateLabelIdx(idx)) {
                 labels[idx].text = text;
             }
         }
 
-        public void SetOffset(int idx, Vector2 offset)
-        {
-            if (validateLabelIdx(idx))
-            {
+        public void SetOffset(int idx, Vector2 offset) {
+            if (validateLabelIdx(idx)) {
                 labels[idx].offset = offset;
             }
         }
 
-        bool validateLabelIdx(int idx)
-        {
+        bool validateLabelIdx(int idx) {
             bool result = true;
 #if UNITY_EDITOR
-            if (labels.Length == 0 || idx < 0 || idx >= labels.Length)
-            {
+            if (labels.Length == 0 || idx < 0 || idx >= labels.Length) {
                 result = false;
                 Debug.LogWarningFormat("labelIdx {0} is out of range. Labels count {1}", idx, labels.Length);
             }
@@ -719,54 +594,45 @@ namespace Linefy
 
         }
 
-        public override void DrawNow(Matrix4x4 matrix)
-        {
+        public override void DrawNow(Matrix4x4 matrix) {
             PreDraw();
             dots.DrawNow(matrix);
         }
 
-        public override void Draw(Matrix4x4 matrix, Camera cam, int layer)
-        {
+        public override void Draw(Matrix4x4 matrix, Camera cam, int layer) {
             PreDraw();
             dots.Draw(matrix, cam, layer);
         }
 
-        void PreDraw()
-        {
-
+        void PreDraw() {
+         
             fontSettingsHash.SetValue(atlas.fontSettingsHash);
             atlasInstanceID.SetValue(atlas.GetInstanceID());
-
-            if (d_background)
-            {
-                foreach (label label in labels)
-                {
+ 
+            if (d_background) {
+                foreach (label label in labels) {
                     label.d_text.Set();
                 }
                 d_background.Reset();
             }
 
-            if (d_anyText)
-            {
+            if (d_anyText) {
                 d_anyColors.Set();
                 d_anyPixelOffset.Set();
                 d_anyPositions.Set();
 
                 int totalCharctersCounter = 0;
-                foreach (label label in labels)
-                {
+                foreach (label label in labels) {
                     label.ParceText();
                     label.d_positions.Set();
-                    for (int c = 0; c < label.glyphInfos.Length; c++)
-                    {
+                    for (int c = 0; c < label.glyphInfos.Length; c++) {
                         label.glyphInfos[c].dotidx = totalCharctersCounter;
                         totalCharctersCounter++;
                     }
                 }
 
                 dots.count = totalCharctersCounter;
-                foreach (label label in labels)
-                {
+                foreach (label label in labels) {
                     label.UpdateRectIndices();
                     label.d_text.Reset();
                 }
@@ -774,57 +640,43 @@ namespace Linefy
                 d_anyText.Reset();
             }
 
-            if (d_anyPositions)
-            {
-                foreach (label label in labels)
-                {
+            if (d_anyPositions) {
+                foreach (label label in labels) {
                     label.UpdatePositions();
                 }
                 d_anyPositions.Reset();
             }
 
-            if (d_anyPixelOffset)
-            {
-                foreach (label label in labels)
-                {
+            if (d_anyPixelOffset) {
+                foreach (label label in labels) {
                     label.UpdatePixelOffset();
                 }
                 d_anyPixelOffset.Reset();
             }
 
-            if (d_anyColors)
-            {
-                if (_drawBackground)
-                {
-                    foreach (label label in labels)
-                    {
+            if (d_anyColors) {
+                if (_drawBackground) {
+                    foreach (label label in labels) {
                         label.UpdateColors(_textColor, _backgroundColor);
                     }
-                }
-                else
-                {
-                    foreach (label label in labels)
-                    {
+                } else {
+                    foreach (label label in labels) {
                         label.UpdateColors(_textColor);
                     }
                 }
 
                 d_anyColors.Reset();
             }
-        }
+         }
 
-        public override void Dispose()
-        {
-            if (dots != null)
-            {
+        public override void Dispose() {
+            if (dots != null) {
                 dots.Dispose();
             }
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
-        {
-            if (dots != null)
-            {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
+            if (dots != null) {
                 dotsCount += 1;
                 totalDotsCount += dots.count;
             }

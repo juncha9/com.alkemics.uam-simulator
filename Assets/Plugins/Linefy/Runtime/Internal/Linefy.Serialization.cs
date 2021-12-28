@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
+ 
 
-
-namespace Linefy.Serialization
-{
+namespace Linefy.Serialization {
     [System.Serializable]
-    public class SerializationData_LinefyDrawcall
-    {
+    public class SerializationData_LinefyDrawcall {
         [HideInInspector]
         public string name;
 
@@ -14,7 +12,7 @@ namespace Linefy.Serialization
 
         [Tooltip("Render queue of material.")]
         public int renderOrder;
-
+ 
         [Tooltip("Sets opaque or transparent material. When off, an opaque material with alpha clipping is used. Note that transparent mode may affects on object sorting. ")]
         public bool transparent = false;
 
@@ -32,15 +30,14 @@ namespace Linefy.Serialization
 
         [Tooltip("The distance to camera which transparency fading start / end")]
         public RangeFloat fadeAlphaDistance = new RangeFloat(10000, 10001);
-
+ 
         [Tooltip("How should depth testing be performed. An wrapper for shader ZTest state")]
         public UnityEngine.Rendering.CompareFunction zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
 
     }
 
     [System.Serializable]
-    public class SerializationData_PrimitivesGroup : SerializationData_LinefyDrawcall
-    {
+    public class SerializationData_PrimitivesGroup : SerializationData_LinefyDrawcall {
         [HideInInspector]
         public int capacityChangeStep = 4;
 
@@ -52,8 +49,7 @@ namespace Linefy.Serialization
     }
 
     [System.Serializable]
-    public class SerializationData_LinesBase : SerializationData_PrimitivesGroup
-    {
+    public class SerializationData_LinesBase : SerializationData_PrimitivesGroup {
         [Tooltip("The smoothness of the edges.  Works only when transparent material is on. This value defines the distance the color.alpha decays from the edge of the line. Can be used to draw  anti-aliased lines. When used widthMode: PixelsBillboard, WorldspaceBillboard, PercentOfScreenHeight is measured with onscreen pixels. When used  widthMode: WorldspaceXY -  in world units.")]
         public float feather = 2;
 
@@ -67,66 +63,58 @@ namespace Linefy.Serialization
         public bool autoTextureOffset;
 
 
-        public SerializationData_LinesBase(float width, Color color, float feather)
-        {
+        public SerializationData_LinesBase(float width, Color color, float feather) {
             this.widthMultiplier = width;
             this.colorMultiplier = color;
             this.feather = feather;
             this.transparent = true;
         }
 
-        public SerializationData_LinesBase()
-        {
+        public SerializationData_LinesBase() {
         }
     }
-
+ 
     /// <summary>
     /// Serialized representation of the Lines properties (except the lines array data)
     /// </summary>
     [System.Serializable]
-    public class SerializationData_Lines : SerializationData_LinesBase
-    {
+    public class SerializationData_Lines : SerializationData_LinesBase {
+ 
 
-
-        public SerializationData_Lines()
-        {
-            name = "new Lines";
+        public SerializationData_Lines() { 
+		    name = "new Lines";
             transparent = true;
             feather = 2;
             widthMultiplier = 20;
-        }
+		}
 
-        public SerializationData_Lines(float widthMultiplier, Color color, float feather)
-        {
+        public SerializationData_Lines(float widthMultiplier, Color color, float feather ) {
             this.widthMultiplier = widthMultiplier;
             this.colorMultiplier = color;
             this.feather = feather;
             this.transparent = true;
         }
 
-        public SerializationData_Lines(float widthMultiplier, Color color)
-        {
+        public SerializationData_Lines(float widthMultiplier, Color color ) {
             this.widthMultiplier = widthMultiplier;
             this.colorMultiplier = color;
             this.transparent = false;
         }
     }
-
+ 
 
     /// <summary>
     /// Serialized representation of the Polyline properties 
     /// </summary>
     [System.Serializable]
-    public class SerializationData_Polyline : SerializationData_LinesBase
-    {
-
+    public class SerializationData_Polyline : SerializationData_LinesBase {
+         
         [Tooltip("If enabled,  connects first and last vertex. ")]
         public bool isClosed = false;
         [Tooltip("The texture offset of the last virtual vertex when the polyline is closed.")]
         public float lastVertexTextureOffset = 1;
 
-        public SerializationData_Polyline()
-        {
+        public SerializationData_Polyline() {
             name = "new Polyline";
             transparent = true;
             feather = 2;
@@ -134,8 +122,7 @@ namespace Linefy.Serialization
             isClosed = true;
         }
 
-        public SerializationData_Polyline(float width, Color color, float feather, bool isClosed)
-        {
+        public SerializationData_Polyline(float width, Color color, float feather, bool isClosed) {
             name = "new Polyline";
             transparent = true;
             this.feather = feather;
@@ -144,8 +131,7 @@ namespace Linefy.Serialization
             this.isClosed = isClosed;
         }
 
-        public SerializationData_Polyline(float lastVertexTextureOffset)
-        {
+        public SerializationData_Polyline(float lastVertexTextureOffset) {
             name = "new Polyline";
             transparent = true;
             feather = 2;
@@ -154,35 +140,32 @@ namespace Linefy.Serialization
             isClosed = true;
         }
     }
-
+ 
     /// <summary>
     /// Serialized representation of the Dots propertyes  
     /// </summary>
     [System.Serializable]
-    public class SerializationData_Dots : SerializationData_PrimitivesGroup
-    {
+    public class SerializationData_Dots : SerializationData_PrimitivesGroup {
         [Tooltip("Enables  pixel perfect rendering mode, which ensures that the screen pixel size and defined dot size are always the same. Only works for widthMode == PixelsBillboard.")]
         public bool pixelPerfect;
 
         [Tooltip("The used DotsAtlas. If null then used default atlas that located in Assets/Plugins/Linefy/Resources/Default DotsAtlas")]
         public DotsAtlas atlas;
-
-        public SerializationData_Dots()
-        {
-            name = "new Dots";
+		
+		public SerializationData_Dots(){
+			name = "new Dots";
             widthMultiplier = 64;
             transparent = true;
-        }
+		}
     }
-
+ 
     /// <summary>
     /// serialized representation of the PolygonalMesh properties
     /// </summary>
     [System.Serializable]
-    public class SerializationData_PolygonalMeshProperties : SerializationData_LinefyDrawcall
-    {
+    public class SerializationData_PolygonalMeshProperties : SerializationData_LinefyDrawcall {
         [Tooltip("Ambient lighting of internal material.  0 = backface is black   1  = backface equals main color ( unlit shading )")]
-        [Range(0, 1)]
+        [Range(0,1)]
         public float ambient = 1;
 
         [Tooltip("Defines recalculation algorithm of mesh lighting data (normals and tangens).")]
@@ -195,13 +178,12 @@ namespace Linefy.Serialization
         public NormalsRecalculationMode normalsRecalculationMode = NormalsRecalculationMode.Unweighted;
 
         [Tooltip("Texture transform. xy = scale zw = offset ")]
-        public Vector4 textureTransform = new Vector4(1, 1, 0, 0);
+        public Vector4 textureTransform = new Vector4(1,1,0,0);
 
         [Tooltip("Doublesided render mode of internal meaterial")]
         public bool doublesided = true;
 
-        public SerializationData_PolygonalMeshProperties()
-        {
+        public SerializationData_PolygonalMeshProperties() {
             boundsSize = -1;
         }
     }

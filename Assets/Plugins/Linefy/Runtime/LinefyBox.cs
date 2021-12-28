@@ -1,24 +1,20 @@
-﻿using Linefy.Serialization;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy.Serialization;
 
-namespace Linefy.Primitives
-{
-
-    public class Box : Drawable
-    {
+namespace Linefy.Primitives {
+    
+    public class Box : Drawable {
 
         float _width = 1;
-        public float width
-        {
-            get
-            {
+        public float width {
+            get {
                 return _width;
             }
 
-            set
-            {
-                if (_width != value)
-                {
+            set {
+                if (_width != value) {
                     _width = value;
                     dSize = true;
                 }
@@ -26,17 +22,13 @@ namespace Linefy.Primitives
         }
 
         float _height = 1;
-        public float height
-        {
-            get
-            {
+        public float height {
+            get {
                 return _height;
             }
 
-            set
-            {
-                if (_height != value)
-                {
+            set {
+                if (_height != value) {
                     _height = value;
                     dSize = true;
                 }
@@ -44,17 +36,13 @@ namespace Linefy.Primitives
         }
 
         float _length = 1;
-        public float length
-        {
-            get
-            {
-                return _length;
+        public float length {
+            get {
+                return _length; 
             }
 
-            set
-            {
-                if (_length != value)
-                {
+            set {
+                if (_length != value) {
                     _length = value;
                     dSize = true;
                 }
@@ -62,18 +50,14 @@ namespace Linefy.Primitives
         }
 
         int _widthSegments = 1;
-        public int widthSegments
-        {
-            get
-            {
+        public int widthSegments {
+            get {
                 return _widthSegments;
             }
 
-            set
-            {
+            set {
                 value = Mathf.Max(value, 1);
-                if (_widthSegments != value)
-                {
+                if (_widthSegments != value) {
                     _widthSegments = value;
                     dTopology = true;
                 }
@@ -81,18 +65,14 @@ namespace Linefy.Primitives
         }
 
         int _heightSegments = 1;
-        public int heightSegments
-        {
-            get
-            {
+        public int heightSegments {
+            get {
                 return _heightSegments;
             }
 
-            set
-            {
+            set {
                 value = Mathf.Max(value, 1);
-                if (_heightSegments != value)
-                {
+                if (_heightSegments != value) {
                     _heightSegments = value;
                     dTopology = true;
                 }
@@ -100,18 +80,14 @@ namespace Linefy.Primitives
         }
 
         int _lengthSegments = 1;
-        public int lengthSegments
-        {
-            get
-            {
+        public int lengthSegments {
+            get {
                 return _lengthSegments;
             }
 
-            set
-            {
+            set {
                 value = Mathf.Max(value, 1);
-                if (_lengthSegments != value)
-                {
+                if (_lengthSegments != value) {
                     _lengthSegments = value;
                     dTopology = true;
                 }
@@ -120,12 +96,11 @@ namespace Linefy.Primitives
 
         bool dTopology = true;
         bool dSize = true;
-
+ 
         Lines wireframe;
         public SerializationData_LinesBase wireframeProperties = new SerializationData_LinesBase(3, Color.white, 1);
 
-        public Box(float width, float height, float length, int widthSegments, int heightSegments, int lengthSegments, SerializationData_LinesBase wireframeProperties)
-        {
+        public Box(float width, float height, float length,  int widthSegments, int heightSegments, int lengthSegments, SerializationData_LinesBase wireframeProperties) {
             _width = width;
             _height = height;
             _length = length;
@@ -135,8 +110,7 @@ namespace Linefy.Primitives
             this.wireframeProperties = wireframeProperties;
         }
 
-        public Box(float width, float height, float length, int widthSegments, int heightSegments, int lengthSegments)
-        {
+        public Box(float width, float height, float length, int widthSegments, int heightSegments, int lengthSegments ) {
             _width = width;
             _height = height;
             _length = length;
@@ -145,46 +119,39 @@ namespace Linefy.Primitives
             _lengthSegments = lengthSegments;
         }
 
-        public Box(float size, Color color)
-        {
+        public Box(float size, Color color) { 
             _width = size;
             _height = size;
             _length = size;
-            this.wireframeProperties.colorMultiplier = color;
+			this.wireframeProperties.colorMultiplier = color;
         }
+		
+		public Box() { 
+ 
+		}
 
-        public Box()
-        {
-
-        }
-
-        void PreDraw()
-        {
-            if (wireframe == null)
-            {
+        void PreDraw() {
+            if (wireframe == null) {
                 wireframe = new Lines(1);
                 wireframe.capacityChangeStep = 8;
             }
 
-            if (dTopology)
-            {
+            if (dTopology) {
                 int linesCount = (_heightSegments + 1) * 4;
                 linesCount += (_widthSegments - 1) * 4;
                 linesCount += (_lengthSegments - 1) * 4;
                 linesCount += 4;
 
                 wireframe.count = linesCount;
-                for (int i = 0; i < linesCount; i++)
-                {
-                    wireframe.SetTextureOffset(i, 0, 0);
+                for (int i = 0; i < linesCount; i++) {
+                    wireframe.SetTextureOffset(i, 0,0);
                 }
 
                 dTopology = false;
                 dSize = true;
             }
 
-            if (dSize)
-            {
+            if (dSize) {
                 float xPosMin = -width / 2f;
                 float zPosMin = -length / 2f;
                 float yPosMin = -height / 2f;
@@ -198,8 +165,7 @@ namespace Linefy.Primitives
                 float yStep = height / heightSegments;
 
                 int linesCounter = 0;
-                for (int y = 0; y <= heightSegments; y++)
-                {
+                for (int y = 0; y <= heightSegments; y++) {
                     float yPos = yPosMin + y * yStep;
                     Vector3 c0 = new Vector3(xPosMin, yPos, zPosMin);
                     Vector3 c1 = new Vector3(xPosMin, yPos, zPosMax);
@@ -215,8 +181,7 @@ namespace Linefy.Primitives
                     linesCounter++;
                 }
 
-                for (int x = 1; x < widthSegments; x++)
-                {
+                for (int x = 1; x < widthSegments; x++) {
                     float xPos = xPosMin + x * xStep;
                     Vector3 c0 = new Vector3(xPos, yPosMin, zPosMin);
                     Vector3 c1 = new Vector3(xPos, yPosMin, zPosMax);
@@ -232,8 +197,7 @@ namespace Linefy.Primitives
                     linesCounter++;
                 }
 
-                for (int z = 1; z < lengthSegments; z++)
-                {
+                for (int z = 1; z < lengthSegments; z++) {
                     float zPos = zPosMin + z * zStep;
                     Vector3 c0 = new Vector3(xPosMin, yPosMin, zPos);
                     Vector3 c1 = new Vector3(xPosMin, yPosMax, zPos);
@@ -267,39 +231,32 @@ namespace Linefy.Primitives
 
         }
 
-        public override void DrawNow(Matrix4x4 matrix)
-        {
+        public override void DrawNow(Matrix4x4 matrix) {
             PreDraw();
             wireframe.DrawNow(matrix);
         }
 
-        public override void Draw(Matrix4x4 tm, Camera cam, int layer)
-        {
+        public override void Draw(Matrix4x4 tm, Camera cam, int layer) {
             PreDraw();
             wireframe.Draw(tm, cam, layer);
         }
 
-        public override void Dispose()
-        {
-            if (wireframe != null)
-            {
+        public override void Dispose() {
+            if (wireframe != null) {
                 wireframe.Dispose();
             }
         }
 
-        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount)
-        {
-            if (wireframe != null)
-            {
+        public override void GetStatistic(ref int linesCount, ref int totallinesCount, ref int dotsCount, ref int totalDotsCount, ref int polylinesCount, ref int totalPolylineVerticesCount) {
+            if (wireframe != null) {
                 linesCount += 1;
                 totallinesCount += wireframe.count;
             }
         }
-    }
+    }    
 
     [ExecuteInEditMode]
-    public class LinefyBox : DrawableComponent
-    {
+    public class LinefyBox : DrawableComponent {
 
         public float width = 1;
         public float height = 1;
@@ -315,20 +272,16 @@ namespace Linefy.Primitives
         public SerializationData_LinesBase wireframeProperties = new SerializationData_LinesBase(3, Color.white, 1);
 
         Box _box;
-        Box box
-        {
-            get
-            {
-                if (_box == null)
-                {
+        Box box {
+            get {
+                if (_box == null) { 
                     _box = new Box(width, height, length, widthSegments, heightSegments, lengthSegments, wireframeProperties);
                 }
                 return _box;
             }
         }
-
-        protected override void PreDraw()
-        {
+ 
+        protected override void PreDraw() {
             box.width = width;
             box.height = height;
             box.length = length;
@@ -338,16 +291,13 @@ namespace Linefy.Primitives
             box.wireframeProperties = wireframeProperties;
         }
 
-        public override Drawable drawable
-        {
-            get
-            {
-                return box;
-            }
-        }
+        public override Drawable drawable {
+			get {
+				return box;
+			}
+		}  
 
-        public static LinefyBox CreateInstance()
-        {
+        public static LinefyBox CreateInstance() {
             GameObject go = new GameObject("New Box");
             LinefyBox result = go.AddComponent<LinefyBox>();
             return result;

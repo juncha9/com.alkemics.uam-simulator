@@ -1,18 +1,18 @@
-﻿using Linefy;
-using UnityEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using Linefy;
 
 
-namespace LinefyExamples
-{
+namespace LinefyExamples {
 
-
+ 
 
     [CustomEditor(typeof(HandlesQuickStart))]
-    public class HandlesQuickStartEditor : Editor
-    {
+    public class HandlesQuickStartEditor : Editor {
         Matrix4x4 tm = Matrix4x4.identity;
-
+ 
         Vector3 p0 = new Vector3(0, 0, 0);
         Vector3 p1 = new Vector3(0, 1, 0);
         Vector3 p2 = new Vector3(1, 1, 0);
@@ -29,16 +29,15 @@ namespace LinefyExamples
         Polyline contour;
         PolygonalMesh fill;
 
-        void OnEnable()
-        {
-
+        void OnEnable() {
+ 
             tmHandle = new Matrix4x4Handle("tm", 0, null, null, null);
             h0 = new Vector3Handle(0);
             h1 = new Vector3Handle(1);
             h2 = new Vector3Handle(2);
             h3 = new Vector3Handle(3);
-
-
+ 
+ 
             contour = new Polyline(4, true, 1, true);
             contour.widthMultiplier = 4;
             Polygon fillPolygon = new Polygon(4);
@@ -50,8 +49,7 @@ namespace LinefyExamples
 
         }
 
-        void OnSceneGUI()
-        {
+        void OnSceneGUI() {
             tmHandle.DrawOnSceneGUI(ref tm, 2, true);
 
             Handles.matrix = tm;
@@ -59,7 +57,7 @@ namespace LinefyExamples
             p1 = h1.DrawOnSceneGUI(p1);
             p2 = h2.DrawOnSceneGUI(p2);
             p3 = h3.DrawOnSceneGUI(p3);
-
+ 
 
             contour.SetPosition(0, p0);
             contour.SetPosition(1, p1);
@@ -76,8 +74,7 @@ namespace LinefyExamples
 
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
 
             tmHandle.Dispose();
             h0.Dispose();

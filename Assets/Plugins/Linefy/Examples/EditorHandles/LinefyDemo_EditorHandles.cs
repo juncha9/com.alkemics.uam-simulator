@@ -1,12 +1,13 @@
-﻿using Linefy;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy;
+using Linefy.Internal;
 
-namespace LinefyExamples
-{
+namespace LinefyExamples {
 
     [ExecuteInEditMode]
-    public class LinefyDemo_EditorHandles : MonoBehaviour
-    {
+    public class LinefyDemo_EditorHandles : MonoBehaviour {
         [Matrix4x4Inspector(true)]
         public Matrix4x4 matrix0;
 
@@ -18,8 +19,8 @@ namespace LinefyExamples
 
         [Matrix4x4Inspector(true)]
         public Matrix4x4 matrix3;
-
-        [Range(1, 3)]
+ 
+        [Range(1,3)]
         public float handlesSize = 1;
 
         public bool drawMeshes = true;
@@ -33,7 +34,7 @@ namespace LinefyExamples
         public Vector3 point6;
 
         Polyline contourPolyline;
-
+ 
 
 
         public Mesh someMesh;
@@ -41,25 +42,22 @@ namespace LinefyExamples
 
 
 
-        private void Update()
-        {
+        private void Update() {
 
 
             Matrix4x4 ltw = transform.localToWorldMatrix;
-            if (drawMeshes)
-            {
+            if (drawMeshes) {
                 Graphics.DrawMesh(someMesh, ltw * matrix0, someMaterial, 0);
                 Graphics.DrawMesh(someMesh, ltw * matrix1, someMaterial, 0);
                 Graphics.DrawMesh(someMesh, ltw * matrix2, someMaterial, 0);
                 Graphics.DrawMesh(someMesh, ltw * matrix3, someMaterial, 0);
             }
 
-            if (contourPolyline == null)
-            {
+            if (contourPolyline == null) {
                 contourPolyline = new Polyline(7, true, 1, true);
                 contourPolyline.widthMultiplier = 4;
             }
-
+ 
 
             contourPolyline.SetPosition(0, point0);
             contourPolyline.SetPosition(1, point1);
@@ -71,7 +69,7 @@ namespace LinefyExamples
             contourPolyline.Draw(ltw);
         }
 
-
+ 
     }
 }
 

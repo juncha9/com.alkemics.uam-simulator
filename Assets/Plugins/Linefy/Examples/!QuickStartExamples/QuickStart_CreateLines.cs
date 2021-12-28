@@ -1,17 +1,13 @@
-﻿using Linefy;
-using UnityEngine;
+﻿using UnityEngine;
+using Linefy;
 
-namespace LinefyExamples
-{
+namespace LinefyExamples {
     [ExecuteInEditMode]
-    public class QuickStart_CreateLines : MonoBehaviour
-    {
+    public class QuickStart_CreateLines : MonoBehaviour {
         Lines lines;
 
-        void Update()
-        {
-            if (lines == null)
-            {
+        void Update() {
+            if (lines == null) {
                 lines = new Lines(2);
                 //assign lines  
                 lines[0] = new Line(Vector3.zero, new Vector3(1, 1, 0), Color.red, Color.yellow, 20, 20);

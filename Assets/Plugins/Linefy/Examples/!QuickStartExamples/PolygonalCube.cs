@@ -1,19 +1,14 @@
-﻿using Linefy;
+﻿using UnityEngine;
+using Linefy;
 using Linefy.Serialization;
-using UnityEngine;
-
-namespace LinefyExamples
-{
+ 
+namespace LinefyExamples {
     [ExecuteInEditMode]
-    public class PolygonalCube : MonoBehaviour
-    {
+    public class PolygonalCube : MonoBehaviour {
         PolygonalMesh _cube;
-        public PolygonalMesh cube
-        {
-            get
-            {
-                if (_cube == null)
-                {
+        public PolygonalMesh cube {
+            get {
+                if (_cube == null) {
                     Vector3[] positions = new Vector3[8];
                     positions[0] = new Vector3(-1, -1, -1);
                     positions[1] = new Vector3(1, -1, -1);
@@ -49,12 +44,9 @@ namespace LinefyExamples
         }
 
         Lines _wireframe;
-        Lines wireframe
-        {
-            get
-            {
-                if (_wireframe == null)
-                {
+        Lines wireframe {
+            get {
+                if (_wireframe == null) {
                     _wireframe = new Lines(12);
                 }
                 return _wireframe;
@@ -64,13 +56,12 @@ namespace LinefyExamples
         public SerializationData_PolygonalMeshProperties polygonalMeshProperties = new SerializationData_PolygonalMeshProperties();
         public SerializationData_Lines wireframePropertyes = new SerializationData_Lines(2, Color.black, 1);
 
-        private void Update()
-        {
+        private void Update() {
             cube.LoadSerializationData(polygonalMeshProperties);
             cube.positionEdgesWireframe = wireframe;
             wireframe.LoadSerializationData(wireframePropertyes);
             cube.Draw(transform.localToWorldMatrix);
-            wireframe.Draw(transform.localToWorldMatrix);
+            wireframe.Draw(transform.localToWorldMatrix);    
         }
     }
 }

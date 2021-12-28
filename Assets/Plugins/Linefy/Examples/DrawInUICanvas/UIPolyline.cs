@@ -1,32 +1,30 @@
-﻿using Linefy;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Linefy;
+using UnityEngine.UI;
 
-namespace LinefyExamples
-{
+namespace LinefyExamples {
 
     /// <summary>
     /// This example shows how to draw linefy objects relative to RectTransform
     /// </summary>
     [ExecuteInEditMode]
-
-    public class UIPolyline : LinefyRectTransform
-    {
+ 
+    public class UIPolyline : LinefyRectTransform {
         Polyline graphFrame;
         Polyline graph;
-
+ 
         public float[] graphValues = new float[2] { 0, 1 };
-
-        void Update()
-        {
-
+ 
+        void Update() {
+           
             //create polyline
-            if (graph == null)
-            {
+            if (graph == null) {
                 graph = new Polyline(1);
             }
 
-            if (graphFrame == null)
-            {
+            if (graphFrame == null) {
                 //frame is closed polyline with fixed 4 corners
                 graphFrame = new Polyline(4, true, 1, true);
                 graphFrame.SetPosition(0, new Vector3(0, 0, 0));
@@ -42,8 +40,7 @@ namespace LinefyExamples
 
             //assign polyline positions
             graph.count = graphValues.Length;
-            for (int i = 0; i < graphValues.Length; i++)
-            {
+            for (int i = 0; i < graphValues.Length; i++) {
                 float xPos = i / (float)(graphValues.Length - 1);
                 Vector2 point = new Vector2(xPos, graphValues[i]);
                 graph.SetPosition(i, point);
