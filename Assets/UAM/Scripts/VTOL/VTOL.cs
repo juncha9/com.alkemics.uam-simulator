@@ -1,4 +1,5 @@
 ﻿using Alkemic.Movement;
+using Shapes;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
@@ -86,6 +87,14 @@ namespace Alkemic.UAM
             }
             get => state;
         }
+
+        [PresetComponent]
+        [SerializeField]
+        private Line leftLine;
+        [PresetComponent]
+        [SerializeField]
+        private Line rightLine;
+
 
         [CacheComponent]
         private Looker looker;
@@ -218,6 +227,9 @@ namespace Alkemic.UAM
         private float maxKPH = UAMStatic.speed2KnotPHour;
         public float MaxKPH => maxKPH;
 
+        private Line line;
+
+
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -278,9 +290,37 @@ namespace Alkemic.UAM
 
         private void Update()
         {
+            if(target != null)
+            {
+                switch (target)
+                {
+                    case Location location:
+                        if(location.AirAnchor == null)
+                        {
+                            break;
+                        }
+                        leftLine.Start = transform.right * -300f;
+                        leftLine.End = transform.InverseTransformPoint(location.AirAnchor.position);
+                        rightLine.Start = transform.right * 300f;
+                        rightLine.End = transform.InverseTransformPoint(location.AirAnchor.position);
+                        break;
 
+                    case MonoBehaviour mono:
+                        leftLine.Start = transform.right * -300f;
+                        leftLine.End = transform.InverseTransformPoint(mono.transform.position);
+                        rightLine.Start = transform.right * 300f;
+                        rightLine.End = transform.InverseTransformPoint(mono.transform.position);
+                        break;
 
+                    default:
+                        leftLine.Start = Vector3.zero;
+                        leftLine.End = Vector3.zero;
+                        rightLine.Start = Vector3.zero;
+                        rightLine.End = Vector3.zero;
+                        break;
+                }
 
+            }
         }
 
         private IEnumerator IndicateRoutine()

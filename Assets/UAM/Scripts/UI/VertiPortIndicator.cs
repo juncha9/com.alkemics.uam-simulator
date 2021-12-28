@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using Alkemic.Collections;
 using System.Collections;
+using UnityEngine.UI;
+using System;
 
 #if UNITY_EDITOR
 #endif
 
 namespace Alkemic.UAM
 {
-    public class VertiPortIndicator : BaseComponent
+
+
+    [RequireComponent(typeof(DataCache))]
+    public class VertiPortIndicator : LeadComponent
     {
         [CacheComponent]
         private VertiPort vertiPort;
@@ -69,6 +74,8 @@ namespace Alkemic.UAM
                 if (TicketControl == null) continue;
 
                 var tickets = TicketControl.Tickets;
+                DataCache.Set("ticket_count", tickets.Count.ToString());
+
                 for(int i = 0; i < TicketItems.Count; i++)
                 {
                     var item = TicketItems[i];
@@ -98,6 +105,8 @@ namespace Alkemic.UAM
                 yield return delay;
                 if (HangarControl == null) continue;
                 var VTOLs = HangarControl.VTOLs;
+                DataCache.Set("vtol_count", VTOLs.Count.ToString());
+
                 for (int i = 0; i < VTOLItems.Count; i++)
                 {
                     var item = VTOLItems[i];

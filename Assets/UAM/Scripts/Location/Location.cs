@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using Alkemic.Collections;
 using Alkemic.UI;
-using UnityEditor.UIElements;
 using System.Collections;
 
 #if UNITY_EDITOR
@@ -158,12 +157,14 @@ namespace Alkemic.UAM
 
         private void OnDrawGizmos()
         {
+#if UNITY_EDITOR
             var style = new GUIStyle();
             style.normal.textColor = Color.white;
             style.fontSize = 12;
             style.fontStyle = FontStyle.Bold;
             style.alignment = TextAnchor.MiddleLeft;
             Handles.Label(transform.position + (Vector3.up * 1000f), $"{this.Key}", style);
+#endif
         }
 
         protected override void OnValidate()
@@ -235,7 +236,10 @@ namespace Alkemic.UAM
                 parentLocationControl.Locations.Add(this);
             }
             StartAutoCoroutine(SyncWayRoutine());
+
+            SetupName();
         }
+
 
 
         protected override void OnEnable()

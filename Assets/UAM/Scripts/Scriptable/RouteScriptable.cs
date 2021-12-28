@@ -11,10 +11,13 @@ using UnityEngine;
 
 namespace Alkemic.UAM
 {
-
-
     public class RouteScriptable : Scriptable
     {
+
+
+        [JsonProperty("routeDatas")]
+        [SerializeField]
+        public List<RouteData> RouteDatas = new List<RouteData>();
 
 #if UNITY_EDITOR
         [HeaderGroup]
@@ -47,15 +50,6 @@ namespace Alkemic.UAM
                 return RouteDatas.Find(x => x.IsEdit == true);
             }
         }
-#endif
-
-
-
-
-
-        [JsonProperty("routeDatas")]
-        [SerializeField]
-        public List<RouteData> RouteDatas = new List<RouteData>();
 
         [Button("SaveJSON")]
         public bool SaveJSON(string path) //where T : Scriptable
@@ -89,9 +83,13 @@ namespace Alkemic.UAM
         [Button]
         private void ForceLoadRoute()
         {
+            if (UAM.Route?.GUI_Simulator == null) return;
+            var simulator = UAM.Route?.GUI_Simulator;
             try
             {
                 StreamReader reader = new StreamReader("./Route.txt");
+                RouteDatas.Clear();
+
                 while(true)
                 {
                     if(reader.EndOfStream == true)
@@ -100,14 +98,72 @@ namespace Alkemic.UAM
                     }
                     var line = reader.ReadLine();
                     var texts = line.Split(';');
-                    var src = texts[0];
-                    var dest = texts[1];
-                    var route = texts[2];
-                    Debug.Log(src);
-                    Debug.Log(dest);
-                    Debug.Log(route);
+                    var key = texts[0];
+                    var src = texts[1];
+                    var dest = texts[2];
+                    var wayPoints = texts[3].Split(' ').ToList();
+                    if (wayPoints.Count <= 2)
+                    {
+                        Debug.LogError($"[{GetType().Name}] [{key}] Route has one way");
+                        continue;
+                    }
 
+                    wayPoints.Insert(0, src);
+                    wayPoints.Add(dest);
 
+                    string prePoint = null;
+                    string curPoint = null;
+
+                    List<Way> ways = new List<Way>();
+                    for(int i = 0; i < wayPoints.Count; i++)
+                    {
+                        curPoint = wayPoints[i];
+                        if(prePoint != null && curPoint != null)
+                        {
+                            Way way = null;
+
+                            var wayA = simulator.LocationControl.Ways.Find(x => x.LocationA.Key == prePoint && x.LocationB.Key == curPoint);
+                            var wayB = simulator.LocationControl.Ways.Find(x => x.LocationA.Key == curPoint && x.LocationB.Key == prePoint);
+                            if(wayA != null && wayB == null)
+                            {
+                                way = wayA;
+                            }
+                            else if(wayA == null && wayB != null)
+                            {
+                                way = wayB;
+                            }
+                            else
+                            {
+                                ways = null;
+                                break;
+                            }
+                            if(way != null)
+                            {
+                                ways.Add(way);
+                            }
+                        }
+                        prePoint = wayPoints[i];
+                    }
+
+                    if(ways == null)
+                    {
+                        Debug.LogError($"[{GetType().Name}] [{key}] Duplicate or wrong way");
+                        continue;
+                    }
+
+                    string log = $"Data[{key}]: ";
+                    foreach(var way in ways)
+                    {
+                        log += $"{way.Key} / ";
+                    }
+                    Debug.Log(log);
+
+                    RouteData route = new RouteData();
+                    route.Key = key;
+                    route.Source = src;
+                    route.Destination = dest;
+                    route.Ways.AddRange(ways.Select(x => x.Key));
+                    this.RouteDatas.Add(route);
                 }
             }
             catch(Exception ex)
@@ -115,8 +171,9 @@ namespace Alkemic.UAM
                 Debug.LogError($"[{GetType().Name}] Failed to load, Ex: {ex}");
             }
         }
+#endif
+
+
     }
-
-
 }
 

@@ -101,7 +101,7 @@ namespace Alkemic.UAM
 
         private IEnumerator RandomTicketRoutine()
         {
-            WaitForSeconds delay = new WaitForSeconds(5f);
+            WaitForSeconds delay = new WaitForSeconds(2f);
             List<VertiPort> entryVertiPorts = new List<VertiPort>();
 
             while (true)

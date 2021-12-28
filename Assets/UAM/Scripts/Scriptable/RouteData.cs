@@ -47,7 +47,7 @@ namespace Alkemic.UAM
         [ShowInInspector]
         public List<Way> GUI_Ways = new List<Way>();
 
-        private static IList<VertiPort> GetVertiPorts()
+        public static IList<VertiPort> GetVertiPorts()
         {
             if (GUI_Simulator?.LocationControl == null) return new List<VertiPort>();
 
@@ -57,7 +57,7 @@ namespace Alkemic.UAM
                 .ToList();
         }
 
-        private static IList<Way> GetWays()
+        public static IList<Way> GetWays()
         {
             if (GUI_Simulator?.LocationControl == null) return new List<Way>();
 

@@ -74,12 +74,6 @@ namespace Alkemic.UAM
         public override void TickTask()
         {
             base.TickTask();
-            if (ParentTaskControl != null && ParentTaskControl.IsDebug == true)
-            {
-                Debug.DrawLine(target.transform.position + (-1 * this.transform.right * 500f), TargetLocation.transform.position, Color.green, UAMStatic.TICK_TIME);
-                Debug.DrawLine(target.transform.position + (this.transform.right * 500f), TargetLocation.transform.position, Color.green, UAMStatic.TICK_TIME);
-            }
-
 
         }
     }
