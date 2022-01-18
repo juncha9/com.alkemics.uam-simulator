@@ -65,7 +65,7 @@ namespace Alkemic.UAM
                 }
 
                 TickTask();
-                yield return UAMStatic.TICK;
+                yield return UAMDefine.TICK;
             }
             this.Way.MovingVTOLs.Remove(Target);
             OverTask();

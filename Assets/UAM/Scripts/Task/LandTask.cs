@@ -39,13 +39,13 @@ namespace Alkemic.UAM
                     DebugEx.DrawBounds(new Bounds(target.transform.position, new Vector3(50f, 50f, 50f)), Color.red, 1f);
                     break;
                 }
-                if (target.transform.position.y <= UAMStatic.DefaultLandHeight)
+                if (target.transform.position.y <= UAMDefine.DefaultLandHeight)
                 {
                     DebugEx.DrawBounds(new Bounds(target.transform.position, new Vector3(50f, 50f, 50f)), Color.green, 1f);
                     break;
                 }
                 TickTask();
-                yield return UAMStatic.TICK;
+                yield return UAMDefine.TICK;
             }
             OverTask();
         }

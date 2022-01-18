@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "key": "scene",
+      "filename": "Scene",
+      "typeText": "Alkemic.UnityCore;Alkemic.SceneScriptable"
+    },
+    {
+      "key": "route",
+      "filename": "Route",
+      "typeText": "Assembly-CSharp;Alkemic.UAM.RouteScriptable"
+    },
+    {
+      "key": "simulation",
+      "filename": "Simulation",
+      "typeText": "Assembly-CSharp;Alkemic.UAM.SimulationScriptable"
+    }
+  ]
+}

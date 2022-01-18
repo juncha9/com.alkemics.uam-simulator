@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eab70c687d242774e8bca9410eceab6a, type: 3}
-  m_Name: Simulate
+  m_Name: Simulation
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -24,7 +24,7 @@ MonoBehaviour:
     - Name: simulateDatas
       Entry: 7
       Data: 0|Alkemic.Collections.InnerKeyList`2[[System.String, mscorlib],[Alkemic.UAM.SimulationData,
-        Assembly-CSharp]], Alkemic.Core
+        Assembly-CSharp]], Alkemic.UnityCore
     - Name: 
       Entry: 12
       Data: 1
@@ -40,7 +40,7 @@ MonoBehaviour:
     - Name: _VTOLPresets
       Entry: 7
       Data: 2|Alkemic.Collections.InnerKeyList`2[[System.String, mscorlib],[Alkemic.UAM.VTOLPreset,
-        Assembly-CSharp]], Alkemic.Core
+        Assembly-CSharp]], Alkemic.UnityCore
     - Name: 
       Entry: 12
       Data: 2
@@ -77,7 +77,7 @@ MonoBehaviour:
     - Name: vertiPortPreset
       Entry: 7
       Data: 5|Alkemic.Collections.InnerKeyList`2[[System.String, mscorlib],[Alkemic.UAM.VertiPortPreset,
-        Assembly-CSharp]], Alkemic.Core
+        Assembly-CSharp]], Alkemic.UnityCore
     - Name: 
       Entry: 12
       Data: 12

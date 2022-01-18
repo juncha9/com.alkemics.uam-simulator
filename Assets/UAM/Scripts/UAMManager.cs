@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace Alkemic.UAM
 {
-
-    
-
     public class UAMManager : Singleton<UAMManager>
     {
+
+
         [PresetComponent]
         [SerializeField]
         private GameObject _VTOLPrefab;
@@ -28,17 +27,17 @@ namespace Alkemic.UAM
 
         [PropertyGroup]
         [ShowOnly]
-        private SimulationData curSimulationData = null;
-        public SimulationData CurSimulationData => curSimulationData;
+        private SimulationEntry curSimulationEntry = null;
+        public SimulationEntry CurSimulationEntry => curSimulationEntry;
 
         protected override void Awake()
         {
             base.Awake();
 
-            var defaultSimulationData = UAM.Simulate.SimulateDatas.FirstOrDefault();
+            var defaultSimulationData = UAM.Simulation.SimulationEntries.FirstOrDefault();
             if(defaultSimulationData != null)
             {
-                this.curSimulationData = defaultSimulationData;
+                this.curSimulationEntry = defaultSimulationData;
             }
             else
             {

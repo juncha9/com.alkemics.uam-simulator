@@ -5,14 +5,15 @@ namespace Alkemic.UAM
 {
     public static class UAM
     {
-        public const string KEY_ROUTE_SCRIPTABLE = "route";
-        public const string KEY_SIMULATE_SCRIPTABLE = "simulate";
+        public const string KEY_ROUTE = "route";
+
+        public const string KEY_SIMULATION = "simulation";
 
         [HideInInspector]
-        public static RouteScriptable Route => ScriptableDatabase.Scriptables[KEY_ROUTE_SCRIPTABLE] as RouteScriptable;
+        public static RouteScriptable Route => ScriptableDB.Scriptables[KEY_ROUTE] as RouteScriptable;
 
         [HideInInspector]
-        public static SimulateScriptable Simulate => ScriptableDatabase.Scriptables[KEY_SIMULATE_SCRIPTABLE] as SimulateScriptable;
+        public static SimulationScriptable Simulation => ScriptableDB.Scriptables[KEY_SIMULATION] as SimulationScriptable;
 
     }
 

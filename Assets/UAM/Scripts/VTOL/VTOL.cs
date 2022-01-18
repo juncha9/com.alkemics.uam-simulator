@@ -202,7 +202,7 @@ namespace Alkemic.UAM
         {
             get
             {
-                return mover.CurSpeedFactor * UAMStatic.speed2KnotPHour;
+                return mover.CurSpeedFactor * UAMDefine.speed2KnotPHour;
             }
         }
 
@@ -212,19 +212,19 @@ namespace Alkemic.UAM
             {
                 if (mover != null)
                 {
-                    mover.SpeedFactor = value * UAMStatic.knotPHour2Speed;
+                    mover.SpeedFactor = value * UAMDefine.knotPHour2Speed;
                 }
             }
             get
             {
-                return mover.SpeedFactor * UAMStatic.speed2KnotPHour;
+                return mover.SpeedFactor * UAMDefine.speed2KnotPHour;
             }
         }
 
-        [Range(UAMStatic.MinVTOLSpeed, UAMStatic.MaxVTOLSpeed)]
+        [Range(UAMDefine.MinVTOLSpeed, UAMDefine.MaxVTOLSpeed)]
         [OptionGroup]
         [SerializeField]
-        private float maxKPH = UAMStatic.speed2KnotPHour;
+        private float maxKPH = UAMDefine.speed2KnotPHour;
         public float MaxKPH => maxKPH;
 
         private Line line;
@@ -343,7 +343,7 @@ namespace Alkemic.UAM
 
         private void InitWithStaticData()
         {
-            var preset = UAMManager.Inst.CurSimulationData?.VTOLPresets[this.VTOLTypeKey];
+            var preset = UAMManager.Inst.CurSimulationEntry?.EVTOLEntries[this.VTOLTypeKey];
             if (preset != null)
             {
                 this.maxKPH = preset.MaxSpeed;
@@ -419,11 +419,11 @@ namespace Alkemic.UAM
             {
                 case TakeOffTask verticalTask:
                     mover.Direction = Vector3.up;
-                    mover.SpeedFactor = 40f * UAMStatic.knotPHour2Speed;
+                    mover.SpeedFactor = 40f * UAMDefine.knotPHour2Speed;
                     break;
                 case LandTask landTask:
                     mover.Direction = Vector3.down;
-                    mover.SpeedFactor = 40f * UAMStatic.knotPHour2Speed;
+                    mover.SpeedFactor = 40f * UAMDefine.knotPHour2Speed;
                     break;
 
                 case MoveTask moveTask:
@@ -438,7 +438,7 @@ namespace Alkemic.UAM
                                 var forwardVTOLs = way.MovingVTOLs.Take(_index).ToList();
                                 if (forwardVTOLs.Count > 0)
                                 {
-                                    float forwardSpeed = forwardVTOLs.Min(x => x.mover.CurSpeedFactor) * UAMStatic.speed2KnotPHour;
+                                    float forwardSpeed = forwardVTOLs.Min(x => x.mover.CurSpeedFactor) * UAMDefine.speed2KnotPHour;
                                     if (speed < forwardSpeed)
                                     {
                                         Debug.Log($"MinSpeed is {forwardSpeed}");
@@ -449,7 +449,7 @@ namespace Alkemic.UAM
                         }
 
                         mover.Direction = transform.forward;
-                        mover.SpeedFactor = speed * UAMStatic.knotPHour2Speed;
+                        mover.SpeedFactor = speed * UAMDefine.knotPHour2Speed;
                     }
 
                     break;

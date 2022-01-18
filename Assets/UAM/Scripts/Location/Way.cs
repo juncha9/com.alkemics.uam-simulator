@@ -80,9 +80,9 @@ namespace Alkemic.UAM
         {
             base.OnValidate();
 
-            if (transform.position.y != UAMStatic.DefaultAirHeight)
+            if (transform.position.y != UAMDefine.DefaultAirHeight)
             {
-                transform.position = new Vector3(transform.position.x, UAMStatic.DefaultAirHeight, transform.position.z);
+                transform.position = new Vector3(transform.position.x, UAMDefine.DefaultAirHeight, transform.position.z);
             }
 
             UpdateNameOnValid();
@@ -172,11 +172,11 @@ namespace Alkemic.UAM
             }
             else if (isOneWay == false)
             {
-                color = UAMStatic.LineColor;
+                color = UAMDefine.LineColor;
             }
             else
             {
-                color = UAMStatic.AltLineColor;
+                color = UAMDefine.AltLineColor;
             }
 #else
             if (isOneWay == false)

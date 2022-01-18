@@ -14,7 +14,6 @@ namespace Alkemic.UAM
     public class RouteScriptable : Scriptable
     {
 
-
         [JsonProperty("routeDatas")]
         [SerializeField]
         public List<RouteData> RouteDatas = new List<RouteData>();
@@ -32,13 +31,16 @@ namespace Alkemic.UAM
             GUI_Simulator = GameObject.FindObjectsOfType<UAMSimulator>().Where(x => x != null).FirstOrDefault();
         }
 
-        private void OnEnable()
+
+        protected override void OnEnable()
         {
+            base.OnEnable();
             ForceReload();
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             GUI_Simulator = null;
         }
 

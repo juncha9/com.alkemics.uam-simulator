@@ -14,12 +14,16 @@ namespace Alkemic.UAM
 
     [Serializable]
     [HideReferenceObjectPicker]
-    public class SimulationData : IKeyContainer<string>
+    public class SimulationEntry : IKeyContainer<string>
     {
         [ReadOnly]
         [SerializeField]
-        public string Key;
-        string IKeyContainer<string>.Key => Key;
+        private string key;
+        public string Key
+        {
+            set => key = value;
+            get => key;
+        }
 
         /// <summary>
         /// 이륙 간격 (분)
@@ -27,48 +31,46 @@ namespace Alkemic.UAM
         [SerializeField]
         public float TakeOffDelay = 5f;
 
-        [VerticalGroup("VTOL")]
+        [TabGroup("EVTOL")]
         [ListDrawerSettings(HideAddButton = true)]
         [SerializeField]
-        private InnerKeyList<string, VTOLPreset> _VTOLPresets = new InnerKeyList<string, VTOLPreset>();
-        public InnerKeyList<string, VTOLPreset> VTOLPresets => _VTOLPresets;
-        [VerticalGroup("VTOL")]
+        private InnerKeyList<string, VTOLEntry> eVTOLEntries = new InnerKeyList<string, VTOLEntry>();
+        public InnerKeyList<string, VTOLEntry> EVTOLEntries => eVTOLEntries;
+
+        [TabGroup("EVTOL")]
         [Button]
         public void AddVTOLPreset(string key)
         {
             if (string.IsNullOrWhiteSpace(key) == true) return;
-            if (VTOLPresets.ContainsKey(key) == true) return;
+            if (EVTOLEntries.ContainsKey(key) == true) return;
 
-            VTOLPresets.Add(new VTOLPreset(key));
+            EVTOLEntries.Add(new VTOLEntry(key));
         }
 
-        [VerticalGroup("VertiPort")]
+        [TabGroup("VPort")]
         [ListDrawerSettings(HideAddButton = true)]
         [SerializeField]
-        private InnerKeyList<string, VertiPortPreset> vertiPortPreset = new InnerKeyList<string, VertiPortPreset>();
-        public InnerKeyList<string, VertiPortPreset> VertiPortPreset => vertiPortPreset;
+        private InnerKeyList<string, VertiPortEntry> vertiPortEntries = new InnerKeyList<string, VertiPortEntry>();
 
-        [VerticalGroup("VertiPort")]
+        public InnerKeyList<string, VertiPortEntry> VertiPortEntries => vertiPortEntries;
+
+        [TabGroup("VPort")]
         [Button]
         public void AddVertiPortPreset(string key)
         {
             if (string.IsNullOrWhiteSpace(key) == true) return;
-            if (VertiPortPreset.ContainsKey(key) == true) return;
+            if (VertiPortEntries.ContainsKey(key) == true) return;
 
-            VertiPortPreset.Add(new VertiPortPreset(key));
+            VertiPortEntries.Add(new VertiPortEntry(key));
         }
 
-        public SimulationData() { }
+        public SimulationEntry() { }
 
-        public SimulationData(string key)
+        public SimulationEntry(string key)
         {
+            
             this.Key = key;
         }
-
-        
-
     }
-
-
 }
 

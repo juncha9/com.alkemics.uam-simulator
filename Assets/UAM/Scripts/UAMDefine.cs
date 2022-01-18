@@ -2,9 +2,8 @@
 
 namespace Alkemic.UAM
 {
-    public static class UAMStatic
+    public static class UAMDefine
     {
-
         public const float TICK_TIME = 0.05f;
 
         public static readonly WaitForSeconds TICK = new WaitForSeconds(TICK_TIME);

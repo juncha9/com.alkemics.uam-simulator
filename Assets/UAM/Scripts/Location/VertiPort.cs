@@ -118,16 +118,22 @@ namespace Alkemic.UAM
         }
         private void InitWithStaticData()
         {
-            var preset = UAMManager.Inst.CurSimulationData?.VertiPortPreset[this.Key];
+            var simulationEntry = UAMManager.Inst.CurSimulationEntry;
+
+            if(simulationEntry != null)
+            {
+                this.takeOffDelay = simulationEntry.TakeOffDelay;
+            }
+
+            var preset = UAMManager.Inst.CurSimulationEntry?.VertiPortEntries[this.Key];
             if (preset != null)
             {
-                this.takeOffDelay = preset.Delay;
                 if(Hangar != null)
                 {
                     int vtolNo = 0;
-                    foreach (var vtolTypeKey in preset.VTOLInitCounts.Keys)
+                    foreach (var vtolTypeKey in preset.VTOLCounts.Keys)
                     {
-                        var count = preset.VTOLInitCounts[vtolTypeKey];
+                        var count = preset.VTOLCounts[vtolTypeKey];
                         for(int i = 0; i < count; i++)
                         {
                             var vtol = Hangar.CreateVTOL(vtolTypeKey);

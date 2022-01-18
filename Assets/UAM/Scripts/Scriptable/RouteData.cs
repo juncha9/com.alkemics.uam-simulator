@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Alkemic.UAM
 {
+    [HideReferenceObjectPicker]
     [Serializable]
     public class RouteData
     {
