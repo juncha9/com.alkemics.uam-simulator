@@ -1,9 +1,10 @@
-﻿using UnityEditor;
+﻿using Alkemic.Doings;
+using UnityEditor;
 
 namespace Alkemic.UAM
 {
     [CustomEditor(typeof(MoveTask))]
-    public class MoveTaskEditor : TaskEditor
+    public class MoveTaskEditor : DoingEditor
     {
         private new MoveTask target => base.target as MoveTask;
     }

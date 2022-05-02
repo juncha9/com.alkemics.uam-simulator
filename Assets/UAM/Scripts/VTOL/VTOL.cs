@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering.Universal;
+using Alkemic.Doings;
 
 namespace Alkemic.UAM
 {
@@ -106,8 +107,8 @@ namespace Alkemic.UAM
         public LocationEvent OnLocationArrived => onLocationArrived;
 
         [CacheComponent]
-        private TaskControl task;
-        public TaskControl Task => task;
+        private DoingHandler task;
+        public DoingHandler Task => task;
 
         [SerializeField]
         private List<GameObject> shapeObjects = new List<GameObject>();
@@ -385,7 +386,7 @@ namespace Alkemic.UAM
             this.Task.AssignTask<LandTask>();
         }
 
-        private void OnTaskInit(Task task)
+        private void OnTaskInit(Doing task)
         {
             switch (task)
             {
@@ -408,12 +409,12 @@ namespace Alkemic.UAM
 
         }
 
-        private void OnTaskUpdate(Task task)
+        private void OnTaskUpdate(Doing task)
         {
             
         }
 
-        private void OnTaskFixedUpdate(Task task)
+        private void OnTaskFixedUpdate(Doing task)
         {
             switch (task)
             {
@@ -456,12 +457,12 @@ namespace Alkemic.UAM
             }
         }
 
-        private void OnTaskTick(Task task)
+        private void OnTaskTick(Doing task)
         {
 
         }
 
-        private void OnTaskOver(Task task)
+        private void OnTaskOver(Doing task)
         {
 
             switch (task)
